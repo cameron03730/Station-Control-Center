@@ -58,24 +58,26 @@ git fetch origin dev
 git merge --ff-only origin/dev
 if ($LASTEXITCODE -ne 0) { Fail "dev is not fast-forwardable from origin/dev. Reconcile manually." }
 
-# --- 2. ingest + rebuild ---------------------------------------------------
+# --- 2. ingest -------------------------------------------------------------
 Write-Host "==> ingesting export into *.view.json.txt" -ForegroundColor Cyan
 python files/_ingest_zip.py "$Export"
 if ($LASTEXITCODE -ne 0) { git checkout -- files/; Fail "ingest failed; working tree reverted." }
 
-Write-Host "==> rebuilding SCC_views_import.zip" -ForegroundColor Cyan
-python files/_rebuild_zip.py
-if ($LASTEXITCODE -ne 0) { git checkout -- files/; Fail "rebuild failed; working tree reverted." }
-
-# --- 3. real changes? (use git's EXIT CODE, not stdout) --------------------
-git add -A
-git diff --cached --quiet
+# --- 3. real SOURCE changes? -----------------------------------------------
+# Gate on the *.view.json.txt sources, NOT the derived zip (the zip re-deflates on
+# every rebuild and can differ byte-wise even when no view actually changed).
+# 'git diff --quiet' evaluates normalized content, so EOL-only noise is ignored.
+git diff --quiet -- 'files/*.view.json.txt'
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "No real changes from that export - nothing to update. Reverting." -ForegroundColor Yellow
-    git reset -q
+    Write-Host "No view changes from that export - nothing to update. Reverting." -ForegroundColor Yellow
     git checkout -- files/
     exit 0
 }
+
+Write-Host "==> view sources changed; rebuilding SCC_views_import.zip" -ForegroundColor Cyan
+python files/_rebuild_zip.py
+if ($LASTEXITCODE -ne 0) { git checkout -- files/; Fail "rebuild failed; working tree reverted." }
+git add -A
 
 # --- 4. tag OLD dev, then commit the update -------------------------------
 if (-not $Tag)     { $Tag     = "dev-snapshot-$(Get-Date -Format 'yyyyMMdd-HHmmss')" }
