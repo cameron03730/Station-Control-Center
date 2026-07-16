@@ -1,0 +1,577 @@
+{
+  "custom": {
+    "mNumber": "",
+    "reason": "",
+    "liveCheck": null
+  },
+  "params": {
+    "serial": "",
+    "section": "",
+    "comp": "",
+    "mode": "associate"
+  },
+  "propConfig": {
+    "params.serial": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.section": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.comp": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.mode": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "custom.liveCheck": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "view.custom.mNumber"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\tv = (value or '').strip()\n\t# Only hit the backend once the entry is a plausibly-complete M-number (M + 5+ digits).\n\t# Perspective bindings can't debounce without a timer (banned by the no-polling rule), so\n\t# gating on a complete pattern is what keeps this from firing a BE round-trip per keystroke.\n\tif not (v[:1].upper() == 'M' and v[1:].isdigit() and len(v) >= 6):\n\t\treturn None\n\ttry:\n\t\treturn StationControl.SCC.validateBoomForAssociation(v)\n\texcept:\n\t\treturn None\n"
+          }
+        ]
+      }
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 470,
+      "height": 360
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "borderRadius": "12px",
+        "height": "100%",
+        "overflow": "hidden",
+        "boxShadow": "0 12px 40px rgba(0,0,0,0.30)"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "TitleBar"
+        },
+        "position": {
+          "basis": "64px",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "style": {
+            "backgroundColor": "#1B212B",
+            "padding": "12px 18px",
+            "gap": "12px",
+            "borderBottom": "3px solid #E87722"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.icon",
+            "meta": {
+              "name": "TitleIcon"
+            },
+            "position": {
+              "basis": "24px",
+              "shrink": 0
+            },
+            "props": {
+              "path": "material/add_link",
+              "color": "#E87722",
+              "style": {
+                "width": "24px",
+                "height": "24px"
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "TitleText"
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "gap": "1px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "TitleLbl"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#FFFFFF",
+                    "fontSize": "17px",
+                    "fontWeight": "700",
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden",
+                    "textOverflow": "ellipsis"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.params.mode} = 'clear', 'Clear ' + coalesce({view.params.section}, '') + ' Boom', 'Associate ' + coalesce({view.params.section}, '') + ' Boom')"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "SerialLbl"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#A7B0BE",
+                    "fontSize": "13px",
+                    "fontWeight": "600",
+                    "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "'WG ' + coalesce({view.params.serial}, '--')"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "Body"
+        },
+        "position": {
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "padding": "16px 18px",
+            "gap": "10px",
+            "backgroundColor": "#FFFFFF"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "CurrentLine"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "13px",
+                "fontWeight": "600"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if(len(trim(coalesce({view.params.comp}, ''))) > 0, 'Currently: ' + {view.params.comp}, 'Currently not associated')"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "Helper"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "M-number must be scheduled at TF000X (pre-assembly) with a timestamp and not already associated to a whole good.",
+              "style": {
+                "color": "#8A929E",
+                "fontSize": "12px",
+                "fontWeight": "400",
+                "lineHeight": "1.45",
+                "whiteSpace": "normal"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "MLbl"
+            },
+            "position": {
+              "basis": "16px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "NWG BOOM (M-NUMBER)",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "11px",
+                "fontWeight": "700",
+                "letterSpacing": "0.6px"
+              }
+            },
+            "propConfig": {
+              "position.display": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "{view.params.mode} != 'clear'"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.input.text-field",
+            "meta": {
+              "name": "MField"
+            },
+            "position": {
+              "basis": "44px",
+              "shrink": 0
+            },
+            "props": {
+              "placeholder": "e.g. M282832",
+              "deferUpdates": false,
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#1B212B",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "8px",
+                "padding": "11px 14px",
+                "fontSize": "15px",
+                "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "bidirectional": true,
+                    "path": "view.custom.mNumber"
+                  }
+                }
+              },
+              "position.display": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "{view.params.mode} != 'clear'"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "LiveCheckLbl"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "fontSize": "12px",
+                "fontWeight": "600",
+                "lineHeight": "1.4",
+                "whiteSpace": "normal",
+                "color": "#2F9E44"
+              }
+            },
+            "propConfig": {
+              "position.display": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "{view.params.mode} != 'clear' && {view.custom.liveCheck} != null"
+                  }
+                }
+              },
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.custom.liveCheck} = null, '', if(coalesce({view.custom.liveCheck.ok}, false), '✓  ' + coalesce({view.custom.liveCheck.message}, ''), '⚠  ' + coalesce({view.custom.liveCheck.message}, '')))"
+                  }
+                }
+              },
+              "props.style.color": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if(coalesce({view.custom.liveCheck.ok}, false), '#2F9E44', '#E03131')"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "ReasonLbl"
+            },
+            "position": {
+              "basis": "16px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "REASON  (required - written to SupervisorOverrideLog)",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "11px",
+                "fontWeight": "700",
+                "letterSpacing": "0.6px"
+              }
+            }
+          },
+          {
+            "type": "ia.input.text-field",
+            "meta": {
+              "name": "ReasonField"
+            },
+            "position": {
+              "basis": "44px",
+              "shrink": 0
+            },
+            "props": {
+              "placeholder": "Why is this being associated manually...",
+              "deferUpdates": false,
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#1B212B",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "8px",
+                "padding": "11px 14px",
+                "fontSize": "15px"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "bidirectional": true,
+                    "path": "view.custom.reason"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "ActionRow"
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 0,
+              "alignSelf": "stretch"
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "flex-end",
+              "style": {
+                "gap": "10px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.input.button",
+                "meta": {
+                  "name": "CancelBtn"
+                },
+                "position": {
+                  "basis": "120px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Cancel",
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "color": "#5B6675",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "fontWeight": "600",
+                    "fontSize": "14px",
+                    "padding": "10px 14px",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "events": {
+                  "dom": {
+                    "onClick": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "\tsystem.perspective.closePopup('sccAssociate')\n"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.input.button",
+                "meta": {
+                  "name": "AssociateBtn"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1,
+                  "basis": "0%"
+                },
+                "props": {
+                  "text": "Associate Boom",
+                  "style": {
+                    "backgroundColor": "#E87722",
+                    "color": "#FFFFFF",
+                    "border": "none",
+                    "borderRadius": "8px",
+                    "fontWeight": "700",
+                    "fontSize": "15px",
+                    "padding": "11px 14px",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap"
+                  },
+                  "image": {
+                    "icon": {
+                      "path": "material/link",
+                      "color": "#FFFFFF",
+                      "style": {
+                        "width": "18px",
+                        "height": "18px",
+                        "flexShrink": "0"
+                      }
+                    }
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.params.mode} = 'clear', 'Clear Association', 'Associate Boom')"
+                      }
+                    }
+                  },
+                  "props.image.icon.path": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.params.mode} = 'clear', 'material/link_off', 'material/link')"
+                      }
+                    }
+                  },
+                  "props.enabled": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.params.mode} = 'clear', len(trim(coalesce({view.custom.reason}, ''))) > 0, len(trim(coalesce({view.custom.mNumber}, ''))) > 0 && len(trim(coalesce({view.custom.reason}, ''))) > 0)"
+                      }
+                    }
+                  },
+                  "props.style.backgroundColor": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.params.mode} = 'clear', if(len(trim(coalesce({view.custom.reason}, ''))) > 0, '#E03131', '#D5D5D5'), if(len(trim(coalesce({view.custom.mNumber}, ''))) > 0 && len(trim(coalesce({view.custom.reason}, ''))) > 0, '#E87722', '#D5D5D5'))"
+                      }
+                    }
+                  },
+                  "props.style.color": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.params.mode} = 'clear', if(len(trim(coalesce({view.custom.reason}, ''))) > 0, '#FFFFFF', '#8A929E'), if(len(trim(coalesce({view.custom.mNumber}, ''))) > 0 && len(trim(coalesce({view.custom.reason}, ''))) > 0, '#FFFFFF', '#8A929E'))"
+                      }
+                    }
+                  },
+                  "props.image.icon.color": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.params.mode} = 'clear', if(len(trim(coalesce({view.custom.reason}, ''))) > 0, '#FFFFFF', '#8A929E'), if(len(trim(coalesce({view.custom.mNumber}, ''))) > 0 && len(trim(coalesce({view.custom.reason}, ''))) > 0, '#FFFFFF', '#8A929E'))"
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "dom": {
+                    "onClick": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "\treason = (self.view.custom.reason or '').strip()\n\tif not reason:\n\t\treturn\n\tif self.view.params.mode == 'clear':\n\t\targs = {'serial': self.view.params.serial, 'section': self.view.params.section, 'reason': reason}\n\t\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Clearing association...', 'actionKey': 'clearBoomAssociation', 'actionArgs': args, 'doneMsg': 'sccAssocDone'}, modal=True, showCloseIcon=False)\n\t\treturn\n\tcomp = (self.view.custom.mNumber or '').strip()\n\tif not comp:\n\t\treturn\n\targs = {'serial': self.view.params.serial, 'section': self.view.params.section, 'componentID': comp, 'reason': reason}\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Associating boom...', 'actionKey': 'associateBoomBySection', 'actionArgs': args, 'doneMsg': 'sccAssocDone'}, modal=True, showCloseIcon=False)\n"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

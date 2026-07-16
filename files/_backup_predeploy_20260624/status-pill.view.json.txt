@@ -1,0 +1,82 @@
+{
+  "custom": {},
+  "params": {
+    "value": ""
+  },
+  "propConfig": {
+    "params.value": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 28,
+      "width": 120
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "Pill"
+        },
+        "position": {
+          "shrink": 0
+        },
+        "propConfig": {
+          "meta.visible": {
+            "binding": {
+              "config": {
+                "expression": "len(coalesce({view.params.value}, '')) > 0"
+              },
+              "type": "expr"
+            }
+          },
+          "props.style.backgroundColor": {
+            "binding": {
+              "config": {
+                "expression": "case(upper(coalesce({view.params.value}, ''),\n  'WIP', '#E87722',\n  'BUILDING', '#E87722',\n  'IN STATION', '#E87722',\n  'COMPLETE', '#2F9E44',\n  'COMPLETED', '#2F9E44',\n  'ASSOCIATED', '#2F9E44',\n  'SCHEDULED', '#E8920C',\n  'EN ROUTE', '#E8920C',\n  'CHARGING', '#E8920C',\n  'LEGACY', '#E8920C',\n  'STANDARD', '#5B6675',\n  '2-COMP', '#0C8599',\n  'DUAL', '#0C8599',\n  'PAIRED', '#0C8599',\n  'ABORT', '#E03131',\n  'ABORTED', '#E03131',\n  'SCRAPPED', '#E03131',\n  'NON-CONFORMANCE', '#E03131',\n  'NONCONFORMANCE', '#E03131',\n  '#5B6675')"
+              },
+              "type": "expr"
+            }
+          },
+          "props.text": {
+            "binding": {
+              "config": {
+                "path": "view.params.value"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "style": {
+            "alignSelf": "flex-start",
+            "borderRadius": "11px",
+            "color": "#FFFFFF",
+            "fontSize": "11px",
+            "fontWeight": "600",
+            "padding": "2px 10px",
+            "textAlign": "center",
+            "textTransform": "uppercase",
+            "whiteSpace": "nowrap"
+          },
+          "text": ""
+        },
+        "type": "ia.display.label"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "alignItems": "center",
+      "justify": "flex-start",
+      "style": {
+        "padding": "2px 0px"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

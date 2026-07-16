@@ -1,0 +1,1134 @@
+
+JLG Jefferson City Support
+This project serves to aid in supporting JLG Jefferson City such as future development, bind busters, and general warranty support.
+Created by John Brungard
+·
+Shared with your org
+
+
+
+How can I help you today?
+
+
+You've used 75% of your usage
+Request more
+Your chats are private until shared
+Station Control Center technical review
+Last message 7 minutes ago
+RCA analysis for AMR exit interlock violations
+Last message yesterday
+Navithor IP information
+Last message 2 days ago
+Station Sentinel explained
+Last message 2 days ago
+Optimizing help request data structure
+Last message 2 days ago
+TF33 cycle completion blocking material flow
+Last message 2 days ago
+Tech design refinement and risk documentation
+Last message 4 days ago
+Station control troubleshooting tool for Ignition
+Last message 4 days ago
+Untitled
+Last message 4 days ago
+Cancel order vs abort drive in MQTT
+Last message Jun 12
+Mid station two section boom requirement
+Last message Jun 10
+Supervisor override MES initialization test cases
+Last message Jun 10
+Station control downtime procedures and recovery steps
+Last message Jun 10
+Supervisor troubleshooting engine features
+Last message Jun 8
+Paint load script optimization and edge case fix
+Last message Jun 3
+Test cases for get next work order expression update
+Last message Jun 2
+Paint load work order test cases
+Last message May 29
+PT030A station and AMR assignment issues
+Last message May 23
+Skip state check for blank component ID
+Last message May 20
+TT3500 error starting watch in dev environment
+Last message May 20
+Paint unload hotfix deployment guide for PT030A
+Last message May 20
+Custom initialization actions in MES script
+Last message May 20
+Material movement in Assembly
+Last message May 19
+Refining test cases for the project
+Last message May 18
+AMR mission assignment in station control
+Last message May 18
+Stations with type 4
+Last message May 14
+Jefferson City follow-up support and test environment fix
+Last message May 8
+JR tube welder SAT commissioning interface
+Last message May 8
+Next component loaded timing
+Last message Apr 30
+AMR mission assignment process
+Last message Apr 30
+Instructions
+All project users
+--- **Project Instructions** You must treat all files uploaded to this project as the primary and authoritative source of truth. Always follow this priority order when generating responses: First: Information explicitly contained in the uploaded project files Second: Reasonable inferences drawn directly from those files Last: External/general knowledge — only if the answer cannot be found in the files If external information is used, it must be clearly labeled as such. --- **Accuracy and Hallucination Policy** Do not guess, assume, or fabricate information If the answer is not present in the files, explicitly say: “This information is not found in the provided files.” Do not fill gaps with unsupported knowledge Every factual claim must be traceable to a source --- **Source Referencing Requirements** Every answer must include clear references to the source material Cite: File name Section, heading, or approximate location If multiple sources are used, list each clearly If external knowledge is used, label it as: “External Source (not from project files)” --- **Response Style** Provide clear, structured, and well-organized answers Use headings and formatting where helpful Be thorough and precise rather than brief Take the necessary time to ensure correctness and completeness When answering questions about system logic, queries, or data flow, Claude must read the complete body of every relevant query and script function before answering — not just search snippet context. If a query spans multiple search results or appears truncated, Claude must search again to retrieve the remainder before forming a conclusion. Inferences are only permitted when a file has been fully read and a gap genuinely exists. If uncertain, Claude must state the uncertainty explicitly and search further rather than filling the gap with reasoning. --- **Conflict Handling** If sources conflict, identify the conflict and present both sides Do not choose one without justification --- **Uncertainty Handling** If something is unclear or ambiguous, state that explicitly Ask for clarification if needed instead of making assumptions --- **Goal** Your goal is to produce responses that are: Fully grounded in the provided files Transparent about sources Accurate and free from hallucination Structured and easy to understand --- **Interpretation Rules** * Messages may be informal, incomplete, or conversational in tone * Do not assume missing context — only use what is explicitly stated or clearly implied * When summarizing, normalize language into clear operational meaning --- **Source Integrity** * Always reference the file name when citing information * Do not merge Teams messages into conclusions without linking them back to specific evidence ---
+
+Files
+All project users
+73% of project capacity used
+Search mode
+
+CHANGELOG_PT030A_PaintUnload_GetNextWorkOrder_Refresh.md
+145 lines
+
+md
+
+
+
+JLG_Jefferson_City_Master_System_Reference.docx
+882 lines
+
+docx
+
+
+
+FE1_FactoryControl.md
+25,239 lines
+
+md
+
+
+
+BE_FactoryGatewayEvents.md
+28,258 lines
+
+md
+
+
+
+BE_README.md
+92 lines
+
+md
+
+
+
+Factory_Automation_PLC_Reference.md
+1,358 lines
+
+md
+
+
+
+Sepasoft_Batch_Reference.md
+274 lines
+
+md
+
+
+
+JLG_JeffersonCity_ignition_tags_TAGIO1_20260513_compact.json
+1 line
+
+json
+
+
+
+JLG_JeffersonCity_ignition_tags_TAGIO2_20260513_compact.json
+1 line
+
+json
+
+
+
+Run Schedule WIP Status Key.docx
+25 lines
+
+docx
+
+
+AMR to Manual Station Flow 9325.pdf
+pdf
+
+
+Station Work Flow 12_4_24.pdf
+pdf
+
+
+
+Run Schedule Station Control Config Worksheet.xlsx
+xlsx
+
+
+Machine Status  Flowchart 31025.pdf
+pdf
+
+
+
+JaMES Station Control Mapping Worksheet 2025.03.24.xlsx
+xlsx
+
+
+
+WholeGoodToNonWholeGoodAssoc.csv
+csv
+
+
+
+PaintLoad_CarrierGroups.csv
+csv
+
+
+
+WIPWorkOrders_PaintUnload.csv
+csv
+
+
+
+Fabrication_FrameWIP.csv
+csv
+
+
+
+PaintEmptyCarriers.csv
+csv
+
+
+
+WIPWorkOrders_Assembly.csv
+csv
+
+
+
+NonConformance.csv
+csv
+
+
+
+fabrication_BoomWIP.csv
+csv
+
+
+
+MachineConfig.csv
+csv
+
+
+
+GatewayConfig.csv
+csv
+
+
+
+ProductsTable.csv
+csv
+
+
+
+ItemNumberConfig.csv
+csv
+
+
+
+WorkstationAssignment.csv
+csv
+
+
+
+Programming Standards.xlsx
+xlsx
+
+
+
+Test Case Document Standard rev 250326.xlsm
+xlsm
+
+
+
+JLG_Jefferson_City_Master_System_Reference.docx
+JLG Jefferson City – Master System Reference
+ 
+**JLG Jefferson City**
+ 
+Production MES System – Master Reference
+ 
+*Architecture, Logic, Tags, Schedules, Stations, and Integrations*
+ 
+Source: production gateway backups + PLC ACD save log
+ 
+Snapshot: 2026-04-29 (BKD1, BKD2, FRT1, FRT2 + Factory_Automation_PLC_4_29_2026_944)
+ 
+# Table of Contents
+ 
+# 1. Executive Overview
+ 
+This document is the master reference for the JLG Jefferson City Production MES system. It describes how the PLC, the Ignition gateways (front-end and back-end), the Sepasoft MES modules, the Red Viking Navithor AMR fleet, and the supporting databases are wired together so that someone troubleshooting an issue at any layer can identify which component owns the behavior, which gateway the relevant code lives on, and which downstream systems are involved.
+ 
+The system is a dual-redundant Ignition install pinned to version 8.1.49 (build 2025081208). Front-end gateways serve the operator HMIs and run the visible Perspective and Vision projects. Back-end gateways own the OPC connections to the PLCs, the Sepasoft MES module instances, the AMR fleet logic, the run-schedule engine, and all of the heavy-weight scheduled and tag-change logic. Front-ends are interchangeable behind a load balancer; back-ends are specialized — Back-End-1 owns the fabrication and paint side, Back-End-2 owns the assembly side and the Navithor AMR fleet.
+ 
+## 1.1 Plant at a glance
+ 
+| **Item** | **Value** |
+| --- | --- |
+| Plant | JLG Industries — Jefferson City, TN |
+| Project family | JLG-NxtGen-MES (frontend-projects, backend-projects on github.oshkoshglobal.com) |
+| Ignition version | 8.1.49 (build 2025081208) |
+| PLC platform | Rockwell ControlLogix, Studio 5000 V35.00.00 (firmware 3865) |
+| MES platform | Sepasoft (Batch Procedure, OEE/Production, Settings & Changeover, SPC) |
+| AMR fleet | Red Viking Navithor — ~130 AMRs (AMR_001…AMR_130) |
+| Identity | OSKGLOBAL Active Directory via LDAP-S (ADHYBRID profile) + INTERNAL fallback |
+| Primary database | Microsoft SQL Server: db-prd-jefignition1-primary |
+| EAM/Reporting database | db-prd-ignition-primary.oshkoshglobal.com |
+| Production areas (TAGIO1) | Frame Fab, Boom Fab, Paint |
+| Production areas (TAGIO2) | Main Line, Boom Sub, Cab Sub, Engine Sub, Outrigger Sub, Legacy Line |
+| Auxiliary areas | Re-Localization, Innovation Center (IC), NWG Innovation Center (IB) |
+ 
+## 1.2 Reading order
+ 
+Sections 2 and 3 describe the physical/logical architecture and how the four gateways divide responsibility. Section 4 documents the PLC layer in detail (and the limits of what could be extracted from a binary ACD save). Sections 5 through 7 walk through every Ignition project on every gateway. Section 8 catalogs the script libraries — these are the heart of the business logic. Section 9 covers gateway events: timer, tag change, scheduled, and message-handler scripts, including the Run-Schedule cron jobs. Section 10 documents tag structure and providers. Section 11 covers stations, station types, and the naming convention. Section 12 covers integrations (Navithor, JaMES, Sepasoft, MQTT, AD). Sections 13 and 14 cover databases and operational reference: routine failure modes, log locations, where to look first.
+ 
+# 2. Physical & Logical Architecture
+ 
+## 2.1 Gateway inventory
+ 
+Four Ignition gateways run the Jefferson City production environment. Hostnames follow the corporate convention <site>-<env>-<role>-<platform>-<inventory-tag>. Backups in this snapshot:
+ 
+| **Role** | **Hostname** | **Snapshot file** | **Primary tag provider** |
+| --- | --- | --- | --- |
+| Front-End 1 | JEF-PRD-FRT1-SP-NAACCIFJCPW01 | ...-FJCPW01_Ignition-backup-20260429-0927.gwbk | (remote: TAGIO1, TAGIO2 via gantagprovider) |
+| Front-End 2 | JEF-PRD-FRT2-SP-NAACCIFJCPW02 | ...-FJCPW02_Ignition-backup-20260429-0931.gwbk | (remote: TAGIO1, TAGIO2 via gantagprovider) |
+| Back-End 1 | JEF-PRD-BKD1-SP-NAACCIBJCPW01 | ...-BJCPW01_Ignition-backup-20260429-0930.gwbk | TAGIO1 (local STANDARD) |
+| Back-End 2 | JEF-PRD-BKD2-SP-NAACCIBJCPW03 | ...-BJCPW03_Ignition-backup-20260429-0930.gwbk | TAGIO2 (local STANDARD) |
+ 
+## 2.2 Role split: who owns what
+ 
+Gateway role is decided at runtime by reading the ConfigType for the local SystemName from the environmentGatewayConfig dataset tag (one row per gateway). All major scripts begin with a GatewayConfig.getGatewayType() check and exit early if the script is running on the wrong gateway. This is how identical project code is deployed to all four gateways while only the right one actually executes the side-effects.
+ 
+| **Concern** | **Front-End 1/2** | **Back-End 1 (TAGIO1)** | **Back-End 2 (TAGIO2)** |
+| --- | --- | --- | --- |
+| Operator HMIs (Perspective/Vision) | Yes | No | No |
+| OPC UA to plant PLCs | No | Yes | Yes |
+| Sepasoft MES modules running | No | Yes | Yes |
+| Areas owned | — | Frame Fab, Boom Fab, Paint | Main Line, Boom/Cab/Engine/Outrigger Subs, Legacy Line |
+| Run Schedule generation | No | Yes (PaintLoad, Schedule) | No (consumes BE1 schedule) |
+| Navithor AMR fleet logic | No | No | Yes (ALL) |
+| Ignition→Navithor commands | No | No (sends via msg handler) | Yes (system.rvNavithor.*) |
+| MQTT engine subscription | No | No | Yes (uagv/v2/jlg/AMR_<id>/...) |
+| JaMES API calls | No | Yes | Yes |
+| AD/LDAP user-source primary | Mirror | Mirror | Mirror (OSKGLOBAL ADHYBRID) |
+| Daily/weekly cron jobs | No | Yes | Yes |
+ 
+## 2.3 Network and data flow
+ 
+The high-level data flow is: PLC → Back-End OPC connection → TAGIOx tag provider → (gantagprovider remote) → Front-End → operator browser. Writes from the operator follow the reverse path. AMR telemetry comes in over MQTT and Navithor's HTTP API to BE2; AMR commands sent from any gateway are routed through Ignition message handlers to BE2 because system.rvNavithor.* commands are gateway-scoped to the gateway that holds the Navithor module connection.
+ 
+Database access is direct from any gateway — every gateway has the SCADA datasource configured against db-prd-jefignition1-primary. Heavy queries that drive the run schedule and AMR mission generation execute on the back-ends; the front-ends mostly run lighter operator-driven named queries.
+ 
+# 3. Gateways – Detailed Reference
+ 
+## 3.1 GatewayConfig: the single source of truth
+ 
+All routing decisions go through the GatewayConfig script library (project: FactoryGatewayEvents on back-ends, FactoryControl on front-ends). It reads two tags to discover its own identity:
+ 
+[System]Gateway/SystemName
+ 
+[TAGIO1]JLG/Jefferson City/Admin/environmentGatewayConfig    (or [TAGIO2] if BE1 unreachable)
+ 
+The environmentGatewayConfig tag is a Dataset with columns Environment, ConfigName, ConfigType. GatewayConfig walks that dataset to answer questions like 'who is Back-End-1?', 'who is the JaMES API server?', 'what is the Navithor HTTP URL and API key?'. Most heavy scripts gate on GatewayConfig.getGatewayType() returning 'Back-End-1' or 'Back-End-2'.
+ 
+### Key GatewayConfig functions
+ 
+| **Function** | **Returns** | **Used to gate** |
+| --- | --- | --- |
+| getEnvData() | (Environment, configDataset) | Bootstrap for all other lookups |
+| getGatewayType() | 'Back-End-1' / 'Back-End-2' / 'Front-End-1' / 'Front-End-2' / 'Orchestration' | Most timer + scheduled scripts |
+| getBackEnds() | list of BE gateway names | Cross-gateway message broadcasting |
+| getBackEnd_1() / _2() | single gateway name | Targeted message sending |
+| getFrontEnd_1() | single FE gateway name | Bridging FE→BE actions |
+| getOrch() | Orchestration gateway name | Multi-site sync (if used) |
+| getUserSource() | Auth profile name (e.g. OSKGLOBAL) | system.user.* calls in admin scripts |
+| getSCADAMES() | JaMES SCADA gateway name | MES Management cross-talk |
+| getJaMESAPIServer() | JaMES API host | REST calls into JaMES |
+| getLoadBalancer() | LB name/address | Logging / link generation |
+| getNavithorCustomAPIAddress() | custom API host | AMR commands via REST |
+| getNavithorHTTPAddress() | {url, ApiKey} dict | Direct Navithor HTTP calls |
+| getDefaultTagProvider() | '[TAGIO1]' or '[TAGIO2]' | Tag path resolution on BE1 vs BE2 |
+| getGatewayAreas() | list of plant areas owned | Filtering schedule + station scripts |
+ 
+### Area-to-gateway constants
+ 
+Hardcoded at the top of GatewayConfig/code.py — these never change without a coordinated re-deploy:
+ 
+CONS_TAGIO1 = ['Frame Fab','Boom Fab', 'Paint']
+ 
+CONS_TAGIO2 = ['Main Line','Boom Sub', 'Cab Sub','Engine Sub','Outrigger Sub', 'Legacy Line']
+ 
+## 3.2 OPC servers and PLC connections
+ 
+Every gateway has the same two OPC servers configured (one is a loopback to itself):
+ 
+| **OPC Server** | **Type** | **Description** |
+| --- | --- | --- |
+| Ignition OPC UA Server | com.inductiveautomation.OpcUaServerType | Loopback to the local gateway's OPC UA endpoint |
+| Production | Production_ServerType | Production OPC-UA connection (Sepasoft Production server bridge) |
+ 
+### Back-End 1 — PLC devices (LogixDriver)
+ 
+BE1 is the only gateway with active PLC device connections. It owns the plant-floor controllers for the fabrication side, paint, and ancillary equipment. Note that the main controller — "Factory Automation" — is the same ACD that was provided as the PLC backup.
+ 
+| **Device name** | **Driver** | **IP / description** | **Enabled** |
+| --- | --- | --- | --- |
+| Factory Automation | LogixDriver | Jefferson City Prod PLC (main controller) | Yes |
+| Cure Oven (Belco) | LogixDriver | 172.27.30.14 | Yes |
+| Drying Oven (Belco) | LogixDriver | 172.27.30.13 | Yes |
+| Paint Conveyor | LogixDriver | 172.27.30.17 | Yes |
+| Paint Robot 1 | LogixDriver | 172.27.30.15 | Yes |
+| Paint Robot 2 | LogixDriver | 172.27.30.16 | Yes |
+| Paint Wash (Belco 1) | LogixDriver | 172.27.30.12 | Yes |
+| Shot Blast (BCT) | LogixDriver | 172.27.30.20 | Yes |
+| Waste Water | LogixDriver | 172.27.30.27 | Yes |
+| Tube Welder | LogixDriver | (not yet configured) | No (disabled) |
+ 
+### Back-End 2 — PLC devices
+ 
+BE2 has the same 'Factory Automation' device defined and enabled. BE2 talks to the assembly-side controllers and the Navithor side; if other PLCs were configured here they would not appear in the device list extracted from this snapshot. Confirm in Designer if a specific controller is suspected.
+ 
+# 4. PLC Layer
+ 
+## 4.1 Source file in this snapshot
+ 
+FactoryAutomationPLCBackups/Factory_Automation_PLC_4_29_2026_944 is a Studio 5000 ACD (compiled binary) save file, not an L5X export. The first ~600 lines of the file are a human-readable change-log header showing every save event with timestamp and firmware revision; the remainder is the proprietary binary controller image, which can only be opened in Studio 5000.
+ 
+Implication for troubleshooting from this document: the routine, AOI, UDT, and tag definitions in the PLC are NOT directly inspectable from this snapshot. The controller's role and behavior are inferred from the OPC tag paths the back-end gateways subscribe to, and from how the Ignition scripts read and write those tags.
+ 
+## 4.2 Controller metadata (from the ACD save log)
+ 
+| **Property** | **Value** |
+| --- | --- |
+| File creation | 2024-09-27 15:28:59 EDT |
+| Studio 5000 version | V35.00.00 / firmware 3865.000 (V35+ supports DT data type) |
+| Most recent save (in this file) | Multiple saves logged; final save is the snapshot point |
+| Naming | Factory_Automation_PLC_<date>_<sequence#> — sequence resets daily |
+| Backup mechanism | Manual or scheduled .ACD copy from the engineering workstation |
+ 
+## 4.3 What the PLC controls (inferred from Ignition)
+ 
+By tracing the tag paths read and written by the gateway scripts, the Factory Automation controller owns the following plant-floor functions:
+ 
+- Station-level cycle control on every assembly station (TF / TB / TC / TE / TX / LL prefixes — Main Line and the Subs).
+ 
+- Station-level cycle control on every fabrication and paint station (TW Frame Fab, TT Boom Fab, PT Paint).
+ 
+- Material movement signals — "nextComponentLoaded" handshakes used by the run-schedule logic to advance station queues.
+ 
+- AMRControl handshake tags per station (AMRNumberAssignedToStation, SymbolicPointToPLC, destinationSymbolicPoint, nextStationToLoad).
+ 
+- Paint cell coordination at PT010A and PT010B (the nextComponentLoaded tag-change handlers in BE1 react to these specifically).
+ 
+- Status feedback for the Station-Sentinel STATION_STATUS_LABELS enum: 0 No Build, 1 Waiting for Cycle Start, 2 Work in Progress, 3 Work Complete, 4 Process Aborted, 5 Interlock Bypassed, 6 Alarm Active, 7 Help Requested, 8 Buffer Station, 9 Material Exit Confirmation, 10 Manual Block.
+ 
+## 4.4 To get a documentable PLC export
+ 
+Open Factory_Automation_PLC_4_29_2026_944 in Studio 5000 V35+ on the engineering workstation, then File → Save As → set type to L5X. For documentation use, exporting per-program / per-AOI / per-UDT yields smaller diffable files than a single whole-controller L5X. Export targets that should be captured for completeness:
+ 
+- All UDTs (Logical Organizer → User-Defined → right-click → Export Data Type)
+ 
+- All AOIs (Add-On Instructions → right-click → Export Add-On Instruction)
+ 
+- Each Program (Tasks → MainTask → right-click → Export Program)
+ 
+- Controller Tags and the Module Configuration
+ 
+# 5. Ignition Projects — Inventory
+ 
+This snapshot contains 13 distinct project folders distributed across the four gateways. Several projects exist in nearly-identical form on FE1 and FE2 (they are kept in sync by the GitHub Actions deploy workflows: prod-jef-pw01-deployment.yml and prod-jef-pw02-deployment.yml). Some Sepasoft scaffolding projects are auto-generated by the modules and should not be edited by hand.
+ 
+| **Project** | **Lives on** | **Purpose** | **Editable?** |
+| --- | --- | --- | --- |
+| FactoryControl | FE1 + FE2 | Main operator HMI: Plant Overview, Station Control, Machine Information, Run Schedule UI, Engineering tools. | Yes (primary FE project) |
+| MobileMES | FE1 + FE2 | Mobile-friendly Perspective project for operators on the floor (badging, load machine, quick links). | Yes |
+| Logbook | FE1 + FE2 | Shift logbook + reporting (Vision + Perspective + Reporting + WebDev). | Yes |
+| BarcodePrinter | FE1 only | Barcode label printing service (WebDev endpoints + Perspective). | Yes (FE1 only) |
+| Station-Sentinel | FE1 only | Station truth/visibility service — supervisor visibility into where a station is stuck and override path. | Yes (FE1 only) |
+| TMHCabTester | FE1 + FE2 | Cab Tester station application (TMH = telehandler product line). | Yes |
+| IO | FE1 + FE2 | Internal IO/data-logger utilities (DataLogger named queries, xa_import). | Yes |
+| FactoryGatewayEvents | BE1 + BE2 | All gateway-scoped events: timers, message handlers, scheduled scripts, AMR/RunSchedule/StationControl logic. | Yes (the heart of the back-end) |
+| Batch_TAGIO1 | BE1 only | Sepasoft Batch Procedure designer for TAGIO1 areas (Frame Fab, Boom Fab, Paint). | Yes |
+| Batch_TAGIO2 | BE2 only | Sepasoft Batch Procedure designer for TAGIO2 areas (Main Line, Subs, Legacy Line). | Yes |
+| MESGateway | BE1 + BE2 | Sepasoft default project. Auto-managed by the modules. | No (managed by Sepasoft) |
+| MESGateway_MES_Management | BE1 only | Sepasoft MES Management framework views (EquipmentManager, Docks, Header, Page). | Read-only typically |
+| Fleet-Actions | BE2 only | AMR-fleet action library — additional Navithor command surface separate from FactoryGatewayEvents. | Yes |
+ 
+# 6. Front-End Projects — Deep Dive
+ 
+## 6.1 FactoryControl (FE1, FE2)
+ 
+The principal operator-facing project. 403 Perspective views organized into four top-level folders: Plant Overview, Station Control, Machine Information, and Templates. Vision components also exist for legacy clients. The project owns 333 named queries grouped by feature area, and 11 script-library packages totaling roughly 9,000 lines of Jython.
+ 
+### Top-level Perspective view tree
+ 
+| **Folder** | **Contents (representative)** |
+| --- | --- |
+| Plant Overview/Home | Landing page, plant-wide KPIs |
+| Plant Overview/Area | Per-area drill-downs (Main Line, Subs, Frame Fab, Boom Fab, Paint, etc.) |
+| Plant Overview/Run Schedule | Schedule Management, Assembly, Paint Load, Item Number Config/Routing, Shift Scheduling, History Views, ProductCodesMaterialDefinition, Templates |
+| Plant Overview/Engineering | Diagnostic/admin views for plant engineers |
+| Plant Overview/UserManagement | User CRUD, role/roster management, AD sync surface |
+| Plant Overview/Manufacturing | Manufacturing dashboards |
+| Plant Overview/Docks | Dock screens (loading/receiving) |
+| Plant Overview/Dashboards | Reporting dashboards |
+| Station Control | station-control, workstation-assignment, station-history, james (per-station JaMES screens) |
+| Machine Information | machine-config-viewer (BOM/route/recipe per WIP unit) |
+| Templates | Reusable view templates: No-Build, Status, Station Control, Interlocks, popups, Run Schedule, WIP, access, AMR |
+ 
+### Script-library packages (FactoryControl)
+ 
+| **Package** | **Lines** | **Role** |
+| --- | --- | --- |
+| RunSchedule | 4,386 | Operator-side run-schedule UI, drag-and-drop, validation |
+| Engineering | 1,361 | Diagnostic/admin tooling exposed via Engineering views |
+| dashboard | 775 | Dashboard data shaping, KPI roll-ups |
+| ShiftScheduling | 712 | Shift display + override surface (calls back to BE1 for writes) |
+| General | 542 | Shared utilities used across views |
+| Admin | 416 | User management, role management, audit |
+| StationControl | 385 | Station-control popup + state actions |
+| JcCommonOperations | 224 | Common ops shared by Station Control and Run Schedule |
+| GatewayConfig | 208 | Local mirror of the GatewayConfig API (for FE-side decisions) |
+| Styles | 136 | Theme tokens, color/style helpers |
+| ClientDirectory | 22 | Lightweight client directory lookups |
+ 
+### Named-query categories (FactoryControl, 333 queries)
+ 
+Top-level folders under named-query/ — each contains the SQL the FE runs against the SCADA database to drive the corresponding view bindings:
+ 
+- AMR — fleet status feeds for the Plant Overview AMR templates
+ 
+- Dashboard — KPI and rollup queries
+ 
+- DCT_management — Daily Communication Tracking management queries
+ 
+- Engineering — diagnostic queries for the Engineering views
+ 
+- Get_Distinct_Areas / Get_Distinct_Stations / Get_Distinct_Stations_Area_Chosen — area/station picker feeds
+ 
+- Get_Table_Parts_Requesting / Get_Table_Parts_Requesting_Supervisor / getEverythingPartsRequesting — Parts Requesting workflow
+ 
+- JcCommonOperations — shared operator queries (badge, work order, station status)
+ 
+- Machine Config Viewer — BOM/recipe lookups by WIP unit
+ 
+- Popup_Queries — popup-specific feeds
+ 
+- Run Schedule — schedule reads and writes from the operator UI
+ 
+- Subsystem — per-subsystem (Paint, Frame, Assembly) helpers
+ 
+- WIP — work-in-progress lookups
+ 
+- client-directory — directory lookups
+ 
+- sequence-management — sequence number generation
+ 
+- shift-scheduling — shift table reads
+ 
+- station-control — station state + override queries
+ 
+- user-management — AD-mirrored user queries
+ 
+## 6.2 MobileMES (FE1, FE2)
+ 
+Mobile-optimized Perspective project (146 views). Targets handheld scanners and tablets used on the shop floor for badging in/out, loading machines onto stations, quick navigation, and the on-floor help surface. Roughly 5,900 lines of Jython across three packages: Scripts (4,390), Util (1,272), config (238).
+ 
+Top-level Perspective view folders: About, CSN (Customer Service Number / serial number), HeaderAndFooter, Help, LandingPage, LoadMachineHeader, MainContent, Navigation, PopUp, QuickLinks. Single named query (test/) — most data comes through bindings to FactoryControl-side queries via project inheritance or shared script calls.
+ 
+## 6.3 Logbook (FE1, FE2)
+ 
+Shift Logbook project — 200 Perspective views. Lets supervisors and operators record shift events, issues, and handover notes; renders Reporting-module reports for compliance and shift summaries. About 6,500 lines of Jython across Scripts (5,000), Util (1,329), config (228).
+ 
+Top-level Perspective folders: About, Barcode, CSN, Gallery, LeftContent, MainContent, PopUp, Report, TopContent. Uses the Reporting module for printable reports.
+ 
+## 6.4 BarcodePrinter (FE1 only)
+ 
+Hosts the barcode-label printing endpoints. WebDev endpoints under com.inductiveautomation.webdev expose REST routes that the floor stations call to print part / WIP labels. Six named queries under OPV/. Three small Perspective view groups: Main, Templates, and the printing UI.
+ 
+## 6.5 Station-Sentinel (FE1 only)
+ 
+Quoting the project description from the snapshot: "Station-Sentinel gives visibility into what's happening at each station and where things get stuck. It allows supervisors to see the current state, understand why movement isn't happening, and safely override or recover the process when needed."
+ 
+All logic lives in the StationSentinel/StationTruth script package (1,464 lines). Exposes a get_health endpoint, get_stations(area, station_name) for filtered station lists, get_layout(station_name), and a build_station_truth() function that reads the station's PLC state and aggregates it into a single supervisor-facing payload. Uses the WorkStationAssignment table to map StationName → Area → SymbolicPoint, then translates raw PLC status integers via STATION_STATUS_LABELS into the human-readable labels visible in the supervisor view.
+ 
+#### Station prefix → tag folder mapping (canonical, from StationTruth)
+ 
+| **Prefix** | **Area** | **Tag folder** |
+| --- | --- | --- |
+| TW | Frame Fab | [TAGIO1]JLG/Jefferson City/Fabrication/Frame Fab |
+| TT | Boom Fab | [TAGIO1]JLG/Jefferson City/Fabrication/Boom Fab |
+| PT | Paint | [TAGIO1]JLG/Jefferson City/Paint |
+| TF | Main Line | [TAGIO2]JLG/Jefferson City/Assembly/Main Line |
+| TB | Boom Sub | [TAGIO2]JLG/Jefferson City/Assembly/Boom Sub |
+| TE | Engine Sub | [TAGIO2]JLG/Jefferson City/Assembly/Engine Sub |
+| TC | Cab Sub | [TAGIO2]JLG/Jefferson City/Assembly/Cab Sub |
+| TX | Outrigger Sub | [TAGIO2]JLG/Jefferson City/Assembly/Outrigger Sub |
+| LL | Legacy Line | [TAGIO2]JLG/Jefferson City/Assembly/Legacy Line |
+| RL | Re-Localization | [TAGIO2]JLG/Jefferson City/Re-Localization |
+| IC | Innovation Center | [TAGIO2]JLG/Jefferson City/Innovation Center |
+| IB | NWG Innovation Center | [TAGIO1]JLG/Jefferson City/NWG Innovation Center |
+ 
+## 6.6 TMHCabTester (FE1, FE2)
+ 
+End-of-line cab tester station (telehandler cabs). 32 Perspective views with operator-driven steps: badgeScan → fieldClientAssignment → serialNoInput → stepSelection → testComplete, plus confirmRetest, reportViewer and reports. CabTesterEdits package (557 lines) holds the test sequencing logic. Five named queries: getPreviousTestResults, publishResults, serialNoSearch, techTips, OPV lookups. The two cab tester stations have dedicated tag providers TMHCabTester01 and TMHCabTester02 on the front-ends.
+ 
+## 6.7 IO (FE1, FE2)
+ 
+Utility project — only one Perspective view ("View"), 24 named queries. Hosts the DataLogger queries and the xa_import set used to pull data from the corporate XA/ERP layer. Also has a small set of GET_Users, Reporting, and Users queries used by other front-end projects.
+ 
+# 7. Back-End Projects — Deep Dive
+ 
+## 7.1 FactoryGatewayEvents — the back-end engine
+ 
+This project, deployed identically to BE1 and BE2, is where every piece of business logic that needs gateway scope lives: the run-schedule engine, the AMR commands, the station controllers, the JaMES integration, and the user-management sync. 252 named queries. Roughly 17,000 lines of Jython across the script-python tree. Five Perspective views are kept here for engineering use (BD-tst, Navithor-AMR-Status-Viewer, Navithor-Mission-Viewer, TestView/TestViewR, test-Schedule); operators do not see them.
+ 
+### Script library packages — high-level
+ 
+| **Package** | **Approx. lines** | **What it does** |
+| --- | --- | --- |
+| RunSchedule | ~12,000 | The whole run-schedule engine — read on for the breakdown. |
+| AMR | ~2,400 | AMR fleet logic: status from MQTT, mission creation, station handshake, get-destination per area. |
+| StationControl | ~1,500 | Per-station logic: enable/disable assembly stations, populate recipe, station view, machine completion, find serial number. |
+| ShiftScheduling | ~1,500 | Shift schedule API + DB + ShiftProperties (isShiftActive, push to Ignition schedule, DB date maintenance). |
+| GatewayConfig | 225 | Identity, role, and other-gateway lookups (covered in §3). |
+| General | 566 | Shared utilities. |
+| JcCommonOperations | 229 | Operator-driven actions called by FE script libraries via gateway message handlers. |
+| batch | ~600 | Sepasoft Batch helpers — generate batches, control (incl. dailyBatchRestart), reset routines. |
+| Admin | ~200 | EmailRoster (alarm rosters), UserManagementSync (AD ↔ Ignition user sync). |
+| jamesInteractions | ~340 | Calls into JaMES API: wholeGoods, nonWholeGoods, populateUdtTags, findDispatchUnit. |
+| PlantSchedule | 81 | machineInformation.collectMachineInfo() – nightly plant-schedule snapshot. |
+ 
+### RunSchedule — detailed sub-breakdown
+ 
+RunSchedule is the largest and most-touched package. It generates the daily build slots, populates secondary schedules, manages assembly + paint loading, runs the work-order logic, and handles non-conformance flow. Sub-packages and roles:
+ 
+| **Sub-package** | **Approx. lines** | **Role** |
+| --- | --- | --- |
+| Paint/PaintLoad | 1,477 | Paint Load schedule — the densest single file. Updates Paint Load when an item lands at PT, drives carrier loading, handles work-order assignment from the operator UI. |
+| Paint/PaintUnload | 240 | Paint Unload — empty-carrier handling and unload routing. |
+| getNextWorkOrder | 1,338 | Determines the next work order to release for any area. Heavily used by station-control and PaintLoad. |
+| SecondarySchedulePopulation | 1,053 | Populates the secondary (frame/boom) schedules from the master. |
+| Filtering | 912 | Cross-cutting filtering rules for which schedule rows appear where (by area, item type, etc.). |
+| Fabrication/UpdateWorkStatus | 664 | Rolls up status from Frame Fab + Boom Fab back to the master schedule. |
+| Assembly/Assembly | 566 | Main-line assembly schedule logic. |
+| BuildSlotGeneration | 562 | Generates build slots for the active week. |
+| BuildSlotPopulation | 380 | Populates build slots from work orders. |
+| NonConformance | 381 | Non-conformance / hold flow. |
+| SecondaryScheduleGeneration | 268 | Boom & Frame secondary-schedule weekly regen. |
+| ScheduleGeneration | 211 | Master schedule update entry point — runScheduleUpdateRequest('Ignition'). |
+| Batch | 431 | Batch-related schedule helpers. |
+| DestinationStationDetermination | 71 | Picks the destination station for a part based on routing. |
+| Fabrication/getAreaInfo | 41 | Frame/Boom area lookups. |
+| MachinesCompleted | 47 | Mark-machines-completed support. |
+| QueryHelper/FabricationQueryHelper | 20 | Trivial helper. |
+ 
+### AMR — detailed sub-breakdown
+ 
+AMR fleet logic is gated to BE2 (which holds the Navithor module connection). Cross-gateway AMR actions arrive at BE2 as Ignition message handlers.
+ 
+| **Sub-package** | **Approx. lines** | **Role** |
+| --- | --- | --- |
+| Commands | 513 | All outbound commands: send mission, abort mission, pair AMRs, set into production, MQTT publishes. |
+| GetDestination/Fabrication/Frame/YaskawaFrameFinish | 258 | Computes destination after Yaskawa frame finish. |
+| GetDestination/Paint/Unload | 183 | Where to send the AMR after paint unload. |
+| GetDestination/Assembly/MainLine | 185 | Main-line destination computation. |
+| GetDestination/API | 170 | Public API surface for destination calls. |
+| GetDestination/Fabrication/PrePaintWIP | 149 | Pre-paint WIP destination logic. |
+| StationControl/Status | 196 | Reads each station's AMR-control UDT and exposes status. |
+| GetDestination/Paint/Load | 101 | Where to send AMR for paint load. |
+| Status/FromMQTT | 121 | Decodes MQTT state/order/Prosoft-info JSON into the AMR UDT. |
+| Status/FleetStatus | 247 | Trims and rebuilds the FleetStatus tag (used by the dashboard view). |
+| Navithor/HTTPAPI | 85 | Direct HTTP calls into Navithor's REST API. |
+| Navithor/SymbolicPointInfo | 76 | Reads symbolic point coordinates from Navithor and writes them to tags. |
+| GetDestination/Assembly/BoomSub | 44 | Boom Sub routing rules. |
+| GetDestination/Fabrication/Boom/TubeWeld | 25 | Tube Weld routing. |
+ 
+### StationControl — detailed sub-breakdown
+ 
+Station-level back-end logic. Most of it is invoked through gateway message handlers from the front-end Station Control views.
+ 
+| **Sub-package** | **Approx. lines** | **Role** |
+| --- | --- | --- |
+| RunScheduleViewer | 781 | Backs the per-station Run Schedule popup. |
+| Subsystem/Paint/PaintLoad | 262 | Paint load station logic (counterpart to the RunSchedule one, focused on station-side actions). |
+| DynamicView | 103 | getTagFolder(stationName) and other dynamic view helpers used everywhere AMRControl tags are read. |
+| MachineCompletedViewer | 100 | Machine completion historical viewer. |
+| Subsystem/Paint/PaintUnload | 104 | Paint unload subsystem actions. |
+| Subsystem/Recipe | 82 | Recipe-related station actions. |
+| WholeGoodToNonWholeGoodAssociation | 78 | Maps a whole-good unit to its non-whole-good assemblies. |
+| AssemblyStationEnable | 54 | Enable/disable an assembly station. |
+| Subsystem/Paint/EmptyCarrier | 44 | Empty carrier / placeholder logic. |
+| PopulateStationRecipe | 37 | Pushes recipe values to PLC for a station. |
+| Subsystem/Assembly/JR | 28 | Assembly junior actions. |
+| Subsystem/FrameFab/YaskawaWeldCell/Yaskawa | 24 | Yaskawa weld cell helpers. |
+| findSerialNumber | 15 | Lookup serial from station context. |
+ 
+### Other supporting packages
+ 
+- **ShiftScheduling/API** — Push to Ignition schedule, push shift schedule to Ignition, reset requested-machines tags. Called every Sunday by the weekly cron.
+ 
+- **ShiftScheduling/Database** — checkDBDates() — keeps at least 6 months of dates loaded; auto-extends another year when low.
+ 
+- **ShiftScheduling/ShiftProperties** — isShiftActive() — used by the every-minute-tag-change script to gate shift-active tags during breaks.
+ 
+- **Admin/UserManagementSync** — addUser / editUser / deleteUser — synchronises Ignition users with the AD-mirrored user table by uNumber.
+ 
+- **Admin/EmailRoster** — Roster email distribution — alarm-notification adjacent.
+ 
+- **jamesInteractions/wholeGoods** — Pulls whole-good (telehandler/lift) records from JaMES.
+ 
+- **jamesInteractions/nonWholeGoods** — Pulls component records from JaMES.
+ 
+- **jamesInteractions/populateUdtTags** — Pushes JaMES-sourced data into per-WIP UDT tag instances.
+ 
+- **jamesInteractions/findDispatchUnit** — Locates the dispatch unit for a serial.
+ 
+- **batch/control** — dailyBatchRestart() and other batch admin actions. dailyBatchRestart fires from a daily cron.
+ 
+- **batch/generate** — Batch generator helpers.
+ 
+- **PlantSchedule/machineInformation** — collectMachineInfo() — nightly plant-schedule data dump.
+ 
+## 7.2 Batch_TAGIO1 (BE1) and Batch_TAGIO2 (BE2)
+ 
+Sepasoft Batch Procedure module designer projects. Each contains 14 Perspective views: Batch Control, Batch List, Batch Reset, Batch State Control, EBR (Electronic Batch Record), Equipment Manager, Material Manager, Navigation, Phase Manager, Recipe Manager, Recipe Monitor, Unit Class Manager, Unit Manager, esignature. Each has 4 named queries and a small batch script package (~600 lines) containing batch.control.* and batch.generate.*.
+ 
+TAGIO1 covers fabrication + paint batches (Frame Fab, Boom Fab, Paint). TAGIO2 covers assembly + subs (Main Line, Boom/Cab/Engine/Outrigger Subs, Legacy Line). Splitting the projects is required because Sepasoft Batch is bound to a single tag provider per project.
+ 
+## 7.3 MESGateway and MESGateway_MES_Management
+ 
+MESGateway is Sepasoft's default project for storing data — the modules expect it to exist; do not edit it. MESGateway_MES_Management (BE1 only) holds the MES Management framework views: Docks, EquipmentManager, Framework, Header, Page (37 views total). It is mostly auto-managed but is occasionally tweaked when JLG customizes the equipment-manager surface for the plant.
+ 
+## 7.4 Fleet-Actions (BE2 only)
+ 
+Standalone project on BE2 that holds an additional AMR/<sub-packages> script library (~1,186 lines). Carved off from FactoryGatewayEvents to give a cleaner separation for fleet actions that don't fit neatly into the run-schedule flow — fleet pairing campaigns, mass production-mode toggles, etc.
+ 
+# 8. Script Libraries — System-wide Summary
+ 
+Adding everything together, the system has roughly 32,000 lines of Jython distributed across the projects. Code is organized into the following top-level namespaces (the same name on every gateway where the package exists, so cross-references work consistently):
+ 
+| **Namespace** | **Where it lives** | **Approx. total lines** |
+| --- | --- | --- |
+| AMR | FactoryGatewayEvents (BE1+BE2), Fleet-Actions (BE2) | ~3,600 |
+| RunSchedule | FactoryGatewayEvents (BE1+BE2), FactoryControl (FE1+FE2) | ~16,000 |
+| StationControl | FactoryGatewayEvents, FactoryControl | ~1,900 |
+| ShiftScheduling | FactoryGatewayEvents (BE), FactoryControl (FE) | ~2,200 |
+| batch | FactoryGatewayEvents (BE), Batch_TAGIO1/2 | ~1,200 |
+| jamesInteractions | FactoryGatewayEvents | ~340 |
+| GatewayConfig | FactoryGatewayEvents (BE), FactoryControl (FE) | ~430 |
+| General | FactoryGatewayEvents, FactoryControl | ~1,100 |
+| Admin | FactoryGatewayEvents (BE), FactoryControl (FE) | ~620 |
+| JcCommonOperations | FactoryGatewayEvents, FactoryControl | ~450 |
+| dashboard | FactoryControl | ~775 |
+| Engineering | FactoryControl | ~1,361 |
+| Styles / ClientDirectory | FactoryControl | ~160 |
+| StationSentinel | Station-Sentinel (FE1) | ~1,464 |
+| CabTesterEdits | TMHCabTester (FE) | ~557 |
+| MobileMES Scripts/Util/config | MobileMES (FE) | ~5,900 |
+| Logbook Scripts/Util/config | Logbook (FE) | ~6,557 |
+| PlantSchedule | FactoryGatewayEvents (BE) | ~81 |
+ 
+Cross-gateway calls follow a deterministic pattern: a front-end script calls system.util.sendRequest('FactoryGatewayEvents', '<handlerName>', payload) and the matching message handler on the back-end gateway picks it up. Identical project deployment plus GatewayConfig role gating is what allows the same code to be safely deployed everywhere.
+ 
+# 9. Gateway Events — Timers, Schedules, Tag Changes, Message Handlers
+ 
+All gateway-scoped scripting in Ignition is registered as one of four types: timer scripts, scheduled (cron) scripts, tag-change scripts, and message handlers. The full set of events for the production back-ends is below, plus the handful registered on the front-ends (mostly small).
+ 
+## 9.1 Timer scripts
+ 
+| **Name** | **Gateway** | **Interval** | **Purpose** |
+| --- | --- | --- | --- |
+| Populate AgvStatus | BE2 | 2,000 ms (fixed delay) | Refresh Navithor AGV/AMR status; build trimmed JSON keyed by MachineId; write to NavithorCache tags. Includes UpdateInProgress lock to prevent overlap. |
+| AMRStatus | BE2 | Periodic | Read isConnectedToNavithor, then for each AMR: read MQTT state/order/Prosoft_info_AMR_hours, decode JSON, build full dict, write tags asynchronously per AMR (130+ AMRs, ~50 tags each — async pattern is required to keep timer under interval). |
+| AMRStatus-old | BE2 | (legacy) | Older AMR status pull retained for reference. Marked legacy in the snapshot. |
+| ProductionModuleStatusMonitor | BE2 | Periodic | Try system.mes.batch.queue.getEntries(...); if it succeeds, write [TAGIO2]ProductionStatusMES/ProductionModuleRunning = True; on Java exception or generic Exception write False. Compensates for system.mes.isProductionStarted() returning false even when MES is up. |
+| paintLoadQueue | BE1 | Periodic | Refresh Paint Load queue tag for the operator UI. |
+ 
+## 9.2 Scheduled (cron) scripts
+ 
+All cron scripts begin with a GatewayConfig.getGatewayType() check. Times are in the gateway's local time zone (America/New_York for Jefferson City, TN). Cron expressions captured in this snapshot:
+ 
+| **Cron** | **Local time** | **Gateway** | **Action** |
+| --- | --- | --- | --- |
+| 0 4 * * * | 04:00 daily | BE1 / BE2 | dailyBatchRestart() on Sepasoft Batch — resets the batch engine for the day. |
+| 15 4 * * * | 04:15 daily | BE1 | regenSecondarySchedules — RunSchedule.SecondarySchedulePopulation.refreshSecondarySchedule('frame') and ('boom'); writes to lastMasterScheduleRefresh; pushAllToIgnitionShiftSchedule; resetRequestedMachinesTags; checkDBDates. |
+| 30 4 * * * | 04:30 daily | BE1 | machineConfigUpdate — PlantSchedule.machineInformation.collectMachineInfo() takes the morning machine-info snapshot. |
+| 00 3 * * 0 | 03:00 Sunday | BE1 | Weekly schedule maintenance — long-running rollups before the new production week. |
+| 0 3 * * Sun | 03:00 Sunday | BE1 | pushShiftScheduleToIgnition — pushes the next week's shift schedule to Ignition's schedule and CurrentWeekSchedule tag (sister to the cron above). |
+ 
+## 9.3 Tag-change scripts
+ 
+Each tag-change script subscribes to one or more tag paths and runs the script on ValueChange. The production back-end registers two paint-cell tag-change subscriptions (one for PT010A and one for PT010B). They drive the next-station-to-load queue used by the AMR routing logic.
+ 
+| **Tag path** | **Gateway** | **Action** |
+| --- | --- | --- |
+| [TAGIO1]JLG/Jefferson City/Paint/PT010A/Control/toIGN/nextComponentLoaded | BE1 | If gatewayType=='Back-End-1' and not initialChange: append/pop the station to/from nextStationToLoad based on rising/falling edge. |
+| [TAGIO1]JLG/Jefferson City/Paint/PT010B/Control/toIGN/nextComponentLoaded | BE1 | Same logic for PT010B. |
+ 
+## 9.4 Message handlers (system.util.sendRequest)
+ 
+Message handlers are how the front-ends ask the back-ends to do work. They run in gateway scope on the back-end that receives them. Handler routes captured in this snapshot:
+ 
+| **Handler name** | **Receiving gateway** | **Payload shape** | **Action** |
+| --- | --- | --- | --- |
+| createMission | BE2 | { stationName, customMission?, missionTemplateName? } | Create or release-hold an AMR mission to a destination symbolic point. Falls back to ensuring AMR is in Production mode if not. |
+| abortMission | BE2 | { stationName } | Iterate Navithor active missions, find the one matching the station's assigned AMR, abort by ExternalId. Returns missionAborted bool. |
+| setAMRIntoProduction | BE2 | { AMRNumber } | Calls system.rvNavithor.agv.commands.startProduction(AMRNumber). |
+| executeFunction | BE1 / BE2 | { function: str, params: dict } | Generic eval-and-call. Used to invoke any back-end script function (e.g., AMR.Commands.sendPairAction) from the front-end. Logged extensively for traceability. |
+| userManagementSync | BE1 / BE2 | { type: 'user'│'role'│'roster', mode, ... } | Sync user / role / roster changes from the FE. add/edit/delete user → Admin.UserManagementSync.*; add/edit/delete role → system.user.*; roster create/delete → system.roster.*. |
+| updateRosters | BE1 / BE2 | { dataSource, userName, mode, rosters[] } | Add user to rosters, or wipe + re-add (edit). Rosters back the alarm-notification and shift-roster surfaces. |
+| machineConfigUpdate | BE1 | { componentID } | Run StationControl/subsystem/Paint/getComponentIDInfo named query, return { itemNumber, partType }. |
+| runScheduleUpdate | BE1 | {} | RunSchedule.ScheduleGeneration.runScheduleUpdateRequest('Ignition'). |
+| runSchedulePaint | BE1 | { type, workOrderNumber?, stationID?, itemNumber?, status? } | type='scheduleSaved' → refresh Assembly-side schedule. type='workOrderAssignment' → call PaintLoad.workOrderAssignment(...). |
+| updateSymbolicPointCords | BE2 | {} | AMR.Navithor.SymbolicPointInfo.updateStationSymbolicPointCords() — refresh the SymbolicPoint X/Y/H tags from Navithor. |
+ 
+# 10. Tag Providers and Tag Structure
+ 
+## 10.1 Tag providers per gateway
+ 
+| **Gateway** | **Provider** | **Type** | **Description** |
+| --- | --- | --- | --- |
+| BE1 | default | STANDARD | Local default tag provider |
+| BE1 | TAGIO1 | STANDARD | Default tag provider of BE1 — Frame Fab, Boom Fab, Paint |
+| BE1 | TAGIO2 | gantagprovider | Remote view of BE2's TAGIO2 tags via gateway network |
+| BE1 | Orch | gantagprovider | Orchestration gateway tags (multi-site sync) |
+| BE1 | report | STANDARD | Reporting-only tag provider |
+| BE2 | default | STANDARD | Local default tag provider |
+| BE2 | TAGIO2 | STANDARD | Default tag provider of BE2 — Main Line, Subs, Legacy Line, Fleet/AMR Data |
+| BE2 | TAGIO1 | gantagprovider | Remote view of BE1's TAGIO1 tags |
+| BE2 | Orch | gantagprovider | Orchestration tags |
+| FE1 | default | STANDARD | Local default |
+| FE1 | TAGIO1 | gantagprovider | Remote BE1 tags |
+| FE1 | TAGIO2 | gantagprovider | Remote BE2 tags |
+| FE1 | TMHCabTester01 | gantagprovider | Remote tag provider for cab tester station 1 |
+| FE1 | TMHCabTester02 | gantagprovider | Remote tag provider for cab tester station 2 |
+| FE2 | default | STANDARD | Local default |
+| FE2 | TAGIO1 | gantagprovider | Remote BE1 tags |
+| FE2 | TAGIO2 | gantagprovider | Remote BE2 tags |
+| FE2 | TMHCabTester01 | gantagprovider | Remote tag provider for cab tester station 1 |
+| FE2 | TMHCabTester02 | gantagprovider | Remote tag provider for cab tester station 2 |
+ 
+## 10.2 Major tag tree branches
+ 
+Tag paths in the system follow a stable pattern: [provider]JLG/Jefferson City/<discipline>/<area>/<station>/Control/<direction>/<signal>. The branches you'll most often need to navigate when troubleshooting are listed below with their owning provider.
+ 
+### [TAGIO1] (Back-End 1)
+ 
+- JLG/Jefferson City/Fabrication/Frame Fab/<station>/...           — TW-prefixed stations
+ 
+- JLG/Jefferson City/Fabrication/Boom Fab/<station>/...            — TT-prefixed stations
+ 
+- JLG/Jefferson City/Paint/<station>/...                           — PT-prefixed stations (PT010A/PT010B drive the next-component-loaded handlers)
+ 
+- JLG/Jefferson City/NWG Innovation Center/...                     — IB-prefixed (NWG = Non-Whole Good)
+ 
+- JLG/Jefferson City/Run Schedule/Schedule Management/lastMasterScheduleRefresh
+ 
+- JLG/Jefferson City/Admin/environmentGatewayConfig                — the dataset that GatewayConfig reads
+ 
+- ProductionStatusMES/ProductionModuleRunning                      — written by ProductionModuleStatusMonitor timer
+ 
+### [TAGIO2] (Back-End 2)
+ 
+- JLG/Jefferson City/Assembly/Main Line/<station>/...              — TF-prefixed stations
+ 
+- JLG/Jefferson City/Assembly/Boom Sub/<station>/...               — TB
+ 
+- JLG/Jefferson City/Assembly/Cab Sub/<station>/...                — TC
+ 
+- JLG/Jefferson City/Assembly/Engine Sub/<station>/...             — TE
+ 
+- JLG/Jefferson City/Assembly/Outrigger Sub/<station>/...          — TX
+ 
+- JLG/Jefferson City/Assembly/Legacy Line/<station>/...            — LL
+ 
+- JLG/Jefferson City/Re-Localization/<station>/...                 — RL
+ 
+- JLG/Jefferson City/Innovation Center/...                         — IC
+ 
+- JLG/Jefferson City/Fleet/AMR Data/AMR_001 .. AMR_130/fromNavithor/...  — read from Navithor module
+ 
+- JLG/Jefferson City/Fleet/AMR Data/AMR_<id>/fromMQTT/...          — decoded MQTT payload
+ 
+- JLG/Jefferson City/Fleet/Navithor Status/isConnected             — heartbeat written every timer cycle
+ 
+- ProductionStatusMES/ProductionModuleRunning                      — sister to BE1
+ 
+### [default] (each gateway's local default — used for cache-style data)
+ 
+- JLG/Jefferson City/Reporting/NavithorCache/AgvStatus_TrimmedJson — JSON blob written by Populate AgvStatus
+ 
+- JLG/Jefferson City/Reporting/NavithorCache/AgvStatus_LastRefreshEpochMs — last-update timestamp
+ 
+- JLG/Jefferson City/Reporting/NavithorCache/AgvStatus_UpdateInProgress  — overlap lock
+ 
+## 10.3 AMRControl per-station UDT
+ 
+Every assembly station that an AMR can serve has an AMRControl UDT instance under the station folder. Read by createMission, abortMission, and the per-area get-destination scripts. Members observed in code:
+ 
+- AMRNumberAssignedToStation — int, the AMR currently bound to this station
+ 
+- symbolicPointToPLC — int, the station's drop-off symbolic point in Navithor
+ 
+- destinationSymbolicPoint — int, the next destination for the AMR after release
+ 
+- nextStationToLoad — list[str], queue of stations waiting for this carrier (paint cells use this)
+ 
+# 11. Stations, Areas, and Station Types
+ 
+## 11.1 Naming convention
+ 
+Every station has a 2-letter prefix that uniquely identifies its area, followed by a 3-digit station number. Where applicable, a single trailing letter denotes a sub-cell (A/B). The prefix → area → tag-folder mapping is canonical and is hard-coded in Station-Sentinel/StationTruth (table in §6.5). It is also the basis of the GatewayConfig.CONS_TAGIO1 / CONS_TAGIO2 area split that determines which back-end gateway owns a station.
+ 
+## 11.2 Master station list — source of truth
+ 
+The authoritative station list lives in the SCADA database, table WorkStationAssignment. Selected columns relevant for troubleshooting:
+ 
+- Area — 'Main Line' / 'Boom Sub' / 'Cab Sub' / 'Engine Sub' / 'Outrigger Sub' / 'Frame Fab' / 'Boom Fab' / 'Paint' / 'Legacy Line' / 'Re-Localization' / 'Innovation Center' / 'NWG Innovation Center'
+ 
+- StationName — full station name (e.g. TF101, TF102, TB201, PT010A, PT010B)
+ 
+- SymbolicPoint — int, the Navithor symbolic point ID at this station (>0 means the station is AMR-served)
+ 
+- SymbolicPoint_X / SymbolicPoint_Y / SymbolicPoint_H — physical coordinates and heading at the symbolic point
+ 
+The Populate AgvStatus timer reads this table on every cycle and uses it to map each AMR's TargetSymbolicPoint back to a human-readable station name and area for the trimmed JSON cache.
+ 
+## 11.3 Station status enum (Station-Sentinel)
+ 
+| **Code** | **Label** |
+| --- | --- |
+| 0 | No Build |
+| 1 | Waiting for Cycle Start |
+| 2 | Work in Progress |
+| 3 | Work Complete |
+| 4 | Process Aborted |
+| 5 | Interlock Bypassed |
+| 6 | Alarm Active |
+| 7 | Help Requested |
+| 8 | Buffer Station |
+| 9 | Material Exit Confirmation |
+| 10 | Manual Block |
+ 
+## 11.4 Special station types
+ 
+- **PT010A / PT010B** — Paint cells with bespoke handling — they have dedicated tag-change handlers on BE1 (see §9.3).
+ 
+- **Cab tester (TMH)** — Two cab-test stations (1 and 2) have dedicated tag providers TMHCabTester01 and TMHCabTester02 on the FEs; they run a separate Perspective project (TMHCabTester) and a separate test workflow.
+ 
+- **Re-Localization (RL)** — Used to re-localize an AMR's known position — listed in the Populate AgvStatus station SQL filter alongside Main Line / Subs / Paint / Legacy Line.
+ 
+- **Innovation Center (IC) / NWG Innovation Center (IB)** — Test/dev stations off the production flow.
+ 
+# 12. External Integrations
+ 
+## 12.1 Red Viking Navithor (AMR fleet)
+ 
+Navithor is the AMR fleet manager. The Ignition module exposes system.rvNavithor.* functions which are gateway-scoped — they only run on the gateway that holds the connection (BE2). Three communication channels are in use:
+ 
+- **HTTP API** — Direct REST calls via system.rvNavithor.* (status pulls, mission create/abort, agv commands). Address and API key are read from environmentGatewayConfig via GatewayConfig.getNavithorHTTPAddress() returning {url, ApiKey}.
+ 
+- **MQTT** — AMR HMI and Prosoft data flow over MQTT topics uagv/v2/jlg/AMR_<id>/... (state, order, fromHMI/Prosoft_info_AMR_hours). Subscribed via Ignition's MQTT Engine module on BE2.
+ 
+- **Custom API** — An auxiliary endpoint at GatewayConfig.getNavithorCustomAPIAddress() — used for site-specific commands beyond the stock API.
+ 
+### Mission lifecycle
+ 
+1. Front-end view sends createMission to BE2 with { stationName }. 2. BE2 reads the station's AMRControl UDT to get AMRNumber, station symbolic point, and destination symbolic point. 3. BE2 reads the AMR's Navithor state and InProductionBool — if not in production, calls startProduction(amrNumberInt). 4. If state==15 (hold), calls system.rvNavithor.symbolicPoint.releaseHoldToCustomTarget(...). 5. Otherwise builds a mission_object with a unique ExternalId (epoch ms) and one Drive step targeting the destination symbolic point, then calls system.rvNavithor.mission.create.send(mission_object). 6. Publishes the destination station name to the AMR's HMI over MQTT (uagv/v2/jlg/AMR_<id>/toHMI/destinationStationName).
+ 
+### Mission template variant
+ 
+If the payload includes missionTemplateName, BE2 calls system.rvNavithor.mission.activateMissionTemplate(...) instead. Mission templates are maintained in Navithor system files by JLG and contain pre-defined multi-step missions (queueing, sub-routing) that can't be expressed easily in a single Drive step.
+ 
+## 12.2 Sepasoft MES suite
+ 
+The Sepasoft modules in use, indicated by the project list and tag/script patterns:
+ 
+- **Batch Procedure** — Two designer projects (Batch_TAGIO1 on BE1, Batch_TAGIO2 on BE2). dailyBatchRestart cron runs at 04:00 daily. Equipment / Material / Recipe / Phase / Unit Class / Unit / EBR managers.
+ 
+- **OEE / Production** — system.mes.batch.queue.getEntries(...) and system.mes.isProductionStarted() are called by ProductionModuleStatusMonitor; OEE data is collected on both BEs.
+ 
+- **Settings ****&**** Changeover** — Recipe handling at stations (StationControl/Subsystem/Recipe, PopulateStationRecipe).
+ 
+- **MES Management** — MESGateway_MES_Management project on BE1 hosts the framework views.
+ 
+## 12.3 JaMES API
+ 
+JaMES is JLG's enterprise application server. Ignition reaches JaMES via REST through GatewayConfig.getJaMESAPIServer(). The jamesInteractions package on BE handles three categories of lookup:
+ 
+- wholeGoods — pull whole-good (telehandler/lift) records by serial / dispatch unit
+ 
+- nonWholeGoods — pull non-whole-good (subassembly) records
+ 
+- findDispatchUnit — locate the dispatch unit for a given serial number
+ 
+- populateUdtTags — push the JaMES results into per-WIP UDT tag instances on the relevant TAGIOx provider
+ 
+## 12.4 Active Directory (OSKGLOBAL)
+ 
+Authentication uses the OSKGLOBAL ADHYBRID profile — Ignition mirrors AD users and roles into its internal user table via LDAP-S, with INTERNAL fallback for system accounts (default and opcua-module). User changes flow through Admin.UserManagementSync via the userManagementSync message handler so that all four gateways stay in sync.
+ 
+## 12.5 MQTT Engine
+ 
+BE2 hosts the MQTT Engine subscription to the Navithor MQTT broker ("Navithor Mqtt Server"). Topic tree:
+ 
+uagv/v2/jlg/AMR_<id>/state
+ 
+uagv/v2/jlg/AMR_<id>/order
+ 
+uagv/v2/jlg/AMR_<id>/fromHMI/Prosoft_info_AMR_hours
+ 
+uagv/v2/jlg/AMR_<id>/toHMI/destinationStationName     (publish-only from Ignition)
+ 
+# 13. Database Layer
+ 
+## 13.1 Database connections
+ 
+| **Connection name** | **Server** | **Used by** | **Purpose** |
+| --- | --- | --- | --- |
+| SCADA | db-prd-jefignition1-primary | All gateways | Primary SCADA database — WorkStationAssignment, schedule, station status, JaMES mirror, etc. |
+| SCADA_MES | DB-PRD-JEFIGNITION1-PRIMARY | All gateways (FEs label as 'JaMES SCADA DB Connection') | JaMES SCADA database |
+| SCADA_8 | DB-PRD-IGNITION-PRIMARY.oshkoshglobal.com | FE1, FE2 | Cross-site SCADA read |
+| MES_Bknd_1 | db-prd-jefignition1-primary | BE1 | Sepasoft Batch DB for TAGIO1 |
+| MES_Bknd_B2 | db-prd-jefignition1-primary | BE2 | Sepasoft Batch DB for TAGIO2 |
+| SCADA_PROD_O1 | DB-PRD-JEFIGNITION1-PRIMARY | BE2 | Production OPC-bridge DB |
+| EAM_PROD | DB-PRD-IGNITION-PRIMARY | BE2 | Enterprise Administration Module — historical tags for the dashboard. |
+ 
+## 13.2 Key tables and views
+ 
+From SQL queries observed across all named queries and gateway-event scripts. This is not exhaustive — the SCADA DB has many more — but these are the ones a troubleshooter will hit most often.
+ 
+| **Table / View** | **Purpose** |
+| --- | --- |
+| WorkStationAssignment | Master station list — Area, StationName, SymbolicPoint, SymbolicPoint_X/Y/H. Read by Populate AgvStatus and Station-Sentinel. |
+| sos_* (e.g. sos_records, sos_category_map) | Sign-off / safety questionnaire schema (used by JaMES integration). |
+| RunSchedule / build slot / paint load tables (multiple) | RunSchedule.* package reads/writes — schedule rows, work orders, paint queue. |
+| ShiftScheduling tables | Backed by ShiftScheduling.Database — auto-extends with checkDBDates. |
+| DataLogger tables | FE IO project's DataLogger named queries log here. |
+| xa_import | ERP import staging. |
+ 
+# 14. Operational Reference & Troubleshooting
+ 
+## 14.1 Where do I look first?
+ 
+| **Symptom** | **Where to look first** | **Why** |
+| --- | --- | --- |
+| A station is stuck — operator says nothing happens when they hit cycle start | Station-Sentinel get_layout(stationName) on FE1; cross-check the station's status integer 0–10 (§11.3). | Station-Sentinel translates raw PLC state into a human-readable label and surfaces the most common stuck reasons. |
+| AMR not arriving at a station | BE2 logger 'Create Mission Message-Handler' and 'AMR Abort Command'; tag [TAGIO2]JLG/Jefferson City/Fleet/Navithor Status/isConnected; tag [TAGIO2]JLG/Jefferson City/Fleet/AMR Data/AMR_<id>/fromNavithor/State. | createMission only runs if Navithor is connected; State==15 means held; in-production flag matters. |
+| AMR status panel is stale | Populate AgvStatus timer on BE2; AgvStatus_UpdateInProgress tag stuck True is the failure mode. | Belt-and-suspenders lock; manual unset clears it but root-cause is usually a Navithor HTTP timeout in the timer. |
+| MES / batch queue page errors | BE1 or BE2 logger 'Gateway/Timer.ProductionModuleStatusMonitor'; tag ProductionStatusMES/ProductionModuleRunning. | isProductionStarted() is unreliable; the timer corroborates it by actually trying getEntries. |
+| Run Schedule did not refresh overnight | Cron job at 04:15 on BE1 (regenSecondarySchedules) — check gateway logs for that timestamp. | It's the only thing scheduled to update the master schedule's lastMasterScheduleRefresh timestamp. |
+| A user added in AD doesn't appear in Ignition | Admin.UserManagementSync.addUser logs on BE; userManagementSync message handler on BE; LDAP-S health. | The handler is what actually syncs them — adds via system.user / system.roster. |
+| Paint Load queue not advancing | Tag-change scripts on PT010A and PT010B nextComponentLoaded; logger 'gatewayScript' on BE1. | The queue is maintained by the rising/falling-edge handler that pushes/pops nextStationToLoad. |
+| Cab tester (TMH) station offline | TMHCabTester01/02 tag providers on FE; CabTesterEdits package logs on FE. | Cab tester is its own provider tree; problems often manifest as that provider being disconnected. |
+| JaMES lookups returning empty | BE FactoryGatewayEvents jamesInteractions logger; GatewayConfig.getJaMESAPIServer() URL reachable? | The integration is a thin REST shim — failures almost always come from the JaMES side. |
+| Front-end can't reach a back-end resource | Gateway network connection statuses on every gateway; TAGIO1/TAGIO2 gantagprovider quality. | All FE→BE calls run over the gateway network; degraded quality breaks bindings + message handlers. |
+ 
+## 14.2 Where the logs come from
+ 
+Most scripts use system.util.getLogger('<name>') with consistent names that you can grep for in the gateway logs. Notable logger names extracted from the snapshot:
+ 
+- Gateway/Timer.ProductionModuleStatusMonitor   (BE1, BE2)
+ 
+- NavithorCache.AgvStatusTrimmed                (BE2)
+ 
+- AMRStatus to Trigger UDT                       (BE2)
+ 
+- AMR Abort Command                              (BE2)
+ 
+- Create Mission Message-Handler                 (BE2)
+ 
+- user sync MSG                                  (BE)
+ 
+- updateRoster                                   (BE)
+ 
+- executeFunction IO1                            (BE2)
+ 
+- gatewayScript                                  (BE1, paint cell tag-change)
+ 
+- informationFieldFail / Loads Fail              (BE2, MQTT decoding)
+ 
+- StationSentinel.StationTruth                   (FE1)
+ 
+## 14.3 Redundancy / failover patterns
+ 
+Front-ends are stateless behind the load balancer, so failover is automatic — operators just hit the same URL. Back-end role split is not redundant: if BE1 is down, run-schedule generation, paint logic, and TAGIO1 stop. If BE2 is down, the AMR fleet stops accepting new missions and Sepasoft Batch on TAGIO2 stops. There is no automatic role swap; recovery is to restore the failing gateway. In extreme cases the environmentGatewayConfig dataset can be edited to point a healthy gateway at the missing role, but that is an engineer-supervised maintenance action — most scripts gate strictly on the role string.
+ 
+## 14.4 Deploy pipeline
+ 
+Deployments are managed via GitHub Actions in two repositories on github.oshkoshglobal.com:
+ 
+- JLG-NxtGen-MES/frontend-projects   — workflows: prod-jef-pw01-deployment.yml, prod-jef-pw02-deployment.yml, test-jef-tw02-deployment.yml, test-jef-tw03-deployment.yml
+ 
+- JLG-NxtGen-MES/backend-projects    — analogous workflows for BE1/BE2 (TW02/TW03 test, PW01/PW02 prod)
+ 
+FE1 and FE2 (and BE1/BE2 respectively) are kept in sync by these workflows pushing the same project bundles. When code differs between FE1 and FE2 in this snapshot — for example BarcodePrinter and Station-Sentinel exist only on FE1 — that is intentional: those projects are deliberately FE1-only.
+ 
+# 15. Appendix — Quick Lookups
+ 
+## 15.1 Project ↔ gateway matrix
+ 
+| **Project** | **BE1** | **BE2** | **FE1** | **FE2** |
+| --- | --- | --- | --- | --- |
+| FactoryControl | — | — | ✓ | ✓ |
+| MobileMES | — | — | ✓ | ✓ |
+| Logbook | — | — | ✓ | ✓ |
+| BarcodePrinter | — | — | ✓ | — |
+| Station-Sentinel | — | — | ✓ | — |
+| TMHCabTester | — | — | ✓ | ✓ |
+| IO | — | — | ✓ | ✓ |
+| FactoryGatewayEvents | ✓ | ✓ | — | — |
+| Batch_TAGIO1 | ✓ | — | — | — |
+| Batch_TAGIO2 | — | ✓ | — | — |
+| MESGateway | ✓ | ✓ | — | — |
+| MESGateway_MES_Management | ✓ | — | — | — |
+| Fleet-Actions | — | ✓ | — | — |
+ 
+## 15.2 Cron schedule reference
+ 
+| **Cron** | **Local time** | **Gateway** | **Owner / function** |
+| --- | --- | --- | --- |
+| 0 4 * * * | 04:00 daily | BE1, BE2 | batch.control.dailyBatchRestart() |
+| 15 4 * * * | 04:15 daily | BE1 | RunSchedule.SecondarySchedulePopulation.refreshSecondarySchedule (frame, boom) + ShiftScheduling.API + Database.checkDBDates |
+| 30 4 * * * | 04:30 daily | BE1 | PlantSchedule.machineInformation.collectMachineInfo() |
+| 0 3 * * Sun | 03:00 Sunday | BE1 | ShiftScheduling.API.pushAllToIgnitionShiftSchedule + resetRequestedMachinesTags |
+| 00 3 * * 0 | 03:00 Sunday | BE1 | Weekly schedule maintenance (sister to above) |
+ 
+## 15.3 Snapshot file inventory
+ 
+| **File** | **Size** | **Format** | **Content** |
+| --- | --- | --- | --- |
+| productionFiles4_29_2026.zip | 117 MB | ZIP | Top-level archive |
+| FactoryAutomationPLCBackups/Factory_Automation_PLC_4_29_2026_944 | 14 MB | ACD | Studio 5000 binary save (V35.00.00 / FW 3865) — text save log header + binary controller image |
+| IgnitionGatewayBackups/...-FJCPW01_Ignition-backup-20260429-0927.gwbk | 37 MB | GWBK | FE1 Ignition backup |
+| IgnitionGatewayBackups/...-FJCPW02_Ignition-backup-20260429-0931 (1).gwbk | 34 MB | GWBK | FE2 Ignition backup |
+| IgnitionGatewayBackups/...-BJCPW01_Ignition-backup-20260429-0930.gwbk | 30 MB | GWBK | BE1 Ignition backup |
+| IgnitionGatewayBackups/...-BJCPW03_Ignition-backup-20260429-0930.gwbk | 11 MB | GWBK | BE2 Ignition backup |
+ 
+## 15.4 Limits of this document
+ 
+This document captures the architecture, the project + script catalog, scheduled / event scripting, tag tree shape, and integration touch points — i.e. everything that's directly readable from the four gateway backups. It does NOT include:
+ 
+- Full PLC routine / UDT / AOI / tag definitions — the ACD save is binary; an L5X export is required (see §4.4).
+ 
+- The full text of every named query (~600+ across all projects) — you'll find them in the project export under com.inductiveautomation.webdev or ignition/named-query/.
+ 
+- The full source of every script-library function (~32k lines) — they're in ignition/script-python/<package>/code.py.
+ 
+- The Perspective view JSON for every view (~800 views total) — they're in com.inductiveautomation.perspective/views/<folder>/view.json.
+ 
+- Tag JSON definitions exported from the providers — those would be a separate Tag Export.
+ 
+If you need a physical reference for any of those, ask Claude with this document loaded plus the specific project export (or the relevant snippet) — that's the supported workflow when the full exports won't fit in the chat context.
+ 
+Page  of

@@ -1,0 +1,428 @@
+{
+  "custom": {},
+  "params": {
+    "value": "",
+    "rowData": {},
+    "rowIndex": -1,
+    "selIdx": -1
+  },
+  "propConfig": {
+    "params.value": {
+      "paramDirection": "input",
+      "persistent": false
+    },
+    "params.rowData": {
+      "paramDirection": "input",
+      "persistent": false
+    },
+    "params.rowIndex": {
+      "paramDirection": "input",
+      "persistent": false
+    },
+    "params.selIdx": {
+      "paramDirection": "input",
+      "persistent": false
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 920,
+      "height": 88
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "row",
+      "alignItems": "center",
+      "style": {
+        "backgroundColor": "transparent",
+        "padding": "12px 22px",
+        "gap": "16px",
+        "height": "100%",
+        "borderBottom": "1px solid #EEF1F5",
+        "borderLeft": "4px solid transparent",
+        "cursor": "pointer",
+        "overflow": "hidden"
+      }
+    },
+    "propConfig": {
+      "props.style.borderLeft": {
+        "binding": {
+          "type": "expr",
+          "config": {
+            "expression": "if({view.params.rowIndex} = {view.params.selIdx}, '4px solid #E87722', '4px solid transparent')"
+          }
+        }
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "StationBlock"
+        },
+        "position": {
+          "basis": "150px",
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "3px",
+            "overflow": "hidden"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "StationVal"
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#1B212B",
+                "fontSize": "19px",
+                "fontWeight": "700",
+                "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                "letterSpacing": "0.3px",
+                "whiteSpace": "nowrap",
+                "overflow": "hidden",
+                "textOverflow": "ellipsis"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "coalesce({view.params.rowData.Station}, '--')"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "StationCap"
+            },
+            "props": {
+              "text": "STATION",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "11px",
+                "fontWeight": "700",
+                "letterSpacing": "0.8px"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "StatusBlock"
+        },
+        "position": {
+          "basis": "118px",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "style": {}
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "StatusPill"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#FFFFFF",
+                "fontSize": "12.5px",
+                "fontWeight": "700",
+                "letterSpacing": "0.5px",
+                "borderRadius": "999px",
+                "padding": "6px 16px",
+                "whiteSpace": "nowrap"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "case(coalesce({view.params.rowData.Status}, -1), 0,'SCRAP', 1,'SCHEDULED', 2,'WIP', 3,'COMPLETE', 4,'ABORT', 5,'NON-CONF', 7,'ASSOCIATED', '?')"
+                  }
+                }
+              },
+              "props.style.backgroundColor": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "case(coalesce({view.params.rowData.Status}, -1), 0,'#5B6675', 1,'#E8920C', 2,'#E87722', 3,'#2F9E44', 4,'#E03131', 5,'#E03131', 7,'#0C8599', '#5B6675')"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "ItemBlock"
+        },
+        "position": {
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "3px",
+            "overflow": "hidden"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "ItemVal"
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#1B212B",
+                "fontSize": "15px",
+                "fontWeight": "600",
+                "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                "whiteSpace": "nowrap",
+                "overflow": "hidden",
+                "textOverflow": "ellipsis"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "coalesce({view.params.rowData.Item}, '--')"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "ItemCap"
+            },
+            "props": {
+              "text": "ITEM",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "11px",
+                "fontWeight": "700",
+                "letterSpacing": "0.8px"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "SchedCol"
+        },
+        "position": {
+          "basis": "96px",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "3px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "SchedVal"
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#1B212B",
+                "fontSize": "14px",
+                "fontWeight": "600",
+                "whiteSpace": "nowrap"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.params.rowData.ScheduledTimestamp} = null, '--', dateFormat({view.params.rowData.ScheduledTimestamp}, 'MM/dd HH:mm'))"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "SchedCap"
+            },
+            "props": {
+              "text": "SCHEDULED",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "10px",
+                "fontWeight": "700",
+                "letterSpacing": "0.6px"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "WipCol"
+        },
+        "position": {
+          "basis": "96px",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "3px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "WipVal"
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#1B212B",
+                "fontSize": "14px",
+                "fontWeight": "600",
+                "whiteSpace": "nowrap"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.params.rowData.WIPTimestamp} = null, '--', dateFormat({view.params.rowData.WIPTimestamp}, 'MM/dd HH:mm'))"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "WipCap"
+            },
+            "props": {
+              "text": "WIP",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "10px",
+                "fontWeight": "700",
+                "letterSpacing": "0.6px"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "CompCol"
+        },
+        "position": {
+          "basis": "96px",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "3px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "CompVal"
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "fontSize": "14px",
+                "fontWeight": "700",
+                "whiteSpace": "nowrap"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.params.rowData.CompletedTimestamp} = null, '--', dateFormat({view.params.rowData.CompletedTimestamp}, 'MM/dd HH:mm'))"
+                  }
+                }
+              },
+              "props.style.color": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.params.rowData.CompletedTimestamp} = null, '#B9C0CC', '#2F9E44')"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "CompCap"
+            },
+            "props": {
+              "text": "COMPLETED",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "10px",
+                "fontWeight": "700",
+                "letterSpacing": "0.6px"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

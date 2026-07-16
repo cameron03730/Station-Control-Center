@@ -1,0 +1,15 @@
+-- NEW FactoryControl named query
+-- Path:    station-control-center/getAssemblyScheduleBySerial
+-- Type:    Query (dataset)   DB: SCADA   FE-direct
+-- Param:   serialNumber  (String)
+-- Returns: every assembly WIP row for a WG serial, one row per station, raw Status.
+-- Columns aliased to match the fabrication query so the same table renders both.
+SELECT StationName AS Station,
+       Status,
+       ProductCode AS Item,
+       ScheduledTimestamp,
+       CAST(NULL AS DATETIME) AS WIPTimestamp,
+       CompletedTimestamp
+FROM WIPWorkOrders_Assembly
+WHERE SerialNumber = :serialNumber
+ORDER BY ScheduledTimestamp

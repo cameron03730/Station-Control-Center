@@ -1,0 +1,284 @@
+{
+  "custom": {},
+  "params": {
+    "title": "Please Confirm",
+    "message": "Are you sure?",
+    "confirmText": "Confirm",
+    "confirmKind": "warn",
+    "callbackMsg": "sccConfirmResult",
+    "context": {}
+  },
+  "propConfig": {
+    "params.title": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.message": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.confirmText": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.confirmKind": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.callbackMsg": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.context": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 460,
+      "height": 248
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "borderRadius": "12px",
+        "overflow": "hidden",
+        "boxShadow": "0 12px 40px rgba(0,0,0,0.30)"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "TitleBar"
+        },
+        "position": {
+          "basis": "52px",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "style": {
+            "backgroundColor": "#1B212B",
+            "padding": "0 18px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.icon",
+            "meta": {
+              "name": "TitleIcon"
+            },
+            "position": {
+              "basis": "22px",
+              "shrink": 0
+            },
+            "props": {
+              "path": "material/warning_amber",
+              "color": "#E8920C",
+              "style": {
+                "width": "20px",
+                "height": "20px",
+                "marginRight": "10px"
+              }
+            },
+            "propConfig": {
+              "props.color": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.params.confirmKind} = 'danger', '#E03131', '#E8920C')"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "Title"
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 1
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.params.title"
+                  }
+                }
+              }
+            },
+            "props": {
+              "text": "Please Confirm",
+              "style": {
+                "color": "#FFFFFF",
+                "fontSize": "15px",
+                "fontWeight": "700",
+                "letterSpacing": "0.2px"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.display.label",
+        "meta": {
+          "name": "Message"
+        },
+        "position": {
+          "grow": 1,
+          "shrink": 1
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.params.message"
+              }
+            }
+          }
+        },
+        "props": {
+          "text": "Are you sure?",
+          "style": {
+            "color": "#1B212B",
+            "fontSize": "14px",
+            "fontWeight": "400",
+            "lineHeight": "1.5",
+            "padding": "20px 22px",
+            "textAlign": "left",
+            "minHeight": "0px",
+            "overflow": "hidden"
+          }
+        }
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "ButtonRow"
+        },
+        "position": {
+          "basis": "64px",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "justify": "flex-end",
+          "alignItems": "center",
+          "style": {
+            "backgroundColor": "#F4F6F9",
+            "borderTop": "1px solid #D8DEE7",
+            "padding": "0 18px",
+            "gap": "10px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.input.button",
+            "meta": {
+              "name": "Cancel_Button"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Cancel",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#1B212B",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "8px",
+                "fontWeight": "600",
+                "fontSize": "13px",
+                "padding": "10px 20px",
+                "minWidth": "104px",
+                "overflow": "hidden",
+                "whiteSpace": "nowrap"
+              }
+            },
+            "events": {
+              "dom": {
+                "onClick": {
+                  "type": "script",
+                  "scope": "G",
+                  "config": {
+                    "script": "\tsystem.perspective.closePopup('sccConfirm')\n"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.input.button",
+            "meta": {
+              "name": "Confirm_Button"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.params.confirmText"
+                  }
+                }
+              },
+              "props.style.backgroundColor": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.params.confirmKind} = 'danger', '#E03131', '#E87722')"
+                  }
+                }
+              }
+            },
+            "props": {
+              "text": "Confirm",
+              "style": {
+                "backgroundColor": "#E87722",
+                "color": "#FFFFFF",
+                "border": "none",
+                "borderRadius": "8px",
+                "fontWeight": "700",
+                "fontSize": "13px",
+                "padding": "10px 20px",
+                "minWidth": "120px",
+                "overflow": "hidden",
+                "whiteSpace": "nowrap"
+              }
+            },
+            "events": {
+              "dom": {
+                "onClick": {
+                  "type": "script",
+                  "scope": "G",
+                  "config": {
+                    "script": "\tsystem.perspective.sendMessage(\n\t\tself.view.params.callbackMsg,\n\t\tpayload={'context': self.view.params.context},\n\t\tscope='session')\n\tsystem.perspective.closePopup('sccConfirm')\n"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

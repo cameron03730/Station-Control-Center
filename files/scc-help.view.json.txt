@@ -1,0 +1,1693 @@
+{
+  "custom": {},
+  "params": {},
+  "props": {
+    "defaultSize": {
+      "width": 720,
+      "height": 820
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "height": "100%",
+        "overflow": "hidden",
+        "borderRadius": "12px",
+        "boxShadow": "0 12px 40px rgba(0,0,0,0.30)"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "HeaderBar"
+        },
+        "position": {
+          "basis": "64px",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "style": {
+            "backgroundColor": "#1B212B",
+            "padding": "14px 22px",
+            "gap": "14px",
+            "borderBottom": "3px solid #E87722"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.icon",
+            "meta": {
+              "name": "Icon"
+            },
+            "position": {
+              "basis": "24px",
+              "shrink": 0
+            },
+            "props": {
+              "path": "material/help_outline",
+              "color": "#E87722",
+              "style": {
+                "width": "24px",
+                "height": "24px"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "Title"
+            },
+            "props": {
+              "text": "Station Control Center  -  Help & Guide",
+              "style": {
+                "color": "#FFFFFF",
+                "fontSize": "18px",
+                "fontWeight": "700",
+                "letterSpacing": "0.3px",
+                "whiteSpace": "nowrap",
+                "overflow": "hidden",
+                "textOverflow": "ellipsis"
+              }
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 1
+            }
+          },
+          {
+            "type": "ia.input.button",
+            "meta": {
+              "name": "Close_Button"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Close",
+              "style": {
+                "backgroundColor": "#2A3340",
+                "color": "#FFFFFF",
+                "border": "1px solid #5B6675",
+                "borderRadius": "8px",
+                "fontWeight": "600",
+                "fontSize": "14px",
+                "padding": "9px 16px",
+                "overflow": "hidden",
+                "whiteSpace": "nowrap"
+              },
+              "image": {
+                "icon": {
+                  "path": "material/close",
+                  "color": "#FFFFFF",
+                  "style": {
+                    "width": "18px",
+                    "height": "18px",
+                    "flexShrink": "0"
+                  }
+                }
+              }
+            },
+            "events": {
+              "dom": {
+                "onClick": {
+                  "type": "script",
+                  "scope": "G",
+                  "config": {
+                    "script": "\tsystem.perspective.closePopup('sccHelp')\n"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "Body"
+        },
+        "position": {
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "backgroundColor": "#F4F6F9",
+            "padding": "18px 20px",
+            "gap": "12px",
+            "overflow": "auto",
+            "minHeight": "0px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Sec0"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "border": "1px solid #E8ECF2",
+                "borderRadius": "10px",
+                "padding": "14px 16px",
+                "gap": "7px",
+                "boxShadow": "0 1px 2px rgba(27,33,43,0.05)"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "Hdr"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "row",
+                  "alignItems": "center",
+                  "style": {
+                    "gap": "10px"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Bar"
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "width": "6px",
+                        "height": "20px",
+                        "borderRadius": "3px",
+                        "backgroundColor": "#1B212B"
+                      }
+                    },
+                    "position": {
+                      "basis": "6px",
+                      "shrink": 0
+                    }
+                  },
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "props": {
+                      "text": "Overview",
+                      "style": {
+                        "color": "#1B212B",
+                        "fontSize": "16px",
+                        "fontWeight": "800",
+                        "letterSpacing": "0.3px",
+                        "whiteSpace": "normal"
+                      }
+                    },
+                    "position": {
+                      "grow": 1,
+                      "shrink": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "When"
+                },
+                "props": {
+                  "text": "When:  Make authorized manual Station Control interventions without opening the Designer. Requires the Engineering, Supervisor, or Scheduler role.",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "13.5px",
+                    "fontWeight": "500",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "HowLbl"
+                },
+                "props": {
+                  "text": "How:",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.6px",
+                    "paddingTop": "2px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step0"
+                },
+                "props": {
+                  "text": "1.  Every action requires a Reason and is written to the SupervisorOverrideLog (user / type / before -> after / time).",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step1"
+                },
+                "props": {
+                  "text": "2.  Pick the tab for the tool you need. Commits are real production changes.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Sec1"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "border": "1px solid #E8ECF2",
+                "borderRadius": "10px",
+                "padding": "14px 16px",
+                "gap": "7px",
+                "boxShadow": "0 1px 2px rgba(27,33,43,0.05)"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "Hdr"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "row",
+                  "alignItems": "center",
+                  "style": {
+                    "gap": "10px"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Bar"
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "width": "6px",
+                        "height": "20px",
+                        "borderRadius": "3px",
+                        "backgroundColor": "#E87722"
+                      }
+                    },
+                    "position": {
+                      "basis": "6px",
+                      "shrink": 0
+                    }
+                  },
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "props": {
+                      "text": "Station Rectification  (tab 1)",
+                      "style": {
+                        "color": "#1B212B",
+                        "fontSize": "16px",
+                        "fontWeight": "800",
+                        "letterSpacing": "0.3px",
+                        "whiteSpace": "normal"
+                      }
+                    },
+                    "position": {
+                      "grow": 1,
+                      "shrink": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "When"
+                },
+                "props": {
+                  "text": "When:  A station shows the wrong ComponentID, or you need to set / clear a station's Component ID 1 or 2, or re-pull a station's next work order.",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "13.5px",
+                    "fontWeight": "500",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "HowLbl"
+                },
+                "props": {
+                  "text": "How:",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.6px",
+                    "paddingTop": "2px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step0"
+                },
+                "props": {
+                  "text": "1.  Select a station (filter by Area or search).",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step1"
+                },
+                "props": {
+                  "text": "2.  Enter a Reason.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step2"
+                },
+                "props": {
+                  "text": "3.  Type the new Component ID (leave blank to unassign) and click Commit Change, then confirm.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step3"
+                },
+                "props": {
+                  "text": "4.  Use 'Refresh Next Work Order' to re-pull that station's next order.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Sec2"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "border": "1px solid #E8ECF2",
+                "borderRadius": "10px",
+                "padding": "14px 16px",
+                "gap": "7px",
+                "boxShadow": "0 1px 2px rgba(27,33,43,0.05)"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "Hdr"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "row",
+                  "alignItems": "center",
+                  "style": {
+                    "gap": "10px"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Bar"
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "width": "6px",
+                        "height": "20px",
+                        "borderRadius": "3px",
+                        "backgroundColor": "#0C8599"
+                      }
+                    },
+                    "position": {
+                      "basis": "6px",
+                      "shrink": 0
+                    }
+                  },
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "props": {
+                      "text": "AMR Rectification  (tab 2)",
+                      "style": {
+                        "color": "#1B212B",
+                        "fontSize": "16px",
+                        "fontWeight": "800",
+                        "letterSpacing": "0.3px",
+                        "whiteSpace": "normal"
+                      }
+                    },
+                    "position": {
+                      "grow": 1,
+                      "shrink": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "When"
+                },
+                "props": {
+                  "text": "When:  An AMR (mobile robot) is carrying the wrong ComponentID and needs corrected or cleared.",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "13.5px",
+                    "fontWeight": "500",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "HowLbl"
+                },
+                "props": {
+                  "text": "How:",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.6px",
+                    "paddingTop": "2px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step0"
+                },
+                "props": {
+                  "text": "1.  Select the AMR.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step1"
+                },
+                "props": {
+                  "text": "2.  Enter a Reason.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step2"
+                },
+                "props": {
+                  "text": "3.  Set Component ID 1 / 2 (blank = unassign) and Commit, then confirm.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step3"
+                },
+                "props": {
+                  "text": "4.  Committing re-sends the AMR payload (Navithor size profile + ACU scanner).",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Sec3"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "border": "1px solid #E8ECF2",
+                "borderRadius": "10px",
+                "padding": "14px 16px",
+                "gap": "7px",
+                "boxShadow": "0 1px 2px rgba(27,33,43,0.05)"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "Hdr"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "row",
+                  "alignItems": "center",
+                  "style": {
+                    "gap": "10px"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Bar"
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "width": "6px",
+                        "height": "20px",
+                        "borderRadius": "3px",
+                        "backgroundColor": "#2F9E44"
+                      }
+                    },
+                    "position": {
+                      "basis": "6px",
+                      "shrink": 0
+                    }
+                  },
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "props": {
+                      "text": "Manual Assembly  (tab 3)",
+                      "style": {
+                        "color": "#1B212B",
+                        "fontSize": "16px",
+                        "fontWeight": "800",
+                        "letterSpacing": "0.3px",
+                        "whiteSpace": "normal"
+                      }
+                    },
+                    "position": {
+                      "grow": 1,
+                      "shrink": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "When"
+                },
+                "props": {
+                  "text": "When:  You need to manually schedule whole-good serial(s) into the assembly line.",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "13.5px",
+                    "fontWeight": "500",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "HowLbl"
+                },
+                "props": {
+                  "text": "How:",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.6px",
+                    "paddingTop": "2px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step0"
+                },
+                "props": {
+                  "text": "1.  Type a serial and click Add (repeat for each machine).",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step1"
+                },
+                "props": {
+                  "text": "2.  Click Verify All -- each row turns green VERIFIED or red INVALID.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step2"
+                },
+                "props": {
+                  "text": "3.  Enter a Reason, then Schedule All. (M-numbers cannot be scheduled in Assembly.)",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Sec4"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "border": "1px solid #E8ECF2",
+                "borderRadius": "10px",
+                "padding": "14px 16px",
+                "gap": "7px",
+                "boxShadow": "0 1px 2px rgba(27,33,43,0.05)"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "Hdr"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "row",
+                  "alignItems": "center",
+                  "style": {
+                    "gap": "10px"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Bar"
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "width": "6px",
+                        "height": "20px",
+                        "borderRadius": "3px",
+                        "backgroundColor": "#E8920C"
+                      }
+                    },
+                    "position": {
+                      "basis": "6px",
+                      "shrink": 0
+                    }
+                  },
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "props": {
+                      "text": "Work Order Reconciliation  (tab 4)",
+                      "style": {
+                        "color": "#1B212B",
+                        "fontSize": "16px",
+                        "fontWeight": "800",
+                        "letterSpacing": "0.3px",
+                        "whiteSpace": "normal"
+                      }
+                    },
+                    "position": {
+                      "grow": 1,
+                      "shrink": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "When"
+                },
+                "props": {
+                  "text": "When:  A machine's schedule / WIP status is wrong: mark a station complete or WIP, associate a boom, or re-schedule a non-whole-good.",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "13.5px",
+                    "fontWeight": "500",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "HowLbl"
+                },
+                "props": {
+                  "text": "How:",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.6px",
+                    "paddingTop": "2px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step0"
+                },
+                "props": {
+                  "text": "1.  Search a ComponentID (M...) or a serial.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step1"
+                },
+                "props": {
+                  "text": "2.  View entries as a list (Rows) or the flow (Chart); Full View opens it full-screen.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step2"
+                },
+                "props": {
+                  "text": "3.  Select a row, enter a Reason, and Mark Complete at Station -- this also re-pulls the station's next work order.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step3"
+                },
+                "props": {
+                  "text": "4.  Whole-good lookups show the ASSOCIATED COMPONENTS panel; for an empty boom section click Associate / Edit.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step4"
+                },
+                "props": {
+                  "text": "5.  For an M-number, use Schedule for Pre-Paint or Pre-Assembly.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Sec5"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "border": "1px solid #E8ECF2",
+                "borderRadius": "10px",
+                "padding": "14px 16px",
+                "gap": "7px",
+                "boxShadow": "0 1px 2px rgba(27,33,43,0.05)"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "Hdr"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "row",
+                  "alignItems": "center",
+                  "style": {
+                    "gap": "10px"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Bar"
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "width": "6px",
+                        "height": "20px",
+                        "borderRadius": "3px",
+                        "backgroundColor": "#6741D9"
+                      }
+                    },
+                    "position": {
+                      "basis": "6px",
+                      "shrink": 0
+                    }
+                  },
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "props": {
+                      "text": "Machine Overview  (Chart)",
+                      "style": {
+                        "color": "#1B212B",
+                        "fontSize": "16px",
+                        "fontWeight": "800",
+                        "letterSpacing": "0.3px",
+                        "whiteSpace": "normal"
+                      }
+                    },
+                    "position": {
+                      "grow": 1,
+                      "shrink": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "When"
+                },
+                "props": {
+                  "text": "When:  You want to see where a machine is across the line and act on a specific station.",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "13.5px",
+                    "fontWeight": "500",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "HowLbl"
+                },
+                "props": {
+                  "text": "How:",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.6px",
+                    "paddingTop": "2px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step0"
+                },
+                "props": {
+                  "text": "1.  On Work Order Reconciliation, search a machine and switch to Chart (or Full View).",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step1"
+                },
+                "props": {
+                  "text": "2.  Each station is a node; the current WIP station glows orange.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step2"
+                },
+                "props": {
+                  "text": "3.  Click a node to Mark WIP, Mark Complete, or associate its boom.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Sec6"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "border": "1px solid #E8ECF2",
+                "borderRadius": "10px",
+                "padding": "14px 16px",
+                "gap": "7px",
+                "boxShadow": "0 1px 2px rgba(27,33,43,0.05)"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "Hdr"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "row",
+                  "alignItems": "center",
+                  "style": {
+                    "gap": "10px"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Bar"
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "width": "6px",
+                        "height": "20px",
+                        "borderRadius": "3px",
+                        "backgroundColor": "#E03131"
+                      }
+                    },
+                    "position": {
+                      "basis": "6px",
+                      "shrink": 0
+                    }
+                  },
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "props": {
+                      "text": "Boom Associations",
+                      "style": {
+                        "color": "#1B212B",
+                        "fontSize": "16px",
+                        "fontWeight": "800",
+                        "letterSpacing": "0.3px",
+                        "whiteSpace": "normal"
+                      }
+                    },
+                    "position": {
+                      "grow": 1,
+                      "shrink": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "When"
+                },
+                "props": {
+                  "text": "When:  A TB boom-sub station (Fly / InnerMid / OuterMid / Base) cannot be marked complete until an NWG boom is associated to the serial.",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "13.5px",
+                    "fontWeight": "500",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "HowLbl"
+                },
+                "props": {
+                  "text": "How:",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.6px",
+                    "paddingTop": "2px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step0"
+                },
+                "props": {
+                  "text": "1.  From the Associated Components panel or a boom node, click Associate.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step1"
+                },
+                "props": {
+                  "text": "2.  Enter the M-number boom: it must be scheduled at TF000X (pre-assembly) with a timestamp and not already associated to another whole good.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step2"
+                },
+                "props": {
+                  "text": "3.  Enter a Reason and Associate Boom -- the section turns green.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Sec7"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "border": "1px solid #E8ECF2",
+                "borderRadius": "10px",
+                "padding": "14px 16px",
+                "gap": "7px",
+                "boxShadow": "0 1px 2px rgba(27,33,43,0.05)"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "Hdr"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "row",
+                  "alignItems": "center",
+                  "style": {
+                    "gap": "10px"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Bar"
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "width": "6px",
+                        "height": "20px",
+                        "borderRadius": "3px",
+                        "backgroundColor": "#5B6675"
+                      }
+                    },
+                    "position": {
+                      "basis": "6px",
+                      "shrink": 0
+                    }
+                  },
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Title"
+                    },
+                    "props": {
+                      "text": "Remember",
+                      "style": {
+                        "color": "#1B212B",
+                        "fontSize": "16px",
+                        "fontWeight": "800",
+                        "letterSpacing": "0.3px",
+                        "whiteSpace": "normal"
+                      }
+                    },
+                    "position": {
+                      "grow": 1,
+                      "shrink": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "When"
+                },
+                "props": {
+                  "text": "When:  These are production changes -- treat them carefully.",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "13.5px",
+                    "fontWeight": "500",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "HowLbl"
+                },
+                "props": {
+                  "text": "How:",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.6px",
+                    "paddingTop": "2px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step0"
+                },
+                "props": {
+                  "text": "1.  Every commit needs a Reason and is logged to SupervisorOverrideLog.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step1"
+                },
+                "props": {
+                  "text": "2.  Mark Complete / Mark WIP re-fire getNextWorkOrder for that station.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Step2"
+                },
+                "props": {
+                  "text": "3.  If a screen looks stale after an action, use its Refresh button.",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.5",
+                    "whiteSpace": "normal",
+                    "paddingLeft": "6px"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

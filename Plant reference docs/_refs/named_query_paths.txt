@@ -1,0 +1,362 @@
+AMR/Select/getModel
+AMR/Select/getRearPairingLocations
+AMR/Select/getSymbolicIDs
+DCT_management/delete/removeDTCByNumber
+DCT_management/insert/insertDTC
+DCT_management/select/getAllDTCs
+DCT_management/select/getDTCByNumber
+DCT_management/select/getDTCByNumberList
+DCT_management/update/updateDTCByNumber
+Dashboard/Add
+Dashboard/Check Name
+Dashboard/Check URL
+Dashboard/DB Check
+Dashboard/Delete
+Dashboard/Edit
+Dashboard/Get
+Dashboard/Get URL
+Dashboard/Last Modified
+Dashboard/Max Order
+Dashboard/Plant-Floor/Check Name
+Dashboard/Plant-Floor/Check URL
+Dashboard/Plant-Floor/Field-Client/Check-Dash-Exist
+Dashboard/Plant-Floor/Field-Client/Check-Dash-Is-In-Use
+Dashboard/Plant-Floor/Field-Client/Get
+Dashboard/Plant-Floor/Field-Client/Get URL From SA
+Dashboard/Plant-Floor/Field-Client/Select-Dash-ID-By-IP
+Dashboard/Plant-Floor/Get
+Dashboard/Plant-Floor/Get Static
+Dashboard/Plant-Floor/Management/Delete-By-ID
+Dashboard/Plant-Floor/Management/Edit-A-Client
+Dashboard/Plant-Floor/Management/Get-Dash-Data
+Dashboard/Plant-Floor/Management/Insert-New-Client
+Dashboard/Plant-Floor/Management/Num-Rows-Based-On-IP
+Dashboard/Plant-Floor/Management/Select-Distinct-IP-Addresses
+Dashboard/Plant-Floor/Select-Devices-By-IP-DevName--DashName
+Dashboard/Select-Order-By-ID
+Dashboard/Sizes/Add
+Dashboard/Sizes/Delete All
+Dashboard/Update Default
+Dashboard/Update Order
+Dashboard/Widget/Add
+Dashboard/Widget/Delete
+Dashboard/Widget/Edit
+Dashboard/Widget/Get
+Dashboard/Widget/Installed Widgets
+Dashboard/Widget/Management/Add
+Dashboard/Widget/Management/Data-Types/Add
+Dashboard/Widget/Management/Data-Types/Delete
+Dashboard/Widget/Management/Data-Types/Edit
+Dashboard/Widget/Management/Data-Types/Get
+Dashboard/Widget/Management/Data-Types/GetV2
+Dashboard/Widget/Management/Data-Types/Num-Rows-Based-On-Type
+Dashboard/Widget/Management/Data-Types/Num-Rows-Data-Type-Used-On-Widgets
+Dashboard/Widget/Management/Delete
+Dashboard/Widget/Management/Edit
+Dashboard/Widget/Management/Get
+Dashboard/Widget/Management/Num-Rows-Based-On-Name
+Dashboard/Widget/Management/Num-Rows-Based-On-Path
+Dashboard/Widget/Management/Num-Rows-Widget-Used-In-Dashboards
+Dashboard/Widget/Management/Parameters/Add
+Dashboard/Widget/Management/Parameters/Delete
+Dashboard/Widget/Management/Parameters/Delete-All-Based-On-Widget-ID
+Dashboard/Widget/Management/Parameters/Edit
+Dashboard/Widget/Management/Parameters/Get
+Dashboard/Widget/Management/Parameters/Num-Rows-Based-Parameter
+Dashboard/Widget/Parameter/Add
+Dashboard/Widget/Parameter/Edit
+Dashboard/Widget/Size/Add
+Dashboard/Widget/Size/Delete All
+Dashboard/addPath
+Dashboard/selectParameterTypes
+Engineering/AMRPayloadTypes/Delete/DeleteAMRPayloadType
+Engineering/AMRPayloadTypes/Edit/EditAMRType
+Engineering/AMRPayloadTypes/Edit/EditItemNumber
+Engineering/AMRPayloadTypes/Edit/EditPayloadDescription
+Engineering/AMRPayloadTypes/Edit/EditPmaxX
+Engineering/AMRPayloadTypes/Edit/EditPmaxY
+Engineering/AMRPayloadTypes/Edit/EditPmaxZ
+Engineering/AMRPayloadTypes/Edit/EditPminX
+Engineering/AMRPayloadTypes/Edit/EditPminY
+Engineering/AMRPayloadTypes/Edit/EditPminZ
+Engineering/AMRPayloadTypes/Edit/EditWheelBase
+Engineering/AMRPayloadTypes/Insert/InsertAMRPayloadType
+Engineering/AMRPayloadTypes/Select/selectAMRPayloadTypes
+Engineering/Tube welder project/Select/getCartAndKitByTubes
+Engineering/Tube welder project/Select/getTubesByBoomKitID
+Engineering/Tube welder project/addRowNegativeNumber
+Engineering/Tube welder project/adjustKitOrder
+Engineering/Tube welder project/deleteCart
+Engineering/Tube welder project/deleteKit
+Engineering/Tube welder project/deleteTube
+Engineering/Tube welder project/editCart
+Engineering/Tube welder project/editRows
+Engineering/Tube welder project/findDeletedCarts
+Engineering/Tube welder project/findDeletedKits
+Engineering/Tube welder project/findDeletedTubes
+Engineering/Tube welder project/findTubeNumber
+Engineering/Tube welder project/getAllKits
+Engineering/Tube welder project/getCartTable
+Engineering/Tube welder project/getDistinctKits
+Engineering/Tube welder project/getKitTable
+Engineering/Tube welder project/getQuantityWithCartID
+Engineering/Tube welder project/getTubeNumberTubeDescriptionWithKitID
+Engineering/Tube welder project/insertCart
+Engineering/Tube welder project/insertkit
+Engineering/Tube welder project/selectCartWithCartID
+Engineering/Tube welder project/selectKitWithKitNumber
+Get_Distinct_Areas
+Get_Distinct_Stations
+Get_Distinct_Stations_Area_Chosen
+Get_Table_Parts_Requesting_Supervisor
+Machine Config Viewer/getBOMForSerials
+Machine Config Viewer/getConfigForSerials
+Machine Config Viewer/getSerialNumbers
+Popup_Queries/Claim_Request
+Popup_Queries/Get_Selected_Row
+Popup_Queries/Request_Insert_Info_Table
+Popup_Queries/Unclaim_Request
+Run Schedule/Assembly/Insert/ToggleNoBuild
+Run Schedule/Assembly/Select/getAssemblyStatuses
+Run Schedule/Assembly/Select/getBoomSubs
+Run Schedule/Assembly/Select/nonConformSerials
+Run Schedule/Assembly/Select/selectAssemblyAreaSchedule
+Run Schedule/Assembly/Select/selectPaintUnloadSchedule
+Run Schedule/Assembly/Select/selectSubAssemblyAreaSchedule
+Run Schedule/Assembly/Update/UpdateLineStatus_NonConformanceComplete
+Run Schedule/Assembly/Update/setMegaOrLegacy
+Run Schedule/Assembly/Update/setMegaOrLegacy (1)
+Run Schedule/Assembly/Update/swap_wg_nwg_assignment
+Run Schedule/Assembly/manualAssemblyScheduling/insert/markNonConformanceAndInsert
+Run Schedule/Assembly/manualAssemblyScheduling/select/getAllActiveSerialsInAssembly
+Run Schedule/Assembly/manualAssemblyScheduling/select/getAllAvailablePreAssemblyInventory
+Run Schedule/Assembly/manualAssemblyScheduling/select/getAllMachineTypesAndProductCodes
+Run Schedule/Assembly/manualAssemblyScheduling/select/getAllScheduledSerialsInAssembly
+Run Schedule/Assembly/manualAssemblyScheduling/select/getConsumedAndAssociatedInventory
+Run Schedule/Assembly/manualAssemblyScheduling/select/getConsumedInventory
+Run Schedule/Assembly/manualAssemblyScheduling/select/getJsonDataForSerials
+Run Schedule/Assembly/manualAssemblyScheduling/select/getReintroducedButNotStartedBoomSub
+Run Schedule/Assembly/manualAssemblyScheduling/select/getUnassignedSerialsAndItemNumbersInAssembly
+Run Schedule/Assembly/manualAssemblyScheduling/select/getWholeGoodAssociationStatusForSerialsQueryString
+Run Schedule/Assembly/manualAssemblyScheduling/update/consumeNwgsFromPreAssemblyInventory
+Run Schedule/Assembly/manualAssemblyScheduling/update/releaseNwgsFromConsumedInventory
+Run Schedule/Assembly/manualAssemblyScheduling/update/swapTimestampsForAssembly
+Run Schedule/Innovation Center/select/getMachineConfigBySerial
+Run Schedule/Item Number Config/delete/deleteItemNumberRouting
+Run Schedule/Item Number Config/insert/insertItemNumberRouting
+Run Schedule/Item Number Config/select/checkRoutingForAllItemNumbers
+Run Schedule/Item Number Config/select/checkRoutingForSingleItemNumber
+Run Schedule/Item Number Config/select/fabFinishWeldPaintDestination
+Run Schedule/Item Number Config/select/getItemNumberConfigInfo
+Run Schedule/Item Number Config/select/getItemNumberRoutingTable
+Run Schedule/Item Number Config/update/updateItemNumberRouting
+Run Schedule/NonConformance/delete/DeleteNonWholeGoodAssociation
+Run Schedule/NonConformance/delete/DeleteWholeGoodAssociations
+Run Schedule/NonConformance/insert/rescheduleItemForPreAssembly
+Run Schedule/NonConformance/select/getAllNonConformance
+Run Schedule/NonConformance/select/getAllNonConformanceBetweenDates
+Run Schedule/NonConformance/select/getAllNonConformance_Fab
+Run Schedule/NonConformance/select/getAllNonConformance_SerialOrComponentId
+Run Schedule/NonConformance/select/getAllNwgNonConformance
+Run Schedule/NonConformance/select/getNotStartedNWGOrders
+Run Schedule/NonConformance/select/lookupItemNumber_ByComponentID
+Run Schedule/NonConformance/update/updateNCStatusToComplete
+Run Schedule/NonConformance/update/updateNCStatusToScrap
+Run Schedule/NonConformance/update/updateNCStatusToWIP
+Run Schedule/NonConformance/update/updateReturnBoomToPrePaint
+Run Schedule/NonConformance/update/updateReturnFrameToPrePaint
+Run Schedule/NonConformance/update/updateSendBoomToPreAssembly
+Run Schedule/NonConformance/update/updateSendFrameToPreAssembly
+Run Schedule/Paint Load/delete/removeRowByID
+Run Schedule/Paint Load/delete/removeRowsByGroupID
+Run Schedule/Paint Load/insert/insertAddedDataCarrier
+Run Schedule/Paint Load/insert/insertAddedDataCarrier_PaintLoad
+Run Schedule/Paint Load/insert/insertAllPartsForReschedulingWholeGood
+Run Schedule/Paint Load/select/ManualEntryDropdown
+Run Schedule/Paint Load/select/ManualEntryDropdown_OnlyWholeGoods
+Run Schedule/Paint Load/select/dbCheckCarrierGroups
+Run Schedule/Paint Load/select/dbCheckDuplicateComponentId
+Run Schedule/Paint Load/select/findDescriptionUsingItemNumber
+Run Schedule/Paint Load/select/getAllPaintLoadAborted
+Run Schedule/Paint Load/select/getBoomKitStatus
+Run Schedule/Paint Load/select/getColorUsingItemNumber
+Run Schedule/Paint Load/select/getHistoricalData
+Run Schedule/Paint Load/select/getMaxCarrierGroupId
+Run Schedule/Paint Load/select/obtainModelAndNameUsingItemNumber
+Run Schedule/Paint Load/select/selectAllCarrierGroups
+Run Schedule/Paint Load/select/selectAllNWGNonconformance
+Run Schedule/Paint Load/select/selectAllWGNonconformance
+Run Schedule/Paint Load/select/showSpecialPaintColor
+Run Schedule/Paint Load/update/makeSequenceNumberSequentialCarrierGroup
+Run Schedule/Paint Load/update/swapOrder_PaintCarrierGroups
+Run Schedule/Paint Unload/select/findComponentIDSerialNumber
+Run Schedule/Paint Unload/select/findComponentIDSerialNumberWithoutStatusParam
+Run Schedule/Paint Unload/select/getHistoricalData
+Run Schedule/Paint Unload/select/getPaintUnloadSchedule
+Run Schedule/Paint Unload/select/getPaintUnloadSchedule_Bypass
+Run Schedule/Product Codes Material Definition/delete/removeRowByID
+Run Schedule/Product Codes Material Definition/insert/insertAddedDataProduct
+Run Schedule/Product Codes Material Definition/select/selectAllProductsTable
+Run Schedule/Product Codes Material Definition/select/selectItemNumbersByItemName
+Run Schedule/Product Codes Material Definition/update/updateItemNumberUsingParams
+Run Schedule/Product Codes Material Definition/update/updateLegacyUsingParams
+Run Schedule/Product Codes Material Definition/update/updateMachineTypeUsingParams
+Run Schedule/Product Codes Material Definition/update/updateModelUsingParams
+Run Schedule/Schedule Management/Fabrication/Booms/select/getBoomInfoFromBoomWip
+Run Schedule/Schedule Management/Fabrication/Frames/select/getFrameInfoFromFrameWip
+Run Schedule/Schedule Management/delete/removeSuperCompactRowByID
+Run Schedule/Schedule Management/insert/insertSuperCompactItemCode
+Run Schedule/Schedule Management/insert/insertWeldmentCompleteDateForComponentID
+Run Schedule/Schedule Management/insert/insertWeldmentStartDateForComponentID
+Run Schedule/Schedule Management/select/Fabrication_BoomWIP
+Run Schedule/Schedule Management/select/Fabrication_FrameWIP
+Run Schedule/Schedule Management/select/getAllNwg
+Run Schedule/Schedule Management/select/getAllProductCodesUniqueUsingProductsTable
+Run Schedule/Schedule Management/select/getAllSuperCompactItemNumbers
+Run Schedule/Schedule Management/select/getAllWholeGoodToNonWholeGoodAssoc
+Run Schedule/Schedule Management/select/getCurrentStationBySerialNumbers
+Run Schedule/Schedule Management/select/getEgnCabDescriptionsForSerials
+Run Schedule/Schedule Management/select/getManufacturingLineForSerials
+Run Schedule/Schedule Management/select/getProductCodeAndCountUsingAssemblySch
+Run Schedule/Schedule Management/select/getSerialNumberScheduledInAssembly
+Run Schedule/Schedule Management/select/getWholeGoodToNonWholeGoodAssoc
+Run Schedule/Schedule Management/select/getWorkOrderInStation
+Run Schedule/Schedule Management/select/parallelStationCheck
+Run Schedule/Sequence Management/select/getRecipeParameters
+SOSChecklist/GetAreaRecords
+SOSChecklist/findMissingRequiredChecklists
+SOSChecklist/selectAreas
+SOSChecklist/update/randomizeQuestionOrder
+SOSChecklistTesting
+WIP/getNoBuildStations_BySerial
+WIP/getNoBuildWIPList
+WIP/getWIPData
+client-directory/UpdateLineProperties
+client-directory/deleteAClient
+client-directory/insertNewClient
+client-directory/management/insertNewClient
+client-directory/management/selectAddress
+client-directory/management/selectClientInformationByLine
+client-directory/management/selectClientInformationByStation
+client-directory/management/selectClientInformationByStationOrAddress
+client-directory/management/selectDistincAddresses
+client-directory/management/selectDistinctArea
+client-directory/management/selectDistinctLine
+client-directory/management/selectDistinctLineByArea
+client-directory/management/selectDistintStationDataByLine
+client-directory/management/selectStationInfoByLine
+client-directory/management/updateClient
+client-directory/selectClientInfo
+client-directory/selectClientInfoByClientID
+client-directory/sessionStartSelectClientInfo
+client-directory/updateClient
+client-directory/updateClientAddress
+getEverythingPartsRequesting
+sequence-management/Get_Table_Parts_Requesting
+sequence-management/recipe-operations/select/findUniqueRecipeCodeByStation
+sequence-management/sequence-operations/insert/addSeqChangelogEntry
+sequence-management/sequence-operations/insert/addSequenceIDsEntry
+sequence-management/sequence-operations/insert/addSequenceTable
+sequence-management/sequence-operations/select/findAvailableStationSequences
+sequence-management/sequence-operations/select/findSequenceName
+sequence-management/sequence-operations/select/getAreasAndStationsForSequenceManagement
+sequence-management/sequence-operations/select/readActiveSequenceTableByStation
+sequence-management/sequence-operations/select/readAllSeqIdSequencesTable
+sequence-management/sequence-operations/select/readAllSequenceNames
+sequence-management/sequence-operations/select/readAllSequenceNamesAndIDs
+sequence-management/sequence-operations/select/readDeactivatedSequenceTableByStationAndTime
+sequence-management/sequence-operations/select/readSequenceChangelogByStationAndTime
+sequence-management/sequence-operations/select/readSequenceTableByGroupID
+sequence-management/sequence-operations/update/deactivateSequencesTable
+sequence-management/sequence-operations/update/editSequenceTable
+sequence-management/sequence-operations/update/reactiveSequencesByGroupID
+sequence-management/sequence-operations/update/updateSequenceNamesUsingID
+sequence-management/step-operations/delete/deleteSteps
+sequence-management/step-operations/insert/insertSteps
+sequence-management/step-operations/insert/insertStepsChangelog
+sequence-management/step-operations/select/findNewStepNumUsingSequenceID
+sequence-management/step-operations/select/readStepUsingStepID
+sequence-management/step-operations/select/readStepsChangelogBySeqIdAndTime
+sequence-management/step-operations/select/readStepsTableUsingSeqID
+sequence-management/step-operations/select/showParamsForStep
+sequence-management/step-operations/select/showParamsForStep-OriginalBeforeBDUpdate
+sequence-management/step-operations/update/addToolParamByToolID
+sequence-management/step-operations/update/editSteps
+sequence-management/step-operations/update/moveSteps
+sequence-management/step-operations/update/removeToolParamByToolID
+sequence-management/step-operations/update/updateToolParamKeyByToolID
+sequence-management/tool-operations/select/findToolIDByToolName
+sequence-management/tool-operations/select/getStationsbyToolName
+sequence-management/tool-operations/select/getToolNameByStationAndToolType
+sequence-management/tool-operations/select/obtainToolParamNamesUsingToolName
+sequence-management/tool-operations/select/readAllUniqueToolNames
+sequence-management/tool-operations/select/readAllUniqueToolNamesByStation
+sequence-management/tool-operations/update/addToolToStationUsingToolName
+sequence-management/tool-operations/update/updateParamNamesByToolName
+shift-scheduling/default_shift/addNewDefaultShift
+shift-scheduling/default_shift/getLatestDefaultShiftByName
+shift-scheduling/default_shift/getMaxDate
+shift-scheduling/default_shift/selectDistinctShiftNames
+shift-scheduling/loaded_shift/addNewLoadedShift
+shift-scheduling/loaded_shift/getLoadedShiftAfterDate
+shift-scheduling/loaded_shift/getLoadedShiftByNameAndDateRange
+shift-scheduling/loaded_shift/getLoadedShiftNextTwoWeeks
+shift-scheduling/loaded_shift/getLoadedShiftNextWeek
+shift-scheduling/loaded_shift/updateLoadedShiftAfterDate
+shift-scheduling/loaded_shift/updateLoadedShiftDay
+station-control-center/getActiveStations
+station-control/Barcode/Select/checkSelectableStatusStationControl
+station-control/Barcode/Select/componentIDInPrePaint
+station-control/Barcode/Select/findWholeGoodSerialNumber
+station-control/Barcode/Select/getMachineConfig
+station-control/Barcode/Select/machineCompleteStatus
+station-control/Barcode/Select/nwgDetermination
+station-control/Down Time Collection/Insert/insertDownTimeReason
+station-control/Down Time Collection/Select/getQualityFlag
+station-control/Down Time Collection/Select/getReasonCodes
+station-control/Help Requested/closeStatus
+station-control/Help Requested/getEntries
+station-control/Help Requested/helpRequestedLogEntry
+station-control/Parts Requesting/Claim/Claim_Request
+station-control/Parts Requesting/Delete/Delete_Query
+station-control/Parts Requesting/Edit/Edit_Part_Request
+station-control/Parts Requesting/Get_Data_From_Parts_Requesting_Table/Get_Incomplete_Area_Specific_Requests
+station-control/Parts Requesting/Get_Data_From_Parts_Requesting_Table/Get_Incomplete_Claimed_Requests
+station-control/Parts Requesting/Get_Data_From_Parts_Requesting_Table/Get_Incomplete_Requests
+station-control/Parts Requesting/Get_Data_From_Parts_Requesting_Table/Get_Incomplete_Unclaimed_Requests
+station-control/Parts Requesting/cancel/CancelPartRequest
+station-control/Parts Requesting/getClaimUnclaimHistory
+station-control/Parts Requesting/insert/Complete_Request
+station-control/Parts Requesting/insert/insertPartRequest
+station-control/Parts Requesting/insertIntoClaimUnclaimHistory
+station-control/Parts Requesting/select/Get_Table_Parts_Requesting
+station-control/Parts Requesting/select/Get_Table_Parts_Requesting_Supervisor
+station-control/Parts Requesting/select/readInsertPartRequest
+station-control/Parts Requesting/update/checkForExistingPCIdInStation
+station-control/Parts Requesting/update/updatePartRequest
+station-control/Run Schedule/select/FindWGSerialNumber
+station-control/Run Schedule/select/checkSelectableStatusStationControl
+station-control/Run Schedule/select/findPaintNonConformance
+station-control/Run Schedule/select/getAllNonConsumedPreAssemblyInventory
+station-control/Run Schedule/select/getMachineConfigInfo
+station-control/Subsystem/Assembly/FluidDispense/Select/getFluidUnitOptions
+station-control/Subsystem/Fabrication/Boom Fab/getCartWIPInventoryInfo
+station-control/Supervisor Overrides/insert/insertEntrySupervisorOverrideLog
+station-control/Supervisor Overrides/select/retrieveSupervisorOverrideData
+station-control/Work Station Assignment/UpdateStationPrinterIP
+station-control/Work Station Assignment/checkForExistingPCIdInStation
+station-control/Work Station Assignment/getAllAreasAndStationNames
+station-control/Work Station Assignment/getAreaStationNames
+station-control/Work Station Assignment/getDistinctAreas
+station-control/Work Station Assignment/getDistinctAreasWithRecipe
+station-control/Work Station Assignment/getPrintingStations
+station-control/Work Station Assignment/getStationConfig
+station-control/Work Station Assignment/getStationName
+station-control/Work Station Assignment/getStationPrinterConfig
+station-control/Work Station Assignment/getStationTabs
+station-control/Work Station Assignment/getWorkStationAssignmentTable
+station-control/Work Station Assignment/updatePCID
+user-management/delete/deleteUser
+user-management/insert/addUser
+user-management/select/getUser
+user-management/update/updateUser

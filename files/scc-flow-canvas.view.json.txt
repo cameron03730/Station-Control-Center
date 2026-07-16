@@ -1,0 +1,2460 @@
+{
+  "custom": {
+    "flowRows": []
+  },
+  "params": {
+    "idText": "",
+    "isNWG": false
+  },
+  "propConfig": {
+    "params.idText": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.isNWG": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "custom.flowRows": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "view.params.idText"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\tval = (value or '')\n\ttry:\n\t\tval = val.strip()\n\texcept:\n\t\tpass\n\tif not val:\n\t\treturn []\n\ttry:\n\t\treturn StationControl.SCC.getMachineFlow(val)\n\texcept:\n\t\treturn []\n"
+          }
+        ]
+      }
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 1240,
+      "height": 760
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "position": {
+      "grow": 1,
+      "shrink": 1
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "backgroundColor": "#F7F9FC",
+        "borderRadius": "10px",
+        "padding": "16px",
+        "gap": "16px",
+        "overflow": "auto",
+        "height": "100%"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "LegendBar"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "wrap": "wrap",
+          "style": {
+            "backgroundColor": "#FFFFFF",
+            "border": "1px solid #E8ECF2",
+            "borderRadius": "10px",
+            "padding": "10px 16px",
+            "gap": "18px",
+            "boxShadow": "0 1px 2px rgba(27,33,43,0.04)"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "LgSCHEDULED"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "6px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Dot"
+                },
+                "position": {
+                  "basis": "11px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "11px",
+                    "height": "11px",
+                    "borderRadius": "999px",
+                    "backgroundColor": "#E8920C",
+                    "boxShadow": "0 1px 2px rgba(27,33,43,0.18)"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Txt"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "SCHEDULED",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "letterSpacing": "0.4px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "LgWIP"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "6px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Dot"
+                },
+                "position": {
+                  "basis": "11px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "11px",
+                    "height": "11px",
+                    "borderRadius": "999px",
+                    "backgroundColor": "#E87722",
+                    "boxShadow": "0 1px 2px rgba(27,33,43,0.18)"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Txt"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "WIP",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "letterSpacing": "0.4px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "LgCOMPLETE"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "6px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Dot"
+                },
+                "position": {
+                  "basis": "11px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "11px",
+                    "height": "11px",
+                    "borderRadius": "999px",
+                    "backgroundColor": "#2F9E44",
+                    "boxShadow": "0 1px 2px rgba(27,33,43,0.18)"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Txt"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "COMPLETE",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "letterSpacing": "0.4px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "LgASSOC"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "6px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Dot"
+                },
+                "position": {
+                  "basis": "11px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "11px",
+                    "height": "11px",
+                    "borderRadius": "999px",
+                    "backgroundColor": "#0C8599",
+                    "boxShadow": "0 1px 2px rgba(27,33,43,0.18)"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Txt"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "ASSOC",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "letterSpacing": "0.4px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "LgABORT/NONCONF"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "6px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Dot"
+                },
+                "position": {
+                  "basis": "11px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "11px",
+                    "height": "11px",
+                    "borderRadius": "999px",
+                    "backgroundColor": "#E03131",
+                    "boxShadow": "0 1px 2px rgba(27,33,43,0.18)"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Txt"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "ABORT / NON-CONF",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "letterSpacing": "0.4px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "Hint"
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "text": "Click a station to mark it WIP or Complete.",
+              "style": {
+                "color": "#9AA3B0",
+                "fontSize": "12px",
+                "fontWeight": "500",
+                "textAlign": "right",
+                "whiteSpace": "nowrap"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "LaneFrameFab"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "10px"
+          }
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.flowRows"
+              },
+              "transforms": [
+                {
+                  "type": "script",
+                  "code": "\treturn any((str((r or {}).get('Area')) == 'Frame Fab') for r in (value or []))\n"
+                }
+              ]
+            }
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "HdrFrameFab"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px",
+                "paddingBottom": "2px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Accent"
+                },
+                "position": {
+                  "basis": "5px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "5px",
+                    "height": "18px",
+                    "borderRadius": "3px",
+                    "backgroundColor": "#E87722"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Name"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "FRAME FAB",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12.5px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.7px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Count"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "backgroundColor": "#EEF1F5",
+                    "borderRadius": "999px",
+                    "padding": "2px 10px",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.flowRows"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\tn = 0\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) == 'Frame Fab':\n\t\t\tn += 1\n\treturn str(n) + (' station' if n == 1 else ' stations')\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Rule"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "borderTop": "1px solid #E8ECF2",
+                    "margin": "0 0 0 4px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.flex-repeater",
+            "meta": {
+              "name": "RepFrameFab"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-flow-node",
+              "direction": "row",
+              "wrap": "wrap",
+              "style": {
+                "gap": "10px 0px"
+              }
+            },
+            "propConfig": {
+              "props.instances": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.flowRows"
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tout = []\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) != 'Frame Fab':\n\t\t\tcontinue\n\t\tout.append({'rowData': dict(r), 'idText': self.view.params.idText, 'isNWG': self.view.params.isNWG, 'idx': len(out)})\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "LaneBoomFab"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "10px"
+          }
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.flowRows"
+              },
+              "transforms": [
+                {
+                  "type": "script",
+                  "code": "\treturn any((str((r or {}).get('Area')) == 'Boom Fab') for r in (value or []))\n"
+                }
+              ]
+            }
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "HdrBoomFab"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px",
+                "paddingBottom": "2px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Accent"
+                },
+                "position": {
+                  "basis": "5px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "5px",
+                    "height": "18px",
+                    "borderRadius": "3px",
+                    "backgroundColor": "#E8920C"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Name"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "BOOM FAB",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12.5px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.7px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Count"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "backgroundColor": "#EEF1F5",
+                    "borderRadius": "999px",
+                    "padding": "2px 10px",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.flowRows"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\tn = 0\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) == 'Boom Fab':\n\t\t\tn += 1\n\treturn str(n) + (' station' if n == 1 else ' stations')\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Rule"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "borderTop": "1px solid #E8ECF2",
+                    "margin": "0 0 0 4px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.flex-repeater",
+            "meta": {
+              "name": "RepBoomFab"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-flow-node",
+              "direction": "row",
+              "wrap": "wrap",
+              "style": {
+                "gap": "10px 0px"
+              }
+            },
+            "propConfig": {
+              "props.instances": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.flowRows"
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tout = []\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) != 'Boom Fab':\n\t\t\tcontinue\n\t\tout.append({'rowData': dict(r), 'idText': self.view.params.idText, 'isNWG': self.view.params.isNWG, 'idx': len(out)})\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "LanePaint"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "10px"
+          }
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.flowRows"
+              },
+              "transforms": [
+                {
+                  "type": "script",
+                  "code": "\treturn any((str((r or {}).get('Area')) == 'Paint') for r in (value or []))\n"
+                }
+              ]
+            }
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "HdrPaint"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px",
+                "paddingBottom": "2px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Accent"
+                },
+                "position": {
+                  "basis": "5px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "5px",
+                    "height": "18px",
+                    "borderRadius": "3px",
+                    "backgroundColor": "#0C8599"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Name"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "PAINT",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12.5px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.7px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Count"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "backgroundColor": "#EEF1F5",
+                    "borderRadius": "999px",
+                    "padding": "2px 10px",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.flowRows"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\tn = 0\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) == 'Paint':\n\t\t\tn += 1\n\treturn str(n) + (' station' if n == 1 else ' stations')\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Rule"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "borderTop": "1px solid #E8ECF2",
+                    "margin": "0 0 0 4px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.flex-repeater",
+            "meta": {
+              "name": "RepPaint"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-flow-node",
+              "direction": "row",
+              "wrap": "wrap",
+              "style": {
+                "gap": "10px 0px"
+              }
+            },
+            "propConfig": {
+              "props.instances": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.flowRows"
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tout = []\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) != 'Paint':\n\t\t\tcontinue\n\t\tout.append({'rowData': dict(r), 'idText': self.view.params.idText, 'isNWG': self.view.params.isNWG, 'idx': len(out)})\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "LanePreAssembly"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "10px"
+          }
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.flowRows"
+              },
+              "transforms": [
+                {
+                  "type": "script",
+                  "code": "\treturn any((str((r or {}).get('Area')) == 'Pre-Assembly') for r in (value or []))\n"
+                }
+              ]
+            }
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "HdrPreAssembly"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px",
+                "paddingBottom": "2px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Accent"
+                },
+                "position": {
+                  "basis": "5px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "5px",
+                    "height": "18px",
+                    "borderRadius": "3px",
+                    "backgroundColor": "#6741D9"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Name"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "PRE-ASSEMBLY",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12.5px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.7px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Count"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "backgroundColor": "#EEF1F5",
+                    "borderRadius": "999px",
+                    "padding": "2px 10px",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.flowRows"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\tn = 0\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) == 'Pre-Assembly':\n\t\t\tn += 1\n\treturn str(n) + (' station' if n == 1 else ' stations')\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Rule"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "borderTop": "1px solid #E8ECF2",
+                    "margin": "0 0 0 4px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.flex-repeater",
+            "meta": {
+              "name": "RepPreAssembly"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-flow-node",
+              "direction": "row",
+              "wrap": "wrap",
+              "style": {
+                "gap": "10px 0px"
+              }
+            },
+            "propConfig": {
+              "props.instances": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.flowRows"
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tout = []\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) != 'Pre-Assembly':\n\t\t\tcontinue\n\t\tout.append({'rowData': dict(r), 'idText': self.view.params.idText, 'isNWG': self.view.params.isNWG, 'idx': len(out)})\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "LaneMainLine"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "10px"
+          }
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.flowRows"
+              },
+              "transforms": [
+                {
+                  "type": "script",
+                  "code": "\treturn any((str((r or {}).get('Area')) == 'Main Line') for r in (value or []))\n"
+                }
+              ]
+            }
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "HdrMainLine"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px",
+                "paddingBottom": "2px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Accent"
+                },
+                "position": {
+                  "basis": "5px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "5px",
+                    "height": "18px",
+                    "borderRadius": "3px",
+                    "backgroundColor": "#1B212B"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Name"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "MAIN LINE",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12.5px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.7px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Count"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "backgroundColor": "#EEF1F5",
+                    "borderRadius": "999px",
+                    "padding": "2px 10px",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.flowRows"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\tn = 0\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) == 'Main Line':\n\t\t\tn += 1\n\treturn str(n) + (' station' if n == 1 else ' stations')\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Rule"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "borderTop": "1px solid #E8ECF2",
+                    "margin": "0 0 0 4px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.flex-repeater",
+            "meta": {
+              "name": "RepMainLine"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-flow-node",
+              "direction": "row",
+              "wrap": "wrap",
+              "style": {
+                "gap": "10px 0px"
+              }
+            },
+            "propConfig": {
+              "props.instances": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.flowRows"
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tout = []\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) != 'Main Line':\n\t\t\tcontinue\n\t\tout.append({'rowData': dict(r), 'idText': self.view.params.idText, 'isNWG': self.view.params.isNWG, 'idx': len(out)})\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "LaneLegacy"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "10px"
+          }
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.flowRows"
+              },
+              "transforms": [
+                {
+                  "type": "script",
+                  "code": "\treturn any((str((r or {}).get('Area')) == 'Legacy') for r in (value or []))\n"
+                }
+              ]
+            }
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "HdrLegacy"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px",
+                "paddingBottom": "2px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Accent"
+                },
+                "position": {
+                  "basis": "5px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "5px",
+                    "height": "18px",
+                    "borderRadius": "3px",
+                    "backgroundColor": "#5B6675"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Name"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "LEGACY",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12.5px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.7px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Count"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "backgroundColor": "#EEF1F5",
+                    "borderRadius": "999px",
+                    "padding": "2px 10px",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.flowRows"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\tn = 0\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) == 'Legacy':\n\t\t\tn += 1\n\treturn str(n) + (' station' if n == 1 else ' stations')\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Rule"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "borderTop": "1px solid #E8ECF2",
+                    "margin": "0 0 0 4px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.flex-repeater",
+            "meta": {
+              "name": "RepLegacy"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-flow-node",
+              "direction": "row",
+              "wrap": "wrap",
+              "style": {
+                "gap": "10px 0px"
+              }
+            },
+            "propConfig": {
+              "props.instances": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.flowRows"
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tout = []\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) != 'Legacy':\n\t\t\tcontinue\n\t\tout.append({'rowData': dict(r), 'idText': self.view.params.idText, 'isNWG': self.view.params.isNWG, 'idx': len(out)})\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "LaneBoomSub"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "10px"
+          }
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.flowRows"
+              },
+              "transforms": [
+                {
+                  "type": "script",
+                  "code": "\treturn any((str((r or {}).get('Area')) == 'Boom Sub') for r in (value or []))\n"
+                }
+              ]
+            }
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "HdrBoomSub"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px",
+                "paddingBottom": "2px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Accent"
+                },
+                "position": {
+                  "basis": "5px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "5px",
+                    "height": "18px",
+                    "borderRadius": "3px",
+                    "backgroundColor": "#2F9E44"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Name"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "BOOM SUB",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12.5px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.7px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Count"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "backgroundColor": "#EEF1F5",
+                    "borderRadius": "999px",
+                    "padding": "2px 10px",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.flowRows"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\tn = 0\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) == 'Boom Sub':\n\t\t\tn += 1\n\treturn str(n) + (' station' if n == 1 else ' stations')\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Rule"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "borderTop": "1px solid #E8ECF2",
+                    "margin": "0 0 0 4px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.flex-repeater",
+            "meta": {
+              "name": "RepBoomSub"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-flow-node",
+              "direction": "row",
+              "wrap": "wrap",
+              "style": {
+                "gap": "10px 0px"
+              }
+            },
+            "propConfig": {
+              "props.instances": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.flowRows"
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tout = []\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) != 'Boom Sub':\n\t\t\tcontinue\n\t\tout.append({'rowData': dict(r), 'idText': self.view.params.idText, 'isNWG': self.view.params.isNWG, 'idx': len(out)})\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "LaneCabSub"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "10px"
+          }
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.flowRows"
+              },
+              "transforms": [
+                {
+                  "type": "script",
+                  "code": "\treturn any((str((r or {}).get('Area')) == 'Cab Sub') for r in (value or []))\n"
+                }
+              ]
+            }
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "HdrCabSub"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px",
+                "paddingBottom": "2px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Accent"
+                },
+                "position": {
+                  "basis": "5px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "5px",
+                    "height": "18px",
+                    "borderRadius": "3px",
+                    "backgroundColor": "#2F9E44"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Name"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "CAB SUB",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12.5px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.7px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Count"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "backgroundColor": "#EEF1F5",
+                    "borderRadius": "999px",
+                    "padding": "2px 10px",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.flowRows"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\tn = 0\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) == 'Cab Sub':\n\t\t\tn += 1\n\treturn str(n) + (' station' if n == 1 else ' stations')\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Rule"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "borderTop": "1px solid #E8ECF2",
+                    "margin": "0 0 0 4px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.flex-repeater",
+            "meta": {
+              "name": "RepCabSub"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-flow-node",
+              "direction": "row",
+              "wrap": "wrap",
+              "style": {
+                "gap": "10px 0px"
+              }
+            },
+            "propConfig": {
+              "props.instances": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.flowRows"
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tout = []\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) != 'Cab Sub':\n\t\t\tcontinue\n\t\tout.append({'rowData': dict(r), 'idText': self.view.params.idText, 'isNWG': self.view.params.isNWG, 'idx': len(out)})\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "LaneEngineSub"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "10px"
+          }
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.flowRows"
+              },
+              "transforms": [
+                {
+                  "type": "script",
+                  "code": "\treturn any((str((r or {}).get('Area')) == 'Engine Sub') for r in (value or []))\n"
+                }
+              ]
+            }
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "HdrEngineSub"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px",
+                "paddingBottom": "2px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Accent"
+                },
+                "position": {
+                  "basis": "5px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "5px",
+                    "height": "18px",
+                    "borderRadius": "3px",
+                    "backgroundColor": "#2F9E44"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Name"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "ENGINE SUB",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12.5px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.7px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Count"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "backgroundColor": "#EEF1F5",
+                    "borderRadius": "999px",
+                    "padding": "2px 10px",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.flowRows"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\tn = 0\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) == 'Engine Sub':\n\t\t\tn += 1\n\treturn str(n) + (' station' if n == 1 else ' stations')\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Rule"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "borderTop": "1px solid #E8ECF2",
+                    "margin": "0 0 0 4px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.flex-repeater",
+            "meta": {
+              "name": "RepEngineSub"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-flow-node",
+              "direction": "row",
+              "wrap": "wrap",
+              "style": {
+                "gap": "10px 0px"
+              }
+            },
+            "propConfig": {
+              "props.instances": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.flowRows"
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tout = []\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) != 'Engine Sub':\n\t\t\tcontinue\n\t\tout.append({'rowData': dict(r), 'idText': self.view.params.idText, 'isNWG': self.view.params.isNWG, 'idx': len(out)})\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "LaneOutriggerSub"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "10px"
+          }
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.flowRows"
+              },
+              "transforms": [
+                {
+                  "type": "script",
+                  "code": "\treturn any((str((r or {}).get('Area')) == 'Outrigger Sub') for r in (value or []))\n"
+                }
+              ]
+            }
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "HdrOutriggerSub"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px",
+                "paddingBottom": "2px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Accent"
+                },
+                "position": {
+                  "basis": "5px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "5px",
+                    "height": "18px",
+                    "borderRadius": "3px",
+                    "backgroundColor": "#2F9E44"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Name"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "OUTRIGGER SUB",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12.5px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.7px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Count"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "backgroundColor": "#EEF1F5",
+                    "borderRadius": "999px",
+                    "padding": "2px 10px",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.flowRows"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\tn = 0\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) == 'Outrigger Sub':\n\t\t\tn += 1\n\treturn str(n) + (' station' if n == 1 else ' stations')\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Rule"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "borderTop": "1px solid #E8ECF2",
+                    "margin": "0 0 0 4px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.flex-repeater",
+            "meta": {
+              "name": "RepOutriggerSub"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-flow-node",
+              "direction": "row",
+              "wrap": "wrap",
+              "style": {
+                "gap": "10px 0px"
+              }
+            },
+            "propConfig": {
+              "props.instances": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.flowRows"
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tout = []\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) != 'Outrigger Sub':\n\t\t\tcontinue\n\t\tout.append({'rowData': dict(r), 'idText': self.view.params.idText, 'isNWG': self.view.params.isNWG, 'idx': len(out)})\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "LaneOther"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "gap": "10px"
+          }
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.flowRows"
+              },
+              "transforms": [
+                {
+                  "type": "script",
+                  "code": "\treturn any((str((r or {}).get('Area')) == 'Other') for r in (value or []))\n"
+                }
+              ]
+            }
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "HdrOther"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px",
+                "paddingBottom": "2px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Accent"
+                },
+                "position": {
+                  "basis": "5px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "width": "5px",
+                    "height": "18px",
+                    "borderRadius": "3px",
+                    "backgroundColor": "#5B6675"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Name"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "OTHER",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "12.5px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.7px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Count"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "backgroundColor": "#EEF1F5",
+                    "borderRadius": "999px",
+                    "padding": "2px 10px",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.flowRows"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\tn = 0\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) == 'Other':\n\t\t\tn += 1\n\treturn str(n) + (' station' if n == 1 else ' stations')\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Rule"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "borderTop": "1px solid #E8ECF2",
+                    "margin": "0 0 0 4px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.flex-repeater",
+            "meta": {
+              "name": "RepOther"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-flow-node",
+              "direction": "row",
+              "wrap": "wrap",
+              "style": {
+                "gap": "10px 0px"
+              }
+            },
+            "propConfig": {
+              "props.instances": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.flowRows"
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tout = []\n\tfor r in (value or []):\n\t\tif str((r or {}).get('Area')) != 'Other':\n\t\t\tcontinue\n\t\tout.append({'rowData': dict(r), 'idText': self.view.params.idText, 'isNWG': self.view.params.isNWG, 'idx': len(out)})\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.display.label",
+        "meta": {
+          "name": "EmptyHint"
+        },
+        "position": {
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "text": "No schedule entries found for this machine.",
+          "style": {
+            "color": "#9AA3B0",
+            "fontSize": "15px",
+            "fontWeight": "500",
+            "textAlign": "center",
+            "padding": "56px 8px"
+          }
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.flowRows"
+              },
+              "transforms": [
+                {
+                  "type": "script",
+                  "code": "\treturn not bool(value)\n"
+                }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "scripts": {
+      "customMethods": [],
+      "extensionFunctions": null,
+      "messageHandlers": [
+        {
+          "messageType": "sccOverviewDone",
+          "pageScope": false,
+          "sessionScope": true,
+          "viewScope": false,
+          "script": "\tsystem.perspective.closePopup('sccProgress')\n\tsystem.perspective.closePopup('sccNodeAction')\n\tok = payload.get('ok', False)\n\tmsg = payload.get('message', '')\n\tif msg:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': msg, 'error': not ok}, showCloseIcon=False, modal=True)\n\tself.view.refreshBinding('custom.flowRows')\n"
+        },
+        {
+          "messageType": "sccFlowRefresh",
+          "pageScope": false,
+          "sessionScope": true,
+          "viewScope": false,
+          "script": "\tself.view.refreshBinding('custom.flowRows')\n"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,1597 @@
+{
+  "custom": {
+    "reason": "",
+    "searchText": "",
+    "scheduleRows": null,
+    "componentInfo": {
+      "input": "",
+      "found": false,
+      "isNWG": false,
+      "itemName": "",
+      "itemNumber": ""
+    },
+    "selectedStation": "",
+    "selectedStatus": -1,
+    "selectedItem": "",
+    "hasSchedule": false,
+    "canMarkComplete": false,
+    "canScheduleNwg": false,
+    "selRowIdx": -1,
+    "showTable": true,
+    "viewMode": "rows",
+    "chartId": ""
+  },
+  "params": {},
+  "propConfig": {
+    "custom.hasSchedule": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "view.custom.scheduleRows"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\treturn bool(value)\n"
+          }
+        ]
+      }
+    },
+    "custom.canMarkComplete": {
+      "binding": {
+        "type": "expr",
+        "config": {
+          "expression": "len(coalesce({view.custom.selectedStation}, '')) > 0 && coalesce({view.custom.selectedStatus}, -1) != 3 && len(trim(coalesce({view.custom.reason}, ''))) > 0 && len(coalesce({view.custom.componentInfo.input}, '')) > 0"
+        }
+      }
+    },
+    "custom.canScheduleNwg": {
+      "binding": {
+        "type": "expr",
+        "config": {
+          "expression": "{view.custom.componentInfo.found} && {view.custom.componentInfo.isNWG} && len(trim(coalesce({view.custom.reason}, ''))) > 0"
+        }
+      }
+    },
+    "custom.selectedStation": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "/root/LeftCard/ScheduleTable.props.selection"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\tsel = value or {}\n\tdata = sel['data'] if 'data' in sel else None\n\tif not data:\n\t\treturn ''\n\tidx = sel['selectedRow'] if 'selectedRow' in sel else None\n\tif idx is None or idx < 0:\n\t\treturn ''\n\ttry:\n\t\tv = getattr(self, 'view', self)\n\t\trows = v.getChild('root').getChild('LeftCard').getChild('ScheduleTable').props.data\n\t\trow = rows[idx]\n\t\treturn row['Station'] if 'Station' in row else ''\n\texcept:\n\t\treturn ''\n"
+          }
+        ]
+      }
+    },
+    "custom.selectedStatus": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "/root/LeftCard/ScheduleTable.props.selection"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\tsel = value or {}\n\tdata = sel['data'] if 'data' in sel else None\n\tif not data:\n\t\treturn -1\n\tidx = sel['selectedRow'] if 'selectedRow' in sel else None\n\tif idx is None or idx < 0:\n\t\treturn -1\n\ttry:\n\t\tv = getattr(self, 'view', self)\n\t\trows = v.getChild('root').getChild('LeftCard').getChild('ScheduleTable').props.data\n\t\trow = rows[idx]\n\t\tst = row['Status'] if 'Status' in row else None\n\t\treturn int(st) if st is not None else -1\n\texcept:\n\t\treturn -1\n"
+          }
+        ]
+      }
+    },
+    "custom.selectedItem": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "/root/LeftCard/ScheduleTable.props.selection"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\tsel = value or {}\n\tdata = sel['data'] if 'data' in sel else None\n\tif not data:\n\t\treturn ''\n\tidx = sel['selectedRow'] if 'selectedRow' in sel else None\n\tif idx is None or idx < 0:\n\t\treturn ''\n\ttry:\n\t\tv = getattr(self, 'view', self)\n\t\trows = v.getChild('root').getChild('LeftCard').getChild('ScheduleTable').props.data\n\t\trow = rows[idx]\n\t\treturn row['Item'] if 'Item' in row else ''\n\texcept:\n\t\treturn ''\n"
+          }
+        ]
+      }
+    },
+    "custom.selRowIdx": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "/root/LeftCard/ScheduleTable.props.selection"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\tsel = value or {}\n\tif 'data' not in sel or not sel['data']:\n\t\treturn -1\n\tidx = sel['selectedRow'] if 'selectedRow' in sel else -1\n\treturn idx if idx is not None else -1\n"
+          }
+        ]
+      }
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 1320,
+      "height": 880
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "row",
+      "style": {
+        "backgroundColor": "#F4F6F9",
+        "padding": "22px",
+        "gap": "22px"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "LeftCard"
+        },
+        "position": {
+          "basis": "60%",
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": "12px",
+            "border": "1px solid #D8DEE7",
+            "boxShadow": "0 1px 3px rgba(27,33,43,0.08)",
+            "padding": "22px",
+            "gap": "18px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "LeftCardTitle"
+            },
+            "position": {
+              "basis": "28px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Where It Lives",
+              "style": {
+                "color": "#1B212B",
+                "fontSize": "17px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "borderBottom": "2px solid #E87722",
+                "paddingBottom": "8px"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "SearchLbl"
+            },
+            "position": {
+              "basis": "18px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "SEARCH COMPONENTID OR SERIAL",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "letterSpacing": "0.7px"
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "SearchRow"
+            },
+            "position": {
+              "basis": "56px",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "16px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.input.text-field",
+                "meta": {
+                  "name": "SearchField"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "placeholder": "e.g. M282832 or 0160153231",
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "color": "#1B212B",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "padding": "11px 14px",
+                    "fontSize": "15px",
+                    "fontFamily": "monospace"
+                  },
+                  "deferUpdates": false
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.searchText",
+                        "bidirectional": true
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.input.button",
+                "meta": {
+                  "name": "Search_Button"
+                },
+                "position": {
+                  "basis": "140px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Search",
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "color": "#1B212B",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "fontWeight": "600",
+                    "fontSize": "15px",
+                    "padding": "11px 18px",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap"
+                  },
+                  "image": {
+                    "icon": {
+                      "path": "material/search",
+                      "color": "#5B6675",
+                      "style": {
+                        "width": "18px",
+                        "height": "18px",
+                        "flexShrink": "0"
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "dom": {
+                    "onClick": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "\tsid = (self.view.custom.searchText or '').strip()\n\tself.view.custom.componentInfo = StationControl.SCC.lookupComponent(sid)\n\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Searching...', 'actionKey': 'refresh', 'actionArgs': {}, 'doneMsg': 'sccWoDone'}, modal=True, showCloseIcon=False)\n"
+                      }
+                    }
+                  }
+                },
+                "propConfig": {}
+              },
+              {
+                "type": "ia.input.button",
+                "meta": {
+                  "name": "Refresh_Button"
+                },
+                "position": {
+                  "basis": "140px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Refresh",
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "color": "#1B212B",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "fontWeight": "600",
+                    "fontSize": "15px",
+                    "padding": "11px 18px",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap"
+                  },
+                  "image": {
+                    "icon": {
+                      "path": "material/refresh",
+                      "color": "#5B6675",
+                      "style": {
+                        "width": "18px",
+                        "height": "18px",
+                        "flexShrink": "0"
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "dom": {
+                    "onClick": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Refreshing...', 'actionKey': 'refresh', 'actionArgs': {}, 'doneMsg': 'sccWoDone'}, modal=True, showCloseIcon=False)\n"
+                      }
+                    }
+                  }
+                },
+                "propConfig": {}
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "ResultRow"
+            },
+            "position": {
+              "basis": "36px",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "14px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "TypeLbl"
+                },
+                "position": {
+                  "basis": "60px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "RESULT",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "12px",
+                    "fontWeight": "700",
+                    "textAlign": "left",
+                    "letterSpacing": "0.7px"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "TypeVal"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "NO SEARCH",
+                  "style": {
+                    "alignSelf": "center",
+                    "color": "#FFFFFF",
+                    "fontSize": "12px",
+                    "fontWeight": "700",
+                    "borderRadius": "999px",
+                    "padding": "5px 14px"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(coalesce({view.custom.componentInfo.input}, '')) = 0, 'NO SEARCH', if({view.custom.componentInfo.found} || {view.custom.hasSchedule}, if({view.custom.componentInfo.isNWG}, 'NON-WHOLE GOOD', 'WHOLE GOOD'), 'NOT FOUND'))"
+                      }
+                    }
+                  },
+                  "props.style.backgroundColor": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(coalesce({view.custom.componentInfo.input}, '')) = 0, '#5B6675', if({view.custom.componentInfo.found} || {view.custom.hasSchedule}, if({view.custom.componentInfo.isNWG}, '#0C8599', '#E87722'), '#E03131'))"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "ItemNameVal"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "14px",
+                    "fontWeight": "500",
+                    "fontFamily": "monospace"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.custom.componentInfo.found}, coalesce({view.custom.componentInfo.itemName}, '') + '   ' + coalesce({view.custom.componentInfo.itemNumber}, ''), '')"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "EntriesHeaderRow"
+            },
+            "position": {
+              "basis": "40px",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "justify": "space-between",
+              "style": {
+                "gap": "12px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "EntriesLbl"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "SCHEDULE ENTRIES",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "12px",
+                    "fontWeight": "700",
+                    "textAlign": "left",
+                    "letterSpacing": "0.7px",
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden",
+                    "textOverflow": "ellipsis"
+                  }
+                }
+              },
+              {
+                "type": "ia.input.button",
+                "meta": {
+                  "name": "FullView_Button"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Full View",
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "color": "#1B212B",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "fontWeight": "600",
+                    "fontSize": "13px",
+                    "padding": "6px 14px",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap"
+                  },
+                  "image": {
+                    "icon": {
+                      "path": "material/open_in_full",
+                      "color": "#5B6675",
+                      "style": {
+                        "width": "16px",
+                        "height": "16px",
+                        "flexShrink": "0"
+                      }
+                    }
+                  }
+                },
+                "propConfig": {
+                  "props.enabled": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "len(coalesce({view.custom.chartId}, '')) > 0"
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "dom": {
+                    "onClick": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "\tsid = (self.view.custom.chartId or self.view.custom.searchText or '').strip()\n\tif not sid:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': 'Search a ComponentID or serial first.', 'error': True}, showCloseIcon=False, modal=True)\n\t\treturn\n\tsystem.perspective.openPopup('sccOverview', 'Plant Overview/Engineering/Station Control Center/embedded/scc-overview', {'idText': sid, 'isNWG': sid.upper().startswith('M')}, modal=True, showCloseIcon=False)\n"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "SegToggle"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "row",
+                  "alignItems": "center",
+                  "style": {
+                    "backgroundColor": "#EEF1F5",
+                    "border": "1px solid #E1E7EF",
+                    "borderRadius": "999px",
+                    "padding": "3px",
+                    "gap": "2px"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "RowsSeg"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Rows",
+                      "style": {
+                        "backgroundColor": "#FFFFFF",
+                        "color": "#1B212B",
+                        "border": "none",
+                        "borderRadius": "999px",
+                        "fontWeight": "700",
+                        "fontSize": "13px",
+                        "padding": "6px 15px",
+                        "overflow": "hidden",
+                        "whiteSpace": "nowrap",
+                        "boxShadow": "0 1px 2px rgba(27,33,43,0.12)"
+                      },
+                      "image": {
+                        "icon": {
+                          "path": "material/view_list",
+                          "color": "#E87722",
+                          "style": {
+                            "width": "16px",
+                            "height": "16px",
+                            "flexShrink": "0"
+                          }
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.style.backgroundColor": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.viewMode} = 'rows', '#FFFFFF', 'transparent')"
+                          }
+                        }
+                      },
+                      "props.style.color": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.viewMode} = 'rows', '#1B212B', '#5B6675')"
+                          }
+                        }
+                      },
+                      "props.style.boxShadow": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.viewMode} = 'rows', '0 1px 2px rgba(27,33,43,0.12)', 'none')"
+                          }
+                        }
+                      },
+                      "props.image.icon.color": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.viewMode} = 'rows', '#E87722', '#9AA3B0')"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "dom": {
+                        "onClick": {
+                          "type": "script",
+                          "scope": "G",
+                          "config": {
+                            "script": "\tself.view.custom.viewMode = 'rows'\n"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "ChartSeg"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Chart",
+                      "style": {
+                        "backgroundColor": "transparent",
+                        "color": "#5B6675",
+                        "border": "none",
+                        "borderRadius": "999px",
+                        "fontWeight": "700",
+                        "fontSize": "13px",
+                        "padding": "6px 15px",
+                        "overflow": "hidden",
+                        "whiteSpace": "nowrap",
+                        "boxShadow": "none"
+                      },
+                      "image": {
+                        "icon": {
+                          "path": "material/account_tree",
+                          "color": "#9AA3B0",
+                          "style": {
+                            "width": "16px",
+                            "height": "16px",
+                            "flexShrink": "0"
+                          }
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.style.backgroundColor": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.viewMode} = 'chart', '#FFFFFF', 'transparent')"
+                          }
+                        }
+                      },
+                      "props.style.color": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.viewMode} = 'chart', '#1B212B', '#5B6675')"
+                          }
+                        }
+                      },
+                      "props.style.boxShadow": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.viewMode} = 'chart', '0 1px 2px rgba(27,33,43,0.12)', 'none')"
+                          }
+                        }
+                      },
+                      "props.image.icon.color": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.viewMode} = 'chart', '#E87722', '#9AA3B0')"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "dom": {
+                        "onClick": {
+                          "type": "script",
+                          "scope": "G",
+                          "config": {
+                            "script": "\tself.view.custom.viewMode = 'chart'\n"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "ia.display.table",
+            "meta": {
+              "name": "ScheduleTable"
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "columns": [
+                {
+                  "field": "__card",
+                  "render": "view",
+                  "viewPath": "Plant Overview/Engineering/Station Control Center/embedded/scc-card-schedule",
+                  "viewParams": {
+                    "selIdx": -1
+                  },
+                  "header": {
+                    "title": "",
+                    "style": {
+                      "classes": ""
+                    }
+                  },
+                  "visible": true,
+                  "sortable": false,
+                  "resizable": false,
+                  "strictWidth": false,
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              ],
+              "rows": {
+                "height": 88,
+                "striped": {
+                  "enabled": false,
+                  "color": {
+                    "odd": "#FFFFFF",
+                    "even": "#F4F6F9"
+                  }
+                }
+              },
+              "selection": {
+                "enabled": true,
+                "mode": "single",
+                "enableRowSelection": true,
+                "enableColumnSelection": false
+              },
+              "filter": {
+                "enabled": false
+              },
+              "emptyMessage": {
+                "noData": {
+                  "icon": {
+                    "path": "material/search_off",
+                    "color": "#D8DEE7"
+                  },
+                  "text": "Search a ComponentID or serial to view schedule entries",
+                  "textStyle": {
+                    "color": "#5B6675",
+                    "fontSize": "15px",
+                    "fontWeight": "600"
+                  }
+                }
+              },
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#1B212B",
+                "fontSize": "14px",
+                "fontFamily": "-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "12px",
+                "boxShadow": "0 1px 2px rgba(27,33,43,0.06), 0 6px 18px rgba(27,33,43,0.10)",
+                "overflow": "hidden",
+                "minHeight": "0px"
+              },
+              "enableHeader": false
+            },
+            "propConfig": {
+              "position.display": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "{view.custom.viewMode} = 'rows'"
+                  }
+                }
+              },
+              "meta.visible": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.showTable"
+                  }
+                }
+              },
+              "props.data": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.scheduleRows"
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tif not value:\n\t\treturn []\n\tout = []\n\tfor r in value:\n\t\trow = dict(r)\n\t\trow['__card'] = ''\n\t\tout.append(row)\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.view",
+            "meta": {
+              "name": "FlowCanvasHost"
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-flow-canvas",
+              "params": {
+                "idText": "",
+                "isNWG": false
+              },
+              "style": {
+                "minHeight": "0px"
+              }
+            },
+            "propConfig": {
+              "position.display": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "{view.custom.viewMode} = 'chart'"
+                  }
+                }
+              },
+              "props.params.idText": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.custom.viewMode} = 'chart', coalesce({view.custom.chartId}, ''), '')"
+                  }
+                }
+              },
+              "props.params.isNWG": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "{view.custom.componentInfo.isNWG}"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "RightCard"
+        },
+        "position": {
+          "basis": "40%",
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": "12px",
+            "border": "1px solid #D8DEE7",
+            "boxShadow": "0 1px 3px rgba(27,33,43,0.08)",
+            "padding": "22px",
+            "gap": "18px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "RightCardTitle"
+            },
+            "position": {
+              "basis": "28px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Targeted Actions",
+              "style": {
+                "color": "#1B212B",
+                "fontSize": "17px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "borderBottom": "2px solid #E87722",
+                "paddingBottom": "8px"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "ReasonLbl"
+            },
+            "position": {
+              "basis": "18px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "REASON  (required - written to SupervisorOverrideLog)",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "letterSpacing": "0.7px"
+              }
+            }
+          },
+          {
+            "type": "ia.input.text-field",
+            "meta": {
+              "name": "ReasonField"
+            },
+            "position": {
+              "basis": "46px",
+              "shrink": 0
+            },
+            "props": {
+              "placeholder": "Logged to SupervisorOverrideLog...",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#1B212B",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "8px",
+                "padding": "11px 14px",
+                "fontSize": "15px"
+              },
+              "deferUpdates": false
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.reason",
+                    "bidirectional": true
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "CompleteLbl"
+            },
+            "position": {
+              "basis": "30px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "MARK COMPLETE AT STATION",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "letterSpacing": "0.7px",
+                "borderTop": "1px solid #D8DEE7",
+                "paddingTop": "12px"
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "SelectedRow"
+            },
+            "position": {
+              "basis": "36px",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "14px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "SelectedCaption"
+                },
+                "position": {
+                  "basis": "76px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "SELECTED",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "12px",
+                    "fontWeight": "700",
+                    "textAlign": "left",
+                    "letterSpacing": "0.7px"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "SelectedStationVal"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "16px",
+                    "fontWeight": "700",
+                    "letterSpacing": "0.3px",
+                    "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(coalesce({view.custom.selectedStation}, '')) = 0, 'No row selected', {view.custom.selectedStation})"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "SelectedStatusPill"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "alignSelf": "center",
+                    "color": "#FFFFFF",
+                    "fontSize": "12px",
+                    "fontWeight": "700",
+                    "letterSpacing": "0.4px",
+                    "borderRadius": "999px",
+                    "padding": "5px 14px"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(coalesce({view.custom.selectedStation}, '')) = 0, '', if({view.custom.selectedStatus} = 0, 'SCRAP', if({view.custom.selectedStatus} = 1, 'SCHEDULED', if({view.custom.selectedStatus} = 2, 'WIP', if({view.custom.selectedStatus} = 3, 'COMPLETE', if({view.custom.selectedStatus} = 4, 'ABORT', if({view.custom.selectedStatus} = 5, 'NON-CONF', if({view.custom.selectedStatus} = 7, 'ASSOCIATED', '?'))))))))"
+                      }
+                    }
+                  },
+                  "props.style.backgroundColor": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.custom.selectedStatus} = 2, '#E87722', if({view.custom.selectedStatus} = 3, '#2F9E44', if({view.custom.selectedStatus} = 1, '#E8920C', if({view.custom.selectedStatus} = 4 || {view.custom.selectedStatus} = 5, '#E03131', if({view.custom.selectedStatus} = 7, '#0C8599', '#5B6675')))))"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.input.button",
+            "meta": {
+              "name": "MarkComplete_Button"
+            },
+            "position": {
+              "basis": "50px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Mark Complete at Station",
+              "style": {
+                "backgroundColor": "#2F9E44",
+                "color": "#FFFFFF",
+                "border": "none",
+                "borderRadius": "8px",
+                "fontWeight": "600",
+                "fontSize": "15px",
+                "padding": "11px 18px",
+                "overflow": "hidden",
+                "whiteSpace": "nowrap"
+              },
+              "image": {
+                "icon": {
+                  "path": "material/check_circle",
+                  "color": "#FFFFFF",
+                  "style": {
+                    "width": "18px",
+                    "height": "18px",
+                    "flexShrink": "0"
+                  }
+                }
+              }
+            },
+            "propConfig": {
+              "props.enabled": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.canMarkComplete"
+                  }
+                }
+              },
+              "props.style.backgroundColor": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.custom.canMarkComplete}, '#2F9E44', '#D5D5D5')"
+                  }
+                }
+              },
+              "props.style.color": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.custom.canMarkComplete}, '#FFFFFF', '#8A929E')"
+                  }
+                }
+              },
+              "props.image.icon.color": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.custom.canMarkComplete}, '#FFFFFF', '#8A929E')"
+                  }
+                }
+              }
+            },
+            "events": {
+              "dom": {
+                "onClick": {
+                  "type": "script",
+                  "scope": "G",
+                  "config": {
+                    "script": "\tsid = (self.view.custom.searchText or '').strip()\n\tstation = self.view.custom.selectedStation\n\tif not sid:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': 'Search a ComponentID or serial first.', 'error': True}, showCloseIcon=False, modal=True)\n\t\treturn\n\tif not station:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': 'Select a schedule entry first.', 'error': True}, showCloseIcon=False, modal=True)\n\t\treturn\n\targs = {'idText': sid, 'item': self.view.custom.selectedItem, 'station': station, 'reason': self.view.custom.reason}\n\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Marking complete...', 'actionKey': 'markScheduleComplete', 'actionArgs': args, 'doneMsg': 'sccWoDone'}, modal=True, showCloseIcon=False)\n"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "AssocLbl"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "ASSOCIATED COMPONENTS  (view only)",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "letterSpacing": "0.7px",
+                "borderTop": "1px solid #D8DEE7",
+                "paddingTop": "12px",
+                "whiteSpace": "normal",
+                "lineHeight": "1.4"
+              }
+            },
+            "propConfig": {
+              "position.display": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "{view.custom.componentInfo.found} && !{view.custom.componentInfo.isNWG}"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "AssocRepeaterArea"
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "gap": "8px",
+                "overflow": "auto",
+                "minHeight": "0px"
+              }
+            },
+            "propConfig": {
+              "position.display": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "{view.custom.componentInfo.found} && !{view.custom.componentInfo.isNWG}"
+                  }
+                }
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.flex-repeater",
+                "meta": {
+                  "name": "AssocRepeater"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-card-assoc",
+                  "direction": "column",
+                  "wrap": "nowrap",
+                  "style": {
+                    "gap": "8px"
+                  }
+                },
+                "propConfig": {
+                  "props.instances": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.componentInfo.associations"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\tif not value:\n\t\treturn []\n\ttry:\n\t\tserial = (self.view.custom.searchText or '').strip()\n\texcept:\n\t\tserial = ''\n\torder = {'Fly': 0, 'InnerMid': 1, 'OuterMid': 2, 'Base': 3, 'Frame': 4}\n\trows = []\n\tfor a in (value or []):\n\t\tnm = a.get('ItemName') if hasattr(a, 'get') else None\n\t\tcid = a.get('ComponentID') if hasattr(a, 'get') else None\n\t\tun = (cid is None) or (str(cid).strip().upper() in ('', 'UNASSIGNED', 'NONE', 'NULL'))\n\t\trows.append((order.get(nm, 9), {'serial': serial, 'section': nm or '?', 'comp': ('' if un else str(cid)), 'unassigned': un}))\n\trows.sort(key = lambda t: t[0])\n\treturn [r for (o, r) in rows]\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "AssocEmptyHint"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "No NWG associations for this serial yet.",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "13px",
+                    "fontWeight": "500",
+                    "textAlign": "center",
+                    "padding": "18px 8px"
+                  }
+                },
+                "propConfig": {
+                  "position.display": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "len(coalesce({view.custom.componentInfo.associations}, '')) = 0"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "NwgLbl"
+            },
+            "position": {
+              "basis": "30px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "SCHEDULE NON-WHOLE GOOD  (NWG only)",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "letterSpacing": "0.7px",
+                "borderTop": "1px solid #D8DEE7",
+                "paddingTop": "12px"
+              }
+            },
+            "propConfig": {
+              "position.display": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "{view.custom.componentInfo.found} && {view.custom.componentInfo.isNWG}"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.input.button",
+            "meta": {
+              "name": "PrePaint_Button"
+            },
+            "position": {
+              "basis": "50px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Schedule for Pre-Paint",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#E87722",
+                "border": "1px solid #E87722",
+                "borderRadius": "8px",
+                "fontWeight": "600",
+                "fontSize": "15px",
+                "padding": "11px 18px",
+                "overflow": "hidden",
+                "whiteSpace": "nowrap"
+              },
+              "image": {
+                "icon": {
+                  "path": "material/format_paint",
+                  "color": "#E87722",
+                  "style": {
+                    "width": "18px",
+                    "height": "18px",
+                    "flexShrink": "0"
+                  }
+                }
+              }
+            },
+            "propConfig": {
+              "props.enabled": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.canScheduleNwg"
+                  }
+                }
+              },
+              "props.style.backgroundColor": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "'#FFFFFF'"
+                  }
+                }
+              },
+              "props.style.border": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.custom.canScheduleNwg}, '1px solid #E87722', '1px solid #D8DEE7')"
+                  }
+                }
+              },
+              "props.style.color": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.custom.canScheduleNwg}, '#E87722', '#8A929E')"
+                  }
+                }
+              },
+              "props.image.icon.color": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.custom.canScheduleNwg}, '#E87722', '#8A929E')"
+                  }
+                }
+              },
+              "position.display": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "{view.custom.componentInfo.found} && {view.custom.componentInfo.isNWG}"
+                  }
+                }
+              }
+            },
+            "events": {
+              "dom": {
+                "onClick": {
+                  "type": "script",
+                  "scope": "G",
+                  "config": {
+                    "script": "\tr = self.view.custom.componentInfo\n\tsid = (self.view.custom.searchText or '').strip()\n\tif not r or not r['found'] or not sid:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': 'Search a valid ComponentID first.', 'error': True}, showCloseIcon=False, modal=True)\n\t\treturn\n\targs = {'componentID': sid, 'itemName': r['itemName'], 'reason': self.view.custom.reason}\n\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Scheduling pre-paint...', 'actionKey': 'scheduleNwgPrePaint', 'actionArgs': args, 'doneMsg': 'sccWoDone'}, modal=True, showCloseIcon=False)\n"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.input.button",
+            "meta": {
+              "name": "PreAssy_Button"
+            },
+            "position": {
+              "basis": "50px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Schedule for Pre-Assembly (TF000X)",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#E87722",
+                "border": "1px solid #E87722",
+                "borderRadius": "8px",
+                "fontWeight": "600",
+                "fontSize": "15px",
+                "padding": "11px 18px",
+                "overflow": "hidden",
+                "whiteSpace": "nowrap"
+              },
+              "image": {
+                "icon": {
+                  "path": "material/build",
+                  "color": "#E87722",
+                  "style": {
+                    "width": "18px",
+                    "height": "18px",
+                    "flexShrink": "0"
+                  }
+                }
+              }
+            },
+            "propConfig": {
+              "props.enabled": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.canScheduleNwg"
+                  }
+                }
+              },
+              "props.style.backgroundColor": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "'#FFFFFF'"
+                  }
+                }
+              },
+              "props.style.border": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.custom.canScheduleNwg}, '1px solid #E87722', '1px solid #D8DEE7')"
+                  }
+                }
+              },
+              "props.style.color": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.custom.canScheduleNwg}, '#E87722', '#8A929E')"
+                  }
+                }
+              },
+              "props.image.icon.color": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.custom.canScheduleNwg}, '#E87722', '#8A929E')"
+                  }
+                }
+              },
+              "position.display": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "{view.custom.componentInfo.found} && {view.custom.componentInfo.isNWG}"
+                  }
+                }
+              }
+            },
+            "events": {
+              "dom": {
+                "onClick": {
+                  "type": "script",
+                  "scope": "G",
+                  "config": {
+                    "script": "\tr = self.view.custom.componentInfo\n\tsid = (self.view.custom.searchText or '').strip()\n\tif not r or not r['found'] or not sid:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': 'Search a valid ComponentID first.', 'error': True}, showCloseIcon=False, modal=True)\n\t\treturn\n\targs = {'componentID': sid, 'reason': self.view.custom.reason}\n\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Scheduling pre-assembly...', 'actionKey': 'scheduleNwgPreAssembly', 'actionArgs': args, 'doneMsg': 'sccWoDone'}, modal=True, showCloseIcon=False)\n"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "Warn"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Mark Complete sets Status 3 + CompletedTimestamp on the selected row (no line cascade).",
+              "style": {
+                "color": "#E8920C",
+                "fontSize": "13px",
+                "fontWeight": "400",
+                "lineHeight": "1.5",
+                "textAlign": "left"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "scripts": {
+      "customMethods": [],
+      "extensionFunctions": null,
+      "messageHandlers": [
+        {
+          "messageType": "sccWoDone",
+          "pageScope": false,
+          "sessionScope": true,
+          "viewScope": false,
+          "script": "\tsystem.perspective.closePopup('sccProgress')\n\tok = payload.get('ok', False)\n\tmsg = payload.get('message', '')\n\tif msg:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': msg, 'error': not ok}, showCloseIcon=False, modal=True)\n\tsid = (self.view.custom.searchText or '').strip()\n\tself.view.custom.chartId = sid\n\tif sid:\n\t\tself.view.custom.scheduleRows = StationControl.SCC.getScheduleEntries(sid)\n\telse:\n\t\tself.view.custom.scheduleRows = []\n\tself.view.custom.showTable = True\n"
+        },
+        {
+          "messageType": "sccOverviewDone",
+          "pageScope": false,
+          "sessionScope": true,
+          "viewScope": false,
+          "script": "\tsid = (self.view.custom.searchText or '').strip()\n\tif sid:\n\t\tself.view.custom.scheduleRows = StationControl.SCC.getScheduleEntries(sid)\n\t\tself.view.custom.showTable = True\n"
+        }
+      ]
+    }
+  }
+}

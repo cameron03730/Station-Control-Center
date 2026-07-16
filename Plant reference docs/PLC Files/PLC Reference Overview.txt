@@ -1,0 +1,1011 @@
+Factory Automation PLC (L5K) — Reference
+Compact reference for Factory_Automation_PLC_CL.L5K — Studio 5000 V35 controller export.
+Verbose cosmetic metadata (security codes, serial numbers, sync settings, RPI defaults), tag descriptions, and per-rung ladder-logic detail have been stripped. UDT and AOI definitions are kept verbatim because they're the contract surface other code targets.
+Controller
+
+Name: Factory_Automation_PLC_Test
+ProcessorType: 1756-L83E
+Major version: 35
+Export: RSLogix 5000 v35.00
+
+User-Defined Types — 23 UDTs
+Each UDT below is shown with its member list (name : type). Descriptions retained where present at the type level. Member-level descriptions stripped.
+AMR
+AMR control and supervision data.
+  AMR_Status_Coms_Ignition_With_FPLC AMR_Coms_FPLC
+AMR_Status_Coms_Ignition_With_FPLC
+Status Data recieved from AMR (AMR to Navithor to Ignition to FPLC
+  SINT Machine_At_Target  # 1 = machine is at $QTargetSymbolPoint$Q, 0 = machi
+  DINT Target_Symbol_Point  # ID of the symbolic point that is the current targe
+  REAL X_Location  # X Location of AMR
+  REAL Y_Location  # Y Location of AMR
+  STRING Component_ID  # Serial Number of component on AMR
+  STRING Component_ID_2  # Serial Number of  2 component on AMR used for Pain
+  SINT Pairing_Status  # 0=Unpaired, 1= Front 2= Rear
+  INT Paired_Vehicle  # Number of AMR Paired with.
+  SINT Lift_Height  # 0-4 Are valid lift positions.
+  SINT Charging_Status  # 0= Not charging, 1= Charging Requested, 2= Chargin
+  DINT Battery_Level  # 0-100% Battery Charge
+Class_1_Station
+Class 1 Station UDT needed for all Class 1 and higher stations.
+  Ignition_to_Station From_Ignition
+  Station_to_Ignition To_Ignition
+  TIMER Takt_Timer
+  TIMER Over_Takt_Timer
+  Station_Interlocks Ignition_Interlocks  # Display interlocks for Ignition.
+  INT Station_Status  # Intermediate Bit used to set To_Ignition_Station_S
+  SINT ZZZZZZZZZZClass_1_St6
+  BIT Status_0 ZZZZZZZZZZClass_1_St6:0  # No Build
+  BIT Status_1 ZZZZZZZZZZClass_1_St6:1  # Waiting for Cycle Start
+  BIT Status_2 ZZZZZZZZZZClass_1_St6:2  # Work In Progres
+  BIT Status_3 ZZZZZZZZZZClass_1_St6:3  # Work Complete
+  BIT Status_4 ZZZZZZZZZZClass_1_St6:4  # Process Abort
+  BIT Status_5 ZZZZZZZZZZClass_1_St6:5  # Interlock Bypassed
+  BIT Status_6 ZZZZZZZZZZClass_1_St6:6  # Alarm Active
+  BIT Status_7 ZZZZZZZZZZClass_1_St6:7  # Help Requested
+  SINT ZZZZZZZZZZClass_1_St15
+  BIT Status_8 ZZZZZZZZZZClass_1_St15:0  # Buffer Station
+  BIT Status_9 ZZZZZZZZZZClass_1_St15:1  # Manual Material Exit PB Not Pressed
+  BIT Status_10 ZZZZZZZZZZClass_1_St15:2  # Non-Conformance Cycle
+Class_2_AMR_Station
+UDT that will be used at all stations with AMR movement i.e. Class 2 and higher.
+  DINT Entrance_Interlocks  # Array of BOOLs that must all be satisfied in order
+  DINT Exit_Interlocks  # Array of BOOLs that must be satisfied in order for
+  DINT AMR_Number_Assigned_To_Station  # Current AMR number assigned to station. AMR can be
+  DINT Dest_Symbolic_Point_ID  # Number value of where the AMR needs to go when it 
+  DINT Paired_Station_Symbolic_ID  # Used by FSC to find AMR assigned to Paired station
+  DINT AMR_Charging_Time  # Charge time in Seconds
+  DINT CFG_Station_Symbolic_ID  # Symbolic ID of the station.
+  INT AMR_SGV_Config  # 1= AMR Station 2=SGV $RStation
+  INT Load_Unload_Config  # 0= Not a load or Unload Station 1=Loading Station 
+  INT Paired_AMR_ID  # ID of the AMR that is to be paired at the station.
+  SINT ZZZZZZZZZZClass_2_AM10
+  BIT Permission_To_Enter ZZZZZZZZZZClass_2_AM10:0  # True if AMR/SVG is allowed to enter station
+  BIT Permission_To_Exit ZZZZZZZZZZClass_2_AM10:1  # True if AMR/SVG is allowed to leave station.
+  BIT AMR_In_Station ZZZZZZZZZZClass_2_AM10:2  # True if AMR is in position.
+  BIT AMR_Enroute ZZZZZZZZZZClass_2_AM10:3  # AMR is Enroute to station.
+  BIT AMR_Station_Charge_Enable ZZZZZZZZZZClass_2_AM10:4  # 1= Station has charging time required. 0= No charg
+  BIT SGV_In_Station ZZZZZZZZZZClass_2_AM10:5  # True if SGV is in position.
+  BIT Component_ID_Alarm_Bypass ZZZZZZZZZZClass_2_AM10:6  # Supervisory Bypass of Component ID Alarm
+  BIT AMR_Charge_Timer_Bypass ZZZZZZZZZZClass_2_AM10:7  # Bypasses charge timer interlock,
+  SINT ZZZZZZZZZZClass_2_AM19
+  BIT Material_Handler_In_Station ZZZZZZZZZZClass_2_AM19:0  # True when either an AMR or an SGV is in station.
+  BIT Material_Handler_Enroute ZZZZZZZZZZClass_2_AM19:1  # True when either an AMR or an SGV is enroute
+  BIT Unpair_CMD ZZZZZZZZZZClass_2_AM19:2  # 1= Unpair Command Active
+  BIT Pair_CMD ZZZZZZZZZZClass_2_AM19:3  # 1= Pair Command Active
+  Ignition_Toggle_PB AMR_Component_ID_Reset_PB  # Ignition pushbutton to reset AMR Component ID
+  Ignition_Toggle_PB Material_Source_Select_PB  # Ignition Toggle Button to select the source of mat
+  Ignition_Toggle_PB Manual_Material_Entry_PB  # Ignition pushbutton to confirm manual material del
+  Ignition_Toggle_PB Manual_Material_Exit_Confirmation_PB  # Ignition pushbutton to confirm manual material exi
+  Ignition_Toggle_PB Send_Paired_Command_PB  # Pairing and Unpairing command. 1= Pair
+  DINT Station_Array_ID  # This sets the station array position.
+Factory_From_Tube_Weld_UDT
+Used to signal Ignition that DMR event has occurred in stage 1 and the current work order needs to be scheduled for Peck welder.
+  SINT ZZZZZZZZZZFactory_Fr0
+  BIT DMR_Initiated ZZZZZZZZZZFactory_Fr0:0  # Used to signal Ignition that DMR event has occurre
+  BIT Heatbeat ZZZZZZZZZZFactory_Fr0:1  # Fluctuates between TRUE and FALSE to ensure equipm
+  BIT ComFlt ZZZZZZZZZZFactory_Fr0:2  # Indicated that the subsystem is failing to receive
+  BIT Welder_Process_Complete ZZZZZZZZZZFactory_Fr0:3  # Set TRUE once the entire Process is Complete
+  BIT Welder_Abort_Complete ZZZZZZZZZZFactory_Fr0:4  # Set TRUE once the Abort process has been completed
+  BIT Permission_To_Enter ZZZZZZZZZZFactory_Fr0:5  # Set TRUE when equipment is OK with an AMR entering
+  BIT Permission_To_Exit ZZZZZZZZZZFactory_Fr0:6  # Set TRUE when equipment is out of the way and it i
+  DINT Recipe_Error  # Alarm for when the Recipe data sent from MES is no
+  DINT OEE_State  # BLOCKED=0, RUNNING=1, PLANNED DOWNTIME= 4, UNPLANN
+  DINT Current_Sequence_ID  # Numeric Value that determines what state the machi
+  STRING Current_Sequence_String  # Description of the state stage 1 is in
+  DINT Sub_System_Command
+  DINT Sub_System_Status
+  DINT DMR_Code  # 1= Wrong Part, 2=Length Check Fail, 3= Width Check
+  DINT Completed_Part_Number  # The part number of the completed tube. Sent when c
+Factory_To_Frame_Weld_UDT
+Single value (numeric value
+  DINT Recipe_ID  # Single value (numeric value, not BOOLs) identifyin
+  DINT Factory_Command
+  DINT Fleet_Status
+  SINT ZZZZZZZZZZFactory_To3
+  BIT AMR_In_Position ZZZZZZZZZZFactory_To3:0  # Gets set TRUE when AMR is in position and ready fo
+  BIT Heartbeat ZZZZZZZZZZFactory_To3:1  # Fluctuates between TRUE and FALSE to ensure equipm
+  BIT Abort ZZZZZZZZZZFactory_To3:2  # Command sent to equipment when the process must be
+  BIT ComFlt ZZZZZZZZZZFactory_To3:3  # PLC is failing to receive comms, indicating unidir
+Factory_To_Lift_Tool
+Used for communication to JR Lift tools
+  DINT Recipe_ID  # Single value identifying what recipe to use.
+  DINT Fleet_Status
+  DINT Fleet_Command
+  SINT ZZZZZZZZZZFactory_To3
+  BIT In_Position ZZZZZZZZZZFactory_To3:0  # Gets set True when AMR is in position and ready fo
+  BIT Heartbeat ZZZZZZZZZZFactory_To3:1  # Fluctuates between true and false to ensure equipm
+  BIT Comflt ZZZZZZZZZZFactory_To3:2  # Indicates that the  PLC is failing to receive comm
+  BIT Abort ZZZZZZZZZZFactory_To3:3  # Command sent to equipment when the process must be
+Factory_To_Material_Bay
+Indicates number of the bay requesting to enter.
+  DINT Request_To_Enter_Bay  # Indicates number of the bay requesting to enter.
+  SINT ZZZZZZZZZZFactory_to1
+  BIT Cart_Removal_Confirm ZZZZZZZZZZFactory_to1:0  # Definition of Boom Kit on the cart.
+  BIT Cart_Loaded_Confirmation ZZZZZZZZZZFactory_to1:1
+Factory_To_Tube_Weld
+Item Number of the tube that identifies what recipe to use. (Only populated for TT0700
+  DINT Recipe_ID  # Item Number of the tube that identifies what recip
+  STRING Recipe_Desc  # Description of recipe commanded. Used to provide i
+  DINT Factory_Command
+  DINT Factory_Status
+  SINT ZZZZZZZZZZFactory_To4
+  BIT AMR_In_Position ZZZZZZZZZZFactory_To4:0  # Gets set TRUE when AMR is in position and ready fo
+  BIT Heartbeat ZZZZZZZZZZFactory_To4:1  # Fluctuates between TRUE and FALSE to ensure equipm
+  BIT ComFlt ZZZZZZZZZZFactory_To4:2  # Indicates that the Factoryt PLC is failing to rece
+  BIT Welder_Abort ZZZZZZZZZZFactory_To4:3  # Command sent to equipment when the process must be
+  DINT Selected_Bay  # Bay Material Requested to Pulled From.
+Frame_Weld_To_Factory_UDT
+Blocked=0
+  DINT Sub_System_Command
+  DINT Sub_System_Status
+  DINT OEE_State  # Blocked=0, Running=1, Planned Downtime= 4, Unplann
+  DINT Recipe_ID_Override  # Recipe ID selected locally on the weld cell HMI to
+  DINT Current_Sequence_ID  # Numeric Value that determines what state the machi
+  STRING Current_Sequence_String  # String description of the current Sequence Step wi
+  SINT ZZZZZZZZZZFrame_Weld6
+  BIT Heartbeat ZZZZZZZZZZFrame_Weld6:0  # Fluctuates between TRUE and FALSE to ensure equipm
+  BIT ComFLT ZZZZZZZZZZFrame_Weld6:1  # Indicates that the subsystem is failing to receive
+  BIT Abort_Complete ZZZZZZZZZZFrame_Weld6:2  # Set TRUE once the Abort process has been complete 
+  BIT Recipe_Error ZZZZZZZZZZFrame_Weld6:3  # Alarm for when the Recipe data sent from MES is no
+  BIT Process_Complete ZZZZZZZZZZFrame_Weld6:4  # Set TRUE once entire Process is Complete
+  BIT Permission_To_Enter ZZZZZZZZZZFrame_Weld6:5  # Set TRUE when equipment is OK with an AMR entering
+  BIT Permission_To_Exit ZZZZZZZZZZFrame_Weld6:6  # Set TRUE when equipment is out of the way, and it
+Ignition_to_Station
+Component ID provided from ignition.
+  STRING ComponentID  # Component ID provided from ignition.
+  STRING ComponentID_2  # Component ID 2 provided from ignition.
+  DINT Takt_Time_Preset
+  Ignition_Toggle_PB Work_Complete
+  Ignition_Toggle_PB Help_Requested
+  Ignition_Toggle_PB Barcode_Verification
+  SINT ZZZZZZZZZZIgnition_t6
+  BIT Station_Batch_Complete ZZZZZZZZZZIgnition_t6:0  # Station Batch Complete bit set by Ignition Batch.
+  BIT WC_Phase_Active ZZZZZZZZZZIgnition_t6:1  # Work Complete Phase Active
+  BIT Active_Workstation ZZZZZZZZZZIgnition_t6:2  # 0=Buffer 1=Active Workstation
+  BIT Station_No_Build ZZZZZZZZZZIgnition_t6:3  # 1= No build 0= Build
+  SINT Comp_Load_CFG  # 1= Load 1 component ID.$N2= Load 2 component ID$'s
+  Ignition_Toggle_PB Non_Conformance_PB
+Lift_Tool_To_Factory
+String description of the current sequence step within the machine.
+  STRING Current_Sequence_String  # String description of the current sequence step wi
+  DINT Current_Sequence_ID  # Numeric value that determines what state the machi
+  DINT OEE_State  # BLOCKED=0, RUNNING=1, PLANNED DOWNTIME= 4, UNPLANN
+  DINT Sub_System_Command
+  DINT Sub_System_Status
+  SINT ZZZZZZZZZZLift_Tool_5
+  BIT Process_Complete ZZZZZZZZZZLift_Tool_5:0  # Set true once entire process is complete
+  BIT Heartbeat ZZZZZZZZZZLift_Tool_5:1  # Fluctuates between true and false to ensure equipm
+  BIT Comflt ZZZZZZZZZZLift_Tool_5:2  # Indicates that the  PLC is failing to receive coms
+  BIT Permission_To_Enter ZZZZZZZZZZLift_Tool_5:3  # Set TRUE when equipment is OK with and AMR enterin
+  BIT Permission_To_Exit ZZZZZZZZZZLift_Tool_5:4  # Set TRUE when the equipment is out of the way and 
+  BIT Recipe_Error ZZZZZZZZZZLift_Tool_5:5  # Alarm for when the Recipe data sent from the Mes i
+  BIT Abort_Complete ZZZZZZZZZZLift_Tool_5:6  # Lift Tool Abort is Complete.
+Material_Bay_to_Factory
+Indicates Presence of a cart
+  SINT ZZZZZZZZZZMaterial_B0
+  BIT Cart_Present ZZZZZZZZZZMaterial_B0:0  # Indicates Presence of a cart
+  BIT Bay_Locked ZZZZZZZZZZMaterial_B0:1  # Indicates the bay is locked and the cart cannot be
+  BIT Permission_To_Enter ZZZZZZZZZZMaterial_B0:2  # Indicates the Bay is available for material cart l
+Station_Entry_Permissive_Info
+Symbolic ID of the Station. This is set in the Station Configuration Routine.
+  DINT Station_Symbolic_ID  # Symbolic ID of the Station. This is set in the Sta
+  SINT ZZZZZZZZZZStation_En1
+  BIT Permission_To_Enter ZZZZZZZZZZStation_En1:0  # Permission to enter for a given station set in the
+  BIT SGV_Enroute ZZZZZZZZZZStation_En1:1  # SGV Enroute is set in the Template class 2 or high
+  SINT Set_AMR_SGV_Config  # Used to set downstream station to AMR or SGV based
+Station_Interlocks
+Interlock bits for display in ignition. These bits are not for control. 0=Interlock not made 1= good interlock
+  SINT ZZZZZZZZZZStation_In0
+  BIT WC_0 ZZZZZZZZZZStation_In0:0  # Component ID interlock.
+  BIT WC_1 ZZZZZZZZZZStation_In0:1  # Phase active interlock.
+  BIT WC_2 ZZZZZZZZZZStation_In0:2
+  BIT WC_3 ZZZZZZZZZZStation_In0:3
+  BIT WC_4 ZZZZZZZZZZStation_In0:4
+  BIT WC_5 ZZZZZZZZZZStation_In0:5
+  BIT WC_6 ZZZZZZZZZZStation_In0:6
+  BIT WC_7 ZZZZZZZZZZStation_In0:7
+  SINT ZZZZZZZZZZStation_In9
+  BIT WC_8 ZZZZZZZZZZStation_In9:0
+  BIT WC_9 ZZZZZZZZZZStation_In9:1
+  BIT Entry_0 ZZZZZZZZZZStation_In9:2  # AMR/SGV  In Station interlock.
+  BIT Entry_1 ZZZZZZZZZZStation_In9:3  # AMR/SGV enroute interlock.
+  BIT Entry_2 ZZZZZZZZZZStation_In9:4
+  BIT Entry_3 ZZZZZZZZZZStation_In9:5
+  BIT Entry_4 ZZZZZZZZZZStation_In9:6
+  BIT Entry_5 ZZZZZZZZZZStation_In9:7
+  SINT ZZZZZZZZZZStation_In18
+  BIT Entry_6 ZZZZZZZZZZStation_In18:0
+  BIT Entry_7 ZZZZZZZZZZStation_In18:1
+  BIT Entry_8 ZZZZZZZZZZStation_In18:2
+  BIT Entry_9 ZZZZZZZZZZStation_In18:3
+  BIT Exit_0 ZZZZZZZZZZStation_In18:4  # Active work station and work complete interlock.
+  BIT Exit_1 ZZZZZZZZZZStation_In18:5  # Destination station entrance interlock.
+  BIT Exit_2 ZZZZZZZZZZStation_In18:6  # Charge time complete interlock.
+  BIT Exit_3 ZZZZZZZZZZStation_In18:7  # Component ID Interlock.
+  SINT ZZZZZZZZZZStation_In27
+  BIT Exit_4 ZZZZZZZZZZStation_In27:0  # Paired AMR In Station Interlock.
+  BIT Exit_5 ZZZZZZZZZZStation_In27:1  # Front and Rear AMR Status = Paired Interlock.
+  BIT Exit_6 ZZZZZZZZZZStation_In27:2
+  BIT Exit_7 ZZZZZZZZZZStation_In27:3
+  BIT Exit_8 ZZZZZZZZZZStation_In27:4
+  BIT Exit_9 ZZZZZZZZZZStation_In27:5
+Station_to_Ignition
+0 - No Build
+  INT AMR_Number_In_Station
+  INT Station_Status  # 0 - No Build, $N1 - Waiting for Cycle Start, $N2 -
+  DINT Current_Takt_Time
+  SINT ZZZZZZZZZZStation_to3
+  BIT Next_Component_Loaded ZZZZZZZZZZStation_to3:0  # Next Component Loaded into Station.
+  BIT Station_Cycle ZZZZZZZZZZStation_to3:1  # 1= Station in cycle 2= Station not in cycle
+Traffic_Lights
+Traffic Light Comunications Fault.
+  SINT ZZZZZZZZZZTraffic_Li0
+  BIT TL_Comflt ZZZZZZZZZZTraffic_Li0:0  # Traffic Light Comunications Fault.
+  BIT TL_ON ZZZZZZZZZZTraffic_Li0:1  # Turns Traffic Light On
+  REAL X_Max  # Parameter used for  Traffic Light Boundry.
+  REAL X_Min  # Parameter used for  Traffic Light Boundry.
+  REAL Y_Max  # Parameter used for  Traffic Light Boundry.
+  REAL Y_Min  # Parameter used for  Traffic Light Boundry.
+  Traffic_Light_Control TL_Control  # AOI that checks all AMR X,Y positions against conf
+UDT_Boom_Carrier
+_BoomNCarrierNumberNCarrier Number
+NCarrierNumberN601-775_
+  INT Boom_Carrier_Number  # Boom$NCarrier Number$N601-775
+  USINT Sequence_Number  # Boom Carrier$NSequence Number$N1-175
+  STRING Part_Number  # Boom$NPart Number
+  SINT Part_Type  # Part Type$NBase = 1$NMid = 2$NFly = 3
+  DINT Spare_1  # Spare Field 1
+  DINT Spare_2  # Spare Field 2
+  DINT Spare_3  # Spare Field 3
+  DINT Spare_4  # Spare Field 4
+UDT_Boom_Unload
+  CONNECTION_STATUS Communication_Status
+  DINT Discrete
+  UDT_Unload_Carrier Unload_Carrier
+  UDT_Unload_Carrier On_Deck_Carrier
+  DINT Spare_1
+  DINT Spare_2
+  DINT Spare_3
+  DINT Spare_4
+UDT_Frame_Carrier
+Frame $NCarrier Number
+  CONNECTION_STATUS Communication_Status
+  DINT Discrete
+  INT Frame_Carrier_Number  # Frame $NCarrier Number
+  INT Sequence_Number  # Frame Carrier$NSequence Number
+  SINT Part_Type  # Part Type$NFrame = 1$NSingle Boom = 2$NTwo Booms =
+  STRING Component_Serial_Number_1  # Part 1$NSerial Number
+  STRING Component_Serial_Number_2  # Part 2$NSerial Number
+  SINT Unload_Destination  # 1 = Boom$N2 = Frame Storage$N3 = Bypass Lane
+  SINT Boom_1_Type  # Boom 1 Type$N0= No Boom$N1 = Base$N2 = Mid$N3 = Fl
+  SINT Boom_2_Type  # Boom 2 Type$N0= No Boom$N1 = Base$N2 = Mid$N3 = Fl
+  SINT Shot_Blast  # Shot Blast$N1 = Blast$N2 = No Blast
+  STRING Color  # Color$NCode
+  USINT Prime_Recipe  # Prime Robot Recipe 1-255
+  USINT Topcoat_Recipe  # Topcoat Recipe 1-255
+  INT Cure_Time_Accumulated  # Cure$NAccumulated Time$N1/10 Minutes
+  DINT Spare_1  # Shot Blast Recipe
+  DINT Spare_2  # Spare Field 2
+  DINT Spare_3  # Spare Field 3
+  DINT Spare_4  # Spare Field 4
+UDT_Frame_Unload
+Carrier Information$NAt Unload $NStation
+  CONNECTION_STATUS Communication_Status
+  DINT Discrete
+  UDT_Unload_Carrier Unload_Carrier  # Carrier Information$NAt Unload $NStation
+  UDT_Unload_Carrier On_Deck_Carrier  # Carrier Information$NNext Carrier$Nto Unload Stati
+  SINT Unload_Queue  # Number of$NCarriers in$NFrame Storage$NLanes 1 - 4
+  SINT Bypass_Lane_Queue  # Number of$NCarriers in$NBypass Lane
+  SINT ZZZZZZZZZZUDT_Frame_6
+  BIT Next_Queue_To_Unload ZZZZZZZZZZUDT_Frame_6:0  # 0 = Lanes 1 - 4$N1 = Bypass Lane
+  DINT Spare_1
+  DINT Spare_2
+  DINT Spare_3
+  DINT Spare_4
+UDT_Unload_Carrier
+Conveyor$NCarrier Number
+  INT Carrier_ID  # Conveyor$NCarrier Number
+  STRING Component_Serial_Number
+  STRING Component_Serial_Number_2
+  SINT ZZZZZZZZZZUDT_Unload3
+  BIT Carrier_Present ZZZZZZZZZZUDT_Unload3:0  # 0 = Not Present$N1 = Present
+UDT_Unload_Reload
+  CONNECTION_STATUS Communication_Status
+  DINT Discrete
+  STRING Component_Serial_Number
+  DINT Frame_Carrier_ID
+  DINT Boom_Carrier_ID
+Add-On Instructions (AOIs) — 9 total
+Each AOI is shown with: revision, description, parameter signature (in/out), and a snippet of the main logic routine. Local tags and full ladder/structured-text bodies are summarized.
+Ignition_Toggle_PB
+Revision 2.0 · Vendor: MDI
+Parameters:
+NameTypeUsageEnableInBOOLInputEnableOutBOOLOutputPB_ControlBOOLInputPB_ToggleBOOLOutputPB_ClearDINTInputPB_EnableBOOLOutput
+AMR_Station_Control
+Revision 1.0
+Parameters:
+NameTypeUsageEnableInBOOLInputEnableOutBOOLOutputAMR_StationClass_2_AMR_StationInOutAMR_DataAMR[151]InOutStationClass_1_StationInOut
+Station_Control
+Revision 1.1
+Parameters:
+NameTypeUsageEnableInBOOLInputEnableOutBOOLOutputStationClass_1_StationInOut
+PG_CONSTANTS
+Revision 1.0 · Vendor: Multi-Dimensional Integration
+
+Program Constants
+
+Parameters:
+NameTypeUsageEnableInBOOLInputEnableOutBOOLOutputNOT_USED_BOOLBOOLOutputNOT_USED_DINTDINTOutputNOT_USED_INTINTInputOFFBOOLOutputONBOOLOutputTEMP_AFIBOOLOutput
+PG_FLASH
+Revision 1.0 · Vendor: Multi-Dimensional Integration
+
+Flashing Bits
+
+Parameters:
+NameTypeUsageEnableInBOOLInputEnableOutBOOLOutputT1msBOOLOutputT2msBOOLOutputT4msBOOLOutputT8msBOOLOutputT16msBOOLOutputT32msBOOLOutputT64msBOOLOutputT128msBOOLOutputT256msBOOLOutputT512msBOOLOutputT1024msBOOLOutputT2048msBOOLOutputT4096msBOOLOutputT8192msBOOLOutputT16384msBOOLOutputT32768msBOOLOutput
+PG_PLC_WDM
+Revision 1.1 · Vendor: Multi-Dimensional Integration
+Parameters:
+NameTypeUsageEnableInBOOLInputEnableOutBOOLOutputTMDINTInputCOM_FLTBOOLOutputHEARTBEATBOOLInput
+PG_PLC_MSG
+Revision 1.1 · Vendor: Multi-Dimensional Integration
+Parameters:
+NameTypeUsageEnableInBOOLInputEnableOutBOOLOutputMSG_TRGBOOLInputWD_TMDINTInputCOM_FLTBOOLOutputHEARTBEATBOOLInOutMSGMESSAGEInOut
+Traffic_Light_Control
+Revision 1.0 · Vendor: Multi-Dimensional Integration
+
+Scans Each AMR location and checks its location against a configurable X
+
+Parameters:
+NameTypeUsageEnableInBOOLInputEnableOutBOOLOutputAMR_DataAMR[301]InOutX_MaxDINTInputX_MinDINTInputY_MaxDINTInputY_MinDINTInputTL_ONBOOLOutput
+Tube_Welder_Pickup
+Revision 1.0 · Vendor: Multi-Dimensional Integration
+
+Scans Each AMR location and checks its location against a configurable X
+
+Parameters:
+NameTypeUsageEnableInBOOLInputEnableOutBOOLOutputAMR_DataAMR[301]InOutX_MaxDINTInputX_MinDINTInputY_MaxDINTInputY_MinDINTInputAMR_PresentBOOLOutput
+Modules — 92 total
+ModuleParentCatalog / TypeDescriptionLocalLocal1756-L83ETube_WelderENET21756-L83ESJR Tube Welder JR224595Paint_Line_Conveyor_PLCENET25069-L340ERS2Bohn Paint Line Conveyor PLC.TW030A_Frame_WelderENET21769-L30ERMSTW030B_Frame_WelderENET21769-L30ERMSTW030C_Frame_WelderENET21769-L30ERMSTF0600_Cab_Lift_ENETENET21756-EN2TJR Cab LiftTF0600_Cab_Lift_PLCTF0600_Cab_Lift_ENET1756-L83ESTF1200_Engine_Lift_ENETENET21756-EN2TJR Engine LiftTF1200_Engine_Lift_PLCTF1200_Engine_Lift_ENET1756-L83ESTF3300_Tire_Lift_ENETENET21756-EN2TJR Tire LiftTF3300_Tire_Lift_PLCTF3300_Tire_Lift_ENET1756-L83ESTF3500_Counterweight_Lifter_ENETENET21756-EN2TJR Cab LiftTF3500_Counterweight_Lifter_PLCTF3500_Counterweight_Lifter_ENET1756-L83ESENET1Local12ENET2Local12TrafficLight# (38 modules: TrafficLight001…TrafficLight038)ENET212(templated group)Output_Relay1TrafficLight0011734-OW4/COutput_Relay2TrafficLight0021734-OW4/COutput_Relay3TrafficLight0031734-OW4/COutput_Relay4TrafficLight0041734-OW4/COutput_Relay5TrafficLight0051734-OW4/COutput_Relay6TrafficLight0061734-OW4/COutput_Relay7TrafficLight0071734-OW4/COutput_Relay8TrafficLight0081734-OW4/COutput_Relay9TrafficLight0091734-OW4/COutput_Relay10TrafficLight0101734-OW4/COutput_Relay11TrafficLight0111734-OW4/COutput_Relay12TrafficLight0121734-OW4/COutput_Relay13TrafficLight0131734-OW4/COutput_Relay14TrafficLight0141734-OW4/COutput_Relay15TrafficLight0151734-OW4/COutput_Relay16TrafficLight0161734-OW4/COutput_Relay17TrafficLight0171734-OW4/COutput_Relay18TrafficLight0181734-OW4/COutput_Relay19TrafficLight0191734-OW4/COutput_Relay20TrafficLight0201734-OW4/COutput_Relay21TrafficLight0211734-OW4/COutput_Relay22TrafficLight0221734-OW4/COutput_Relay23TrafficLight0231734-OW4/COutput_Relay24TrafficLight0241734-OW4/COutput_Relay25TrafficLight0251734-OW4/COutput_Relay26TrafficLight0261734-OW4/COutput_Relay27TrafficLight0271734-OW4/COutput_Relay28TrafficLight0281734-OW4/COutput_Relay29TrafficLight0291734-OW4/COutput_Relay30TrafficLight0301734-OW4/COutput_Relay31TrafficLight0311734-OW4/COutput_Relay32TrafficLight0321734-OW4/COutput_Relay33TrafficLight0331734-OW4/COutput_Relay34TrafficLight0341734-OW4/COutput_Relay35TrafficLight0351734-OW4/COutput_Relay36TrafficLight0361734-OW4/COutput_Relay37TrafficLight0371734-OW4/COutput_Relay38TrafficLight0381734-OW4/C
+Programs — 10 total
+Program Boom_Fabrication
+
+Routines: 44
+Local tags: present (1 lines)
+
+Templated routine groups (one representative shown in full, others share the same structure):
+Family: {STN}_Class_1 — 31 routines
+Members: TT010A_Class_1, TT010B_Class_1, TT020A_Class_1, TT020B_Class_1, TT030A_Class_1, TT030B_Class_1, TT040A_Class_1, TT040B_Class_1, TT050A_Class_1, TT050B_Class_1, TT0600_Class_1, TT090A_Class_1, TT090B_Class_1, TT090C_Class_1, TT100A_Class_1, TT100B_Class_1, TT100C_Class_1, TT120A_Class_1, TT120B_Class_1, TT130A_Class_1, TT130B_Class_1, TT130C_Class_1, TT130D_Class_1, TT140A_Class_1, TT140B_Class_1, TT150A_Class_1, TT150B_Class_1, TT150C_Class_1, TT150D_Class_1, TT160A_Class_1, TT160B_Class_1
+Representative: TT010A_Class_1 (73 content lines)
+				RC: "Class 1 Station Template Version 1.0 used in this routine. $N"
+				    "Any changes to this routine must be noted in detail in this comment.$N"
+				    "$N"
+				    "Changes:";
+				N: NOP();
+				RC: "--------------------------------------------------------------------------- Station Control ---------------------------------------------------------------------------";
+				N: Station_Control(TT010A_Station_Control,TT010A);
+				RC: "--------------------------------------------------------------------------- Takt Timer ---------------------------------------------------------------------------$N"
+				    "$N"
+				    "Convert Takt Time Setpoint (in seconds) to set Takt Timer Preset value (in milliseconds)$N"
+				    "$N"
+				    "While shift active and component ID assigned, continue takt timer. If takt timer finishes start over takt timer.$N"
+				    "$N"
+				    "While takt timer is not done, display remaining time, otherwise display the time over takt as a negative number.$N"
+				    "Set next component loaded.$N"
+...(58 more lines)
+Family: {STN}_Class_2 — 6 routines
+Members: TT0800_Class_2, TT1100_Class_2, TT170A_Class_2, TT170B_Class_2, TT170C_Class_2, TT1710_Class_2
+Representative: TT0800_Class_2 (223 content lines)
+				RC: "Class 2 Station Template Version 1.0 used in this routine. $N"
+				    "Configuration bits for this routine are set routine Station_Configuration$N"
+				    "Any changes to this routine must be noted in detail in this comment.$N"
+				    "$N"
+				    "Changes:";
+				N: NOP();
+				RC: "This rung on first scan sets the FSC array length to scan as determined by rung 0 of the station configuration routine. This is done to allow changes in array sizes.";
+				N: XIC(S:FS)MOV(AMR_Data_Array_Size,TT0800_AMR_Station_FSC.LEN)MOV(Dest_Station_Array_Size,TT0800_Dest_FSC.LEN);
+				RC: "Diagnostic Status Rung$N"
+				    "Used for Troubleshooting only.";
+				N: XIC(TT0800.From_Ignition.WC_Phase_Active)XIC(TT0800.Ignition_Interlocks.WC_0)XIC(TT0800.Ignition_Interlocks.WC_1)XIC(TT0800.Ignition_Interlocks.Entry_0)XIC(TT0800.Ignition_Interlocks.Entry_1)XIC(TT0800.Ignition_Interlocks.Exit_0)XIC(TT0800.Ignition_Interlocks.Exit_1)XIC(TT0800.Ignition_Interlocks.Exit_2)XIC(TT0800.Ignition_Interlocks.Exit_3)XIC(TT0800.Ignition_Interlocks.Exit_4)EQU(TT0800_AMR_Station_FSC.POS,TT0800_Dest_FSC.POS)EQU(TT0800_Pairing_FSC.POS,0)XIC(TT0800_AMR_Station_FSC.FD)XIC(TT0800_Dest_FSC.FD)XIC(TT0800_Pairing_FSC.FD)XIC(TT0800_AMR_Station.Material_Handler_In_Station)XIC(TT0800_AMR_Station.Material_Handler_Enroute)XIC(TT0800_AMR_Station.SGV_In_Station)XIC(TT0800_AMR_Station.AMR_In_Station)XIC(TT0800_AMR_Station.Permission_To_Enter)XIC(TT0800_AMR_Station.Permission_To_Exit)NOP();
+				RC: "--------------------------------------------------------------------------- Station Control ---------------------------------------------------------------------------";
+				N: Station_Control(TT0800_Station_Control,TT0800);
+				RC: "--------------------------------------------------------------------------- Takt Timer ---------------------------------------------------------------------------$N"
+				    "$N"
+...(208 more lines)
+Routines:
+
+Main (43 lines):
+
+  				N: JSR(Peck_WIP_Class_21_Queue,0);
+  				N: JSR(TT010A_Class_1,0);
+  				N: JSR(TT010B_Class_1,0);
+  				N: JSR(TT020A_Class_1,0);
+  ...(39 more lines)
+
+Peck_WIP_Class_21_Queue (93 lines):
+
+  				RC: "XXXX$N"
+  				    "Class 21 Station Template Version 1.0 used in this routine. $N"
+  				    "This code has been simplified and modifed from the Class 2 logic to only be used for queue stations. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  ...(89 more lines)
+
+TT0610_Class_37_Tube_Material_Bay (80 lines):
+
+  				RC: "Class 37 Station Template Version 1.0 used in this routine. $N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  				    "Changes:";
+  ...(76 more lines)
+
+TT0700_Class_39_Tube_Stage_1 (94 lines):
+
+  				RC: "$N"
+  				    "Class 39 Station Template Version 1.0 used in this routine. $N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "Work Complete PB is NA in this template.$N"
+  ...(90 more lines)
+
+TT0710_Class_36_Tube_Stage_2 (85 lines):
+
+  				RC: "$N"
+  				    "Class 36 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment. Work Complete PB is NA in this template.$N"
+  ...(81 more lines)
+
+TT0720_Class_23_Tube_Weld_Unload (231 lines):
+
+  				RC: "Class 2 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(227 more lines)
+
+TT_Tube_Q1_Class_21_Queue (89 lines):
+
+  				RC: "XXXX$N"
+  				    "Class 21 Station Template Version 1.0 used in this routine. $N"
+  				    "This code has been simplified and modifed from the Class 2 logic to only be used for queue stations. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  ...(85 more lines)
+Program Boom_Subassembly
+
+Routines: 5
+Local tags: present (1 lines)
+
+Templated routine groups (one representative shown in full, others share the same structure):
+Family: {STN}_Class_2 — 4 routines
+Members: TB0100_Class_2, TB0500_Class_2, TB0900_Class_2, TB1600_Class_2
+Representative: TB0100_Class_2 (223 content lines)
+				RC: "Class 2 Station Template Version 1.0 used in this routine. $N"
+				    "Configuration bits for this routine are set routine Station_Configuration$N"
+				    "Any changes to this routine must be noted in detail in this comment.$N"
+				    "$N"
+				    "Changes:";
+				N: NOP();
+				RC: "This rung on first scan sets the FSC array length to scan as determined by rung 0 of the station configuration routine. This is done to allow changes in array sizes.";
+				N: XIC(S:FS)MOV(AMR_Data_Array_Size,TB0100_AMR_Station_FSC.LEN)MOV(Dest_Station_Array_Size,TB0100_Dest_FSC.LEN);
+				RC: "Diagnostic Status Rung$N"
+				    "Used for Troubleshooting only.";
+				N: XIC(TB0100.From_Ignition.WC_Phase_Active)XIC(TB0100.Ignition_Interlocks.WC_0)XIC(TB0100.Ignition_Interlocks.WC_1)XIC(TB0100.Ignition_Interlocks.Entry_0)XIC(TB0100.Ignition_Interlocks.Entry_1)XIC(TB0100.Ignition_Interlocks.Exit_0)XIC(TB0100.Ignition_Interlocks.Exit_1)XIC(TB0100.Ignition_Interlocks.Exit_2)XIC(TB0100.Ignition_Interlocks.Exit_3)XIC(TB0100.Ignition_Interlocks.Exit_4)EQU(TB0100_AMR_Station_FSC.POS,TB0100_Dest_FSC.POS)EQU(TB0100_Pairing_FSC.POS,0)XIC(TB0100_AMR_Station_FSC.FD)XIC(TB0100_Dest_FSC.FD)XIC(TB0100_Pairing_FSC.FD)XIC(TB0100_AMR_Station.Material_Handler_In_Station)XIC(TB0100_AMR_Station.Material_Handler_Enroute)XIC(TB0100_AMR_Station.SGV_In_Station)XIC(TB0100_AMR_Station.AMR_In_Station)XIC(TB0100_AMR_Station.Permission_To_Enter)XIC(TB0100_AMR_Station.Permission_To_Exit)NOP();
+				RC: "--------------------------------------------------------------------------- Station Control ---------------------------------------------------------------------------";
+				N: Station_Control(TB0100_Station_Control,TB0100);
+				RC: "--------------------------------------------------------------------------- Takt Timer ---------------------------------------------------------------------------$N"
+				    "$N"
+...(208 more lines)
+Routines:
+
+Main (4 lines):
+
+  				N: JSR(TB0100_Class_2,0);
+  				N: JSR(TB0500_Class_2,0);
+  				N: JSR(TB0900_Class_2,0);
+  				N: JSR(TB1600_Class_2,0);
+Program Cab_Subassembly
+
+Routines: 2
+Local tags: present (1 lines)
+
+Routines:
+
+Main (1 lines):
+
+  				N: JSR(TC0100_Class_1,0);
+
+TC0100_Class_1 (73 lines):
+
+  				RC: "Class 1 Station Template Version 1.0 used in this routine. $N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  				    "Changes:";
+  ...(69 more lines)
+Program Engine_Subassembly
+
+Routines: 2
+Local tags: present (1 lines)
+
+Routines:
+
+Main (1 lines):
+
+  				N: JSR(TE0100_Class_1,0);
+
+TE0100_Class_1 (73 lines):
+
+  				RC: "Class 1 Station Template Version 1.0 used in this routine. $N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  				    "Changes:";
+  ...(69 more lines)
+Program Final_Assembly
+
+Routines: 57
+Local tags: present (1 lines)
+
+Templated routine groups (one representative shown in full, others share the same structure):
+Family: {STN}_Class_1 — 6 routines
+Members: LL0000_Class_1, LL0010_Class_1, TF020A_Class_1, TF020B_Class_1, TF370A_Class_1, TF370B_Class_1
+Representative: LL0000_Class_1 (73 content lines)
+				RC: "Class 1 Station Template Version 1.0 used in this routine. $N"
+				    "Any changes to this routine must be noted in detail in this comment.$N"
+				    "$N"
+				    "Changes:";
+				N: NOP();
+				RC: "--------------------------------------------------------------------------- Station Control ---------------------------------------------------------------------------";
+				N: Station_Control(LL0000_Station_Control,LL0000);
+				RC: "--------------------------------------------------------------------------- Takt Timer ---------------------------------------------------------------------------$N"
+				    "$N"
+				    "Convert Takt Time Setpoint (in seconds) to set Takt Timer Preset value (in milliseconds)$N"
+				    "$N"
+				    "While shift active and component ID assigned, continue takt timer. If takt timer finishes start over takt timer.$N"
+				    "$N"
+				    "While takt timer is not done, display remaining time, otherwise display the time over takt as a negative number.$N"
+				    "Set next component loaded.$N"
+...(58 more lines)
+Family: {STN}_Class_1_MOD — 4 routines
+Members: TF010A_Class_1_MOD, TF010B_Class_1_MOD, TF010C_Class_1_MOD, TF010D_Class_1_MOD
+Representative: TF010A_Class_1_MOD (74 content lines)
+				RC: "Class 1 Station Template Version 1.0 used in this routine. $N"
+				    "Any changes to this routine must be noted in detail in this comment.$N"
+				    "$N"
+				    "Changes:";
+				N: NOP();
+				RC: "--------------------------------------------------------------------------- Station Control ---------------------------------------------------------------------------";
+				N: Station_Control(TF010A_Station_Control,TF010A);
+				RC: "--------------------------------------------------------------------------- Takt Timer ---------------------------------------------------------------------------$N"
+				    "$N"
+				    "Convert Takt Time Setpoint (in seconds) to set Takt Timer Preset value (in milliseconds)$N"
+				    "$N"
+				    "While shift active and component ID assigned, continue takt timer. If takt timer finishes start over takt timer.$N"
+				    "$N"
+				    "While takt timer is not done, display remaining time, otherwise display the time over takt as a negative number.$N"
+				    "Set next component loaded.$N"
+...(59 more lines)
+Family: {STN}_Class_2 — 30 routines
+Members: TF0400_Class_2, TF0500_Class_2, TF0700_Class_2, TF0800_Class_2, TF0900_Class_2, TF1000_Class_2, TF1100_Class_2, TF1300_Class_2, TF1400_Class_2, TF1500_Class_2, TF1600_Class_2, TF1700_Class_2, TF1800_Class_2, TF1900_Class_2, TF2000_Class_2, TF2100_Class_2, TF2200_Class_2, TF2300_Class_2, TF2400_Class_2, TF2500_Class_2, TF2600_Class_2, TF2700_Class_2, TF2800_Class_2, TF2900_Class_2, TF3000_Class_2, TF310A_Class_2, TF310B_Class_2, TF320A_Class_2, TF320B_Class_2, TF3300_Class_2
+Representative: TF0400_Class_2 (223 content lines)
+				RC: "Class 2 Station Template Version 1.0 used in this routine. $N"
+				    "Configuration bits for this routine are set routine Station_Configuration$N"
+				    "Any changes to this routine must be noted in detail in this comment.$N"
+				    "$N"
+				    "Changes:";
+				N: NOP();
+				RC: "This rung on first scan sets the FSC array length to scan as determined by rung 0 of the station configuration routine. This is done to allow changes in array sizes.";
+				N: XIC(S:FS)MOV(AMR_Data_Array_Size,TF0400_AMR_Station_FSC.LEN)MOV(Dest_Station_Array_Size,TF0400_Dest_FSC.LEN);
+				RC: "Diagnostic Status Rung$N"
+				    "Used for Troubleshooting only.";
+				N: XIC(TF0400.From_Ignition.WC_Phase_Active)XIC(TF0400.Ignition_Interlocks.WC_0)XIC(TF0400.Ignition_Interlocks.WC_1)XIC(TF0400.Ignition_Interlocks.Entry_0)XIC(TF0400.Ignition_Interlocks.Entry_1)XIC(TF0400.Ignition_Interlocks.Exit_0)XIC(TF0400.Ignition_Interlocks.Exit_1)XIC(TF0400.Ignition_Interlocks.Exit_2)XIC(TF0400.Ignition_Interlocks.Exit_3)XIC(TF0400.Ignition_Interlocks.Exit_4)EQU(TF0400_AMR_Station_FSC.POS,TF0400_Dest_FSC.POS)EQU(TF0400_Pairing_FSC.POS,0)XIC(TF0400_AMR_Station_FSC.FD)XIC(TF0400_Dest_FSC.FD)XIC(TF0400_Pairing_FSC.FD)XIC(TF0400_AMR_Station.Material_Handler_In_Station)XIC(TF0400_AMR_Station.Material_Handler_Enroute)XIC(TF0400_AMR_Station.SGV_In_Station)XIC(TF0400_AMR_Station.AMR_In_Station)XIC(TF0400_AMR_Station.Permission_To_Enter)XIC(TF0400_AMR_Station.Permission_To_Exit)NOP();
+				RC: "--------------------------------------------------------------------------- Station Control ---------------------------------------------------------------------------";
+				N: Station_Control(TF0400_Station_Control,TF0400);
+				RC: "--------------------------------------------------------------------------- Takt Timer ---------------------------------------------------------------------------$N"
+				    "$N"
+...(208 more lines)
+Family: {STN}_Class_12_Boom_Hang — 4 routines
+Members: TF360A_Class_12_Boom_Hang, TF360B_Class_12_Boom_Hang, TF380A_Class_12_Boom_Hang, TF380B_Class_12_Boom_Hang
+Representative: TF360A_Class_12_Boom_Hang (73 content lines)
+				RC: "Class 12 Station Template Version 1.0 used in this routine. $N"
+				    "Any changes to this routine must be noted in detail in this comment.$N"
+				    "$N"
+				    "Changes:";
+				N: NOP();
+				RC: "--------------------------------------------------------------------------- Station Control ---------------------------------------------------------------------------";
+				N: Station_Control(TF360A_Station_Control,TF360A);
+				RC: "--------------------------------------------------------------------------- Takt Timer ---------------------------------------------------------------------------$N"
+				    "$N"
+				    "Convert Takt Time Setpoint (in seconds) to set Takt Timer Preset value (in milliseconds)$N"
+				    "$N"
+				    "While shift active and component ID assigned, continue takt timer. If takt timer finishes start over takt timer.$N"
+				    "$N"
+				    "While takt timer is not done, display remaining time, otherwise display the time over takt as a negative number.$N"
+				    "Set next component loaded.$N"
+...(58 more lines)
+Routines:
+
+Main (56 lines):
+
+  				N: JSR(LL0000_Class_1,0);
+  				N: JSR(RL040S_Class_210,0);
+  				N: JSR(TF000A_Class_251,0);
+  				N: JSR(TF000B_Class_252,0);
+  ...(52 more lines)
+
+RL040S_Class_210 (68 lines):
+
+  				RC: "Class 210 Relocalization Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(64 more lines)
+
+TF000A_Class_251 (133 lines):
+
+  				RC: "Class 25 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(129 more lines)
+
+TF000B_Class_252 (135 lines):
+
+  				RC: "Class 252 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(131 more lines)
+
+TF000X_Class_21_Queue (93 lines):
+
+  				RC: "XXXX$N"
+  				    "Class 21 Station Template Version 1.0 used in this routine. $N"
+  				    "This code has been simplified and modifed from the Class 2 logic to only be used for queue stations. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  ...(89 more lines)
+
+TF0010_Class_2_MOD (226 lines):
+
+  				RC: "Class 2 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(222 more lines)
+
+TF0300_Class_23_Pairing (242 lines):
+
+  				RC: "Class 23 Station Pairing Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(238 more lines)
+
+TF0600_Class_38_Lift_Tool (246 lines):
+
+  				RC: "Class 38 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(242 more lines)
+
+TF1200_Class_38_Lift_Tool (246 lines):
+
+  				RC: "Class 38 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(242 more lines)
+
+TF3400_Class_26 (253 lines):
+
+  				RC: "Class 2 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "Note: This station has extra logic to ensure lift height is correct before entering station TF3500.$N"
+  ...(249 more lines)
+
+TF3500_Class_22_Unpairing_Lift (269 lines):
+
+  				RC: "Class 2 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(265 more lines)
+
+TF_Front_Q1_Class_21_Queue (93 lines):
+
+  				RC: "XXXX$N"
+  				    "Class 21 Station Template Version 1.0 used in this routine. $N"
+  				    "This code has been simplified and modifed from the Class 2 logic to only be used for queue stations. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  ...(89 more lines)
+
+TF_Rear_Q1_Class_21_Queue (93 lines):
+
+  				RC: "XXXX$N"
+  				    "Class 21 Station Template Version 1.0 used in this routine. $N"
+  				    "This code has been simplified and modifed from the Class 2 logic to only be used for queue stations. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  ...(89 more lines)
+Program Frame_Fabrication
+
+Routines: 17
+Local tags: present (1 lines)
+
+Templated routine groups (one representative shown in full, others share the same structure):
+Family: {STN}_Class_1 — 8 routines
+Members: TW010A_Class_1, TW010B_Class_1, TW010C_Class_1, TW010D_Class_1, TW010E_Class_1, TW020B_Class_1, TW0400_Class_1, TW0600_Class_1
+Representative: TW010A_Class_1 (73 content lines)
+				RC: "Class 1 Station Template Version 1.0 used in this routine. $N"
+				    "Any changes to this routine must be noted in detail in this comment.$N"
+				    "$N"
+				    "Changes:";
+				N: NOP();
+				RC: "--------------------------------------------------------------------------- Station Control ---------------------------------------------------------------------------";
+				N: Station_Control(TW010A_Station_Control,TW010A);
+				RC: "--------------------------------------------------------------------------- Takt Timer ---------------------------------------------------------------------------$N"
+				    "$N"
+				    "Convert Takt Time Setpoint (in seconds) to set Takt Timer Preset value (in milliseconds)$N"
+				    "$N"
+				    "While shift active and component ID assigned, continue takt timer. If takt timer finishes start over takt timer.$N"
+				    "$N"
+				    "While takt timer is not done, display remaining time, otherwise display the time over takt as a negative number.$N"
+				    "Set next component loaded.$N"
+...(58 more lines)
+Family: {STN}_Class_2 — 6 routines
+Members: TW020A_Class_2, TW030A_Class_2, TW030B_Class_2, TW030C_Class_2, TW0700_Class_2, TW0710_Class_2
+Representative: TW020A_Class_2 (223 content lines)
+				RC: "Class 2 Station Template Version 1.0 used in this routine. $N"
+				    "Configuration bits for this routine are set routine Station_Configuration$N"
+				    "Any changes to this routine must be noted in detail in this comment.$N"
+				    "$N"
+				    "Changes:";
+				N: NOP();
+				RC: "This rung on first scan sets the FSC array length to scan as determined by rung 0 of the station configuration routine. This is done to allow changes in array sizes.";
+				N: XIC(S:FS)MOV(AMR_Data_Array_Size,TW020A_AMR_Station_FSC.LEN)MOV(Dest_Station_Array_Size,TW020A_Dest_FSC.LEN);
+				RC: "Diagnostic Status Rung$N"
+				    "Used for Troubleshooting only.";
+				N: XIC(TW020A.From_Ignition.WC_Phase_Active)XIC(TW020A.Ignition_Interlocks.WC_0)XIC(TW020A.Ignition_Interlocks.WC_1)XIC(TW020A.Ignition_Interlocks.Entry_0)XIC(TW020A.Ignition_Interlocks.Entry_1)XIC(TW020A.Ignition_Interlocks.Exit_0)XIC(TW020A.Ignition_Interlocks.Exit_1)XIC(TW020A.Ignition_Interlocks.Exit_2)XIC(TW020A.Ignition_Interlocks.Exit_3)XIC(TW020A.Ignition_Interlocks.Exit_4)EQU(TW020A_AMR_Station_FSC.POS,TW020A_Dest_FSC.POS)EQU(TW020A_Pairing_FSC.POS,0)XIC(TW020A_AMR_Station_FSC.FD)XIC(TW020A_Dest_FSC.FD)XIC(TW020A_Pairing_FSC.FD)XIC(TW020A_AMR_Station.Material_Handler_In_Station)XIC(TW020A_AMR_Station.Material_Handler_Enroute)XIC(TW020A_AMR_Station.SGV_In_Station)XIC(TW020A_AMR_Station.AMR_In_Station)XIC(TW020A_AMR_Station.Permission_To_Enter)XIC(TW020A_AMR_Station.Permission_To_Exit)NOP();
+				RC: "--------------------------------------------------------------------------- Station Control ---------------------------------------------------------------------------";
+				N: Station_Control(TW020A_Station_Control,TW020A);
+				RC: "--------------------------------------------------------------------------- Takt Timer ---------------------------------------------------------------------------$N"
+				    "$N"
+...(208 more lines)
+Routines:
+
+Main (16 lines):
+
+  				N: JSR(TW010A_Class_1,0);
+  				N: JSR(TW010B_Class_1,0);
+  				N: JSR(TW010C_Class_1,0);
+  				N: JSR(TW010D_Class_1,0);
+  ...(12 more lines)
+
+TW050A_Class_24 (227 lines):
+
+  				RC: "Class 24 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(223 more lines)
+
+TW050B_Class_24 (227 lines):
+
+  				RC: "Class 24 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(223 more lines)
+Program MainProgram
+
+Routines: 4
+Local tags: present (1 lines)
+
+Routines:
+
+COMS (91 lines):
+
+  				RC: "****************************Subsystem PLC Monitoring******************************$N"
+  				    "These status are for the PLC. Indivdual stations will also have additional communications monitoring via heartbeat or communication status.";
+  				N: NOP();
+  				N: [GSV(Module,Paint_Line_Conveyor_PLC,EntryStatus,WDM_Paint_Line_Conveyor_PLC) ,NEQ(16384,WDM_Paint_Line_Conveyor_PLC) OTE(Paint_Line_Conveyor_PLC_Comflt) ];
+  ...(87 more lines)
+
+MainRoutine (7 lines):
+
+  				N: NOP();
+  				N: JSR(COMS,0);
+  				N: JSR(Station_Configuration,0);
+  				RC: "Used to create constant bits for use in programs. ";
+  ...(3 more lines)
+
+Station_Configuration (373 lines):
+
+  				RC: "*************************************Station Configuration*****************************$N"
+  				    "Station Array ID are set in this routine. Array position 0 is reserved and should not be used. All ofther stations should have a station Array ID corresponding to the Rung number. This rung gets the size of arrays so that can be used as the length value for FSC$'s and also the last element to be used as a reset for the FSC should it not find a match.$N"
+  				    "";
+  				N: XIC(S:FS)[SIZE(AMR_Data,0,AMR_Data_Array_Size) ,SIZE(Dest_Station_Entry_Permissive_Array,0,Dest_Station_Array_Size) ,SUB(AMR_Data_Array_Size,1,AMR_Data_Array_Last_Element) ,SUB(Dest_Station_Array_Size,1,Dest_Station_Array_Last_Element) ];
+  ...(369 more lines)
+
+ZZXXX2_Class_2 (225 lines):
+
+  				RC: "Class 2 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(221 more lines)
+Program Outriggers
+
+Routines: 4
+Local tags: present (1 lines)
+
+Templated routine groups (one representative shown in full, others share the same structure):
+Family: {STN}_Class_1 — 3 routines
+Members: TX010A_Class_1, TX010B_Class_1, TX010C_Class_1
+Representative: TX010A_Class_1 (73 content lines)
+				RC: "Class 1 Station Template Version 1.0 used in this routine. $N"
+				    "Any changes to this routine must be noted in detail in this comment.$N"
+				    "$N"
+				    "Changes:";
+				N: NOP();
+				RC: "--------------------------------------------------------------------------- Station Control ---------------------------------------------------------------------------";
+				N: Station_Control(TX010A_Station_Control,TX010A);
+				RC: "--------------------------------------------------------------------------- Takt Timer ---------------------------------------------------------------------------$N"
+				    "$N"
+				    "Convert Takt Time Setpoint (in seconds) to set Takt Timer Preset value (in milliseconds)$N"
+				    "$N"
+				    "While shift active and component ID assigned, continue takt timer. If takt timer finishes start over takt timer.$N"
+				    "$N"
+				    "While takt timer is not done, display remaining time, otherwise display the time over takt as a negative number.$N"
+				    "Set next component loaded.$N"
+...(58 more lines)
+Routines:
+
+Main (3 lines):
+
+  				N: JSR(TX010A_Class_1,0);
+  				N: JSR(TX010B_Class_1,0);
+  				N: JSR(TX010C_Class_1,0);
+Program Paint_Line
+
+Routines: 15
+Local tags: present (1 lines)
+
+Routines:
+
+Legacy_Line_Class_21_Queue (93 lines):
+
+  				RC: "XXXX$N"
+  				    "Class 21 Station Template Version 1.0 used in this routine. $N"
+  				    "This code has been simplified and modifed from the Class 2 logic to only be used for queue stations. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  ...(89 more lines)
+
+Main (14 lines):
+
+  				N: JSR(PT000_Class_2,0);
+  				N: JSR(PT010A_Class_31_Paint_Load,0);
+  				N: JSR(PT010B_Class_31_Paint_Load,0);
+  				N: JSR(PT030A_Class_34_Paint_Unload_Frame,0);
+  ...(10 more lines)
+
+PRE_Paint_WIP_Class_21_Queue (93 lines):
+
+  				RC: "XXXX$N"
+  				    "Class 21 Station Template Version 1.0 used in this routine. $N"
+  				    "This code has been simplified and modifed from the Class 2 logic to only be used for queue stations. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  ...(89 more lines)
+
+PT000X_Class_1 (73 lines):
+
+  				RC: "Class 1 Station Template Version 1.0 used in this routine. $N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  				    "Changes:";
+  ...(69 more lines)
+
+PT000_Class_2 (223 lines):
+
+  				RC: "Class 2 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(219 more lines)
+
+PT010A_Class_31_Paint_Load (248 lines):
+
+  				RC: "Class 31 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(244 more lines)
+
+PT010B_Class_31_Paint_Load (248 lines):
+
+  				RC: "Class 31 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(244 more lines)
+
+PT020A_Class_33_Paint_Unload_Reload (10 lines):
+
+  				RC: "Class 33 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(6 more lines)
+
+PT030A_Class_34_Paint_Unload_Frame (265 lines):
+
+  				RC: "Class 34 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(261 more lines)
+
+PT030B_Class_32_Paint_Unload_Boom (256 lines):
+
+  				RC: "Class 32 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(252 more lines)
+
+PT030C_Class_32_Paint_Unload_Boom (256 lines):
+
+  				RC: "Class 32 Station Template Version 1.0 used in this routine. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  ...(252 more lines)
+
+PT030X_Class_1 (73 lines):
+
+  				RC: "Class 1 Station Template Version 1.0 used in this routine. $N"
+  				    "Any changes to this routine must be noted in detail in this comment.$N"
+  				    "$N"
+  				    "Changes:";
+  ...(69 more lines)
+
+PT_Load_Q1_Class_21_Queue (93 lines):
+
+  				RC: "XXXX$N"
+  				    "Class 21 Station Template Version 1.0 used in this routine. $N"
+  				    "This code has been simplified and modifed from the Class 2 logic to only be used for queue stations. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  ...(89 more lines)
+
+PT_Unload_Q1_Class_21_Queue (93 lines):
+
+  				RC: "XXXX$N"
+  				    "Class 21 Station Template Version 1.0 used in this routine. $N"
+  				    "This code has been simplified and modifed from the Class 2 logic to only be used for queue stations. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  ...(89 more lines)
+
+PT_Unload_Q2_Class_21_Queue (93 lines):
+
+  				RC: "XXXX$N"
+  				    "Class 21 Station Template Version 1.0 used in this routine. $N"
+  				    "This code has been simplified and modifed from the Class 2 logic to only be used for queue stations. $N"
+  				    "Configuration bits for this routine are set routine Station_Configuration$N"
+  ...(89 more lines)
+Program TrafficControl
+
+Routines: 2
+Local tags: present (1 lines)
+
+Routines:
+
+Main (1 lines):
+
+  				N: JSR(Traffic_Lights,0);
+
+Traffic_Lights (40 lines):
+
+  				RC: "This routine uses the X,Y positions provided by Ignition in the AMR Data array to check if any AMR is present in the X,Y boundarys provided by Ignition in the Traffic Lights array. If any AMR$'s are present in a intersection a traffic light will be turned on. ";
+  				N: NOP();
+  				N: [Traffic_Light_Control(Traffic_Lights_Array[1].TL_Control,AMR_Data,Traffic_Lights_Array[1].X_Max,Traffic_Lights_Array[1].X_Min,Traffic_Lights_Array[1].Y_Max,Traffic_Lights_Array[1].Y_Min,Traffic_Lights_Array[1].TL_ON) ,XIC(Traffic_Lights_Array[1].TL_ON) OTE(TrafficLight001:O.Data[1].0) ];
+  				N: [Traffic_Light_Control(Traffic_Lights_Array[2].TL_Control,AMR_Data,Traffic_Lights_Array[2].X_Max,Traffic_Lights_Array[2].X_Min,Traffic_Lights_Array[2].Y_Max,Traffic_Lights_Array[2].Y_Min,Traffic_Lights_Array[2].TL_ON) ,XIC(Traffic_Lights_Array[2].TL_ON) OTE(TrafficLight002:O.Data[1].0) ];
+  ...(36 more lines)

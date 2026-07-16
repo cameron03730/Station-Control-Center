@@ -1,0 +1,1395 @@
+{
+  "custom": {
+    "selectedAmr": "",
+    "reason": "",
+    "amrRows": [],
+    "currentComponentId": "",
+    "currentComponentId2": "",
+    "newComponentId": "",
+    "newComponentId2": "",
+    "componentIdTagPath": "",
+    "selRowIdx": -1,
+    "showTable": true,
+    "filterSearch": ""
+  },
+  "propConfig": {
+    "custom.amrRows": {
+      "binding": {
+        "type": "expr",
+        "config": {
+          "expression": "1"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\t# One-shot load on view mount (constant expr -> evaluates once; imperative refresh/optimistic writes persist).\n\treturn StationControl.SCC.getAmrFleet()\n"
+          }
+        ]
+      }
+    },
+    "custom.selectedAmr": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "/root/AmrCard/AmrTable.props.selection"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\tsel = value or {}\n\tdata = sel['data'] if 'data' in sel else None\n\tif not data:\n\t\treturn ''\n\tidx = sel['selectedRow'] if 'selectedRow' in sel else None\n\tif idx is None or idx < 0:\n\t\treturn ''\n\ttry:\n\t\tv = getattr(self, 'view', self)\n\t\trows = v.getChild('root').getChild('AmrCard').getChild('AmrTable').props.data\n\t\trow = rows[idx]\n\t\treturn row['AMR'] if 'AMR' in row else ''\n\texcept:\n\t\treturn ''\n"
+          }
+        ]
+      }
+    },
+    "custom.selRowIdx": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "/root/AmrCard/AmrTable.props.selection"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\tsel = value or {}\n\tif 'data' not in sel or not sel['data']:\n\t\treturn -1\n\tidx = sel['selectedRow'] if 'selectedRow' in sel else -1\n\treturn idx if idx is not None else -1\n"
+          }
+        ]
+      }
+    },
+    "custom.currentComponentId": {
+      "binding": {
+        "config": {
+          "path": "view.custom.selectedAmr"
+        },
+        "transforms": [
+          {
+            "code": "\tif not value:\n\t\treturn ''\n\ttry:\n\t\treturn StationControl.SCC.readAmrComponentId(value) or ''\n\texcept Exception:\n\t\treturn ''\n",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      }
+    },
+    "custom.currentComponentId2": {
+      "binding": {
+        "config": {
+          "path": "view.custom.selectedAmr"
+        },
+        "transforms": [
+          {
+            "code": "\tif not value:\n\t\treturn ''\n\ttry:\n\t\treturn StationControl.SCC.readAmrComponentId(value, 'componentID2') or ''\n\texcept Exception:\n\t\treturn ''\n",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      }
+    },
+    "custom.componentIdTagPath": {
+      "binding": {
+        "config": {
+          "path": "view.custom.selectedAmr"
+        },
+        "transforms": [
+          {
+            "code": "\tif not value:\n\t\treturn ''\n\ttry:\n\t\treturn StationControl.SCC.amrComponentIdTagPath(value)\n\texcept Exception:\n\t\treturn ''\n",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      }
+    }
+  },
+  "params": {},
+  "props": {
+    "defaultSize": {
+      "width": 1320,
+      "height": 860
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "row",
+      "style": {
+        "backgroundColor": "#F4F6F9",
+        "padding": "22px",
+        "gap": "22px"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "AmrCard"
+        },
+        "position": {
+          "basis": "55%",
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": "12px",
+            "border": "1px solid #D8DEE7",
+            "boxShadow": "0 1px 3px rgba(27,33,43,0.08)",
+            "padding": "22px",
+            "gap": "18px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "AmrHeader"
+            },
+            "position": {
+              "basis": "52px",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "justify": "space-between",
+              "style": {
+                "gap": "16px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "AmrCardTitle"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "AMR Fleet",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "17px",
+                    "fontWeight": "700",
+                    "textAlign": "left",
+                    "borderBottom": "2px solid #E87722",
+                    "paddingBottom": "8px"
+                  }
+                }
+              },
+              {
+                "type": "ia.input.button",
+                "meta": {
+                  "name": "RefreshAmrs_Button"
+                },
+                "position": {
+                  "basis": "140px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Refresh",
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "color": "#1B212B",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "fontWeight": "600",
+                    "fontSize": "15px",
+                    "padding": "12px 18px",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap"
+                  },
+                  "image": {
+                    "icon": {
+                      "path": "material/refresh",
+                      "color": "#5B6675",
+                      "style": {
+                        "width": "18px",
+                        "height": "18px",
+                        "flexShrink": "0"
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "dom": {
+                    "onClick": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Refreshing fleet...', 'actionKey': 'refresh', 'actionArgs': {}, 'doneMsg': 'sccAmrDone'}, modal=True, showCloseIcon=False)\n"
+                      }
+                    }
+                  }
+                },
+                "propConfig": {}
+              }
+            ]
+          },
+          {
+            "type": "ia.input.text-field",
+            "meta": {
+              "name": "AmrSearchField"
+            },
+            "position": {
+              "basis": "44px",
+              "shrink": 0
+            },
+            "props": {
+              "placeholder": "Search AMR number or component ID...",
+              "deferUpdates": false,
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#1B212B",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "8px",
+                "padding": "10px 14px",
+                "fontSize": "15px"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.filterSearch",
+                    "bidirectional": true
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.table",
+            "meta": {
+              "name": "AmrTable"
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "columns": [
+                {
+                  "field": "__card",
+                  "render": "view",
+                  "viewPath": "Plant Overview/Engineering/Station Control Center/embedded/scc-card-amr",
+                  "viewParams": {
+                    "selIdx": -1
+                  },
+                  "header": {
+                    "title": "",
+                    "style": {
+                      "classes": ""
+                    }
+                  },
+                  "visible": true,
+                  "sortable": false,
+                  "resizable": false,
+                  "strictWidth": false,
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              ],
+              "rows": {
+                "height": 72,
+                "striped": {
+                  "enabled": false,
+                  "color": {
+                    "odd": "#FFFFFF",
+                    "even": "#F4F6F9"
+                  }
+                }
+              },
+              "selection": {
+                "enabled": true,
+                "mode": "single",
+                "enableRowSelection": true,
+                "enableColumnSelection": false
+              },
+              "filter": {
+                "enabled": false
+              },
+              "emptyMessage": {
+                "noData": {
+                  "icon": {
+                    "path": "material/inbox",
+                    "color": "#D8DEE7"
+                  },
+                  "text": "No AMRs in the fleet",
+                  "textStyle": {
+                    "color": "#5B6675",
+                    "fontSize": "15px",
+                    "fontWeight": "600"
+                  }
+                }
+              },
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#1B212B",
+                "fontSize": "14px",
+                "fontFamily": "-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "12px",
+                "boxShadow": "0 1px 2px rgba(27,33,43,0.06), 0 6px 18px rgba(27,33,43,0.10)",
+                "overflow": "hidden",
+                "minHeight": "0px"
+              },
+              "enableHeader": false
+            },
+            "propConfig": {
+              "meta.visible": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.showTable"
+                  }
+                }
+              },
+              "props.data": {
+                "binding": {
+                  "type": "expr-struct",
+                  "config": {
+                    "struct": {
+                      "rows": "{view.custom.amrRows}",
+                      "search": "{view.custom.filterSearch}"
+                    },
+                    "waitOnAll": false
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tsd = value or {}\n\trows = (sd['rows'] if 'rows' in sd else []) or []\n\tsearch = ((sd['search'] if 'search' in sd else '') or '').strip().lower()\n\tout = []\n\tfor row in rows:\n\t\tif search:\n\t\t\thay = (str(row.get('AMR', '')) + ' ' + str(row.get('ComponentID', '')) + ' ' + str(row.get('ComponentID2', ''))).lower()\n\t\t\tif search not in hay:\n\t\t\t\tcontinue\n\t\tr = dict(row)\n\t\tr['__card'] = ''\n\t\tout.append(r)\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "DetailCard"
+        },
+        "position": {
+          "basis": "45%",
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": "12px",
+            "border": "1px solid #D8DEE7",
+            "boxShadow": "0 1px 3px rgba(27,33,43,0.08)",
+            "padding": "22px",
+            "gap": "16px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "DetailCardTitle"
+            },
+            "position": {
+              "basis": "30px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Selected AMR",
+              "style": {
+                "color": "#1B212B",
+                "fontSize": "17px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "borderBottom": "2px solid #E87722",
+                "paddingBottom": "8px"
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "StatusRow"
+            },
+            "position": {
+              "basis": "36px",
+              "shrink": 0
+            },
+            "propConfig": {
+              "meta.visible": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "len(coalesce({view.custom.selectedAmr}, '')) > 0"
+                  }
+                }
+              }
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "AmrIdChip"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "AMR",
+                  "style": {
+                    "backgroundColor": "#1B212B",
+                    "color": "#FFFFFF",
+                    "fontSize": "15px",
+                    "fontWeight": "700",
+                    "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                    "letterSpacing": "0.3px",
+                    "borderRadius": "8px",
+                    "padding": "6px 14px"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "'AMR_' + coalesce({view.custom.selectedAmr}, '')"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "AmrDetailsHdr"
+            },
+            "position": {
+              "basis": "30px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "CURRENT ASSIGNMENT",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "letterSpacing": "0.8px",
+                "borderTop": "1px solid #D8DEE7",
+                "paddingTop": "10px"
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "CurrentTiles"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "style": {
+                "gap": "12px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "Comp1Tile"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1,
+                  "basis": "0%"
+                },
+                "props": {
+                  "direction": "column",
+                  "style": {
+                    "gap": "5px",
+                    "backgroundColor": "#F4F6F9",
+                    "borderRadius": "8px",
+                    "padding": "12px 14px",
+                    "minWidth": "0"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Comp1TileLbl"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "CURRENT COMPONENTID",
+                      "style": {
+                        "color": "#5B6675",
+                        "fontSize": "11px",
+                        "fontWeight": "700",
+                        "textAlign": "left",
+                        "letterSpacing": "0.6px"
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Comp1TileVal"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "(blank)",
+                      "style": {
+                        "color": "#1B212B",
+                        "fontSize": "16px",
+                        "fontWeight": "700",
+                        "textAlign": "left",
+                        "whiteSpace": "nowrap",
+                        "overflow": "hidden",
+                        "textOverflow": "ellipsis",
+                        "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace"
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.currentComponentId} = '', '(blank)', {view.custom.currentComponentId})"
+                          }
+                        }
+                      },
+                      "props.style.color": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.currentComponentId} = '', '#8A929E', '#1B212B')"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "Comp2Tile"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1,
+                  "basis": "0%"
+                },
+                "props": {
+                  "direction": "column",
+                  "style": {
+                    "gap": "5px",
+                    "backgroundColor": "#F4F6F9",
+                    "borderRadius": "8px",
+                    "padding": "12px 14px",
+                    "minWidth": "0"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Comp2TileLbl"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "CURRENT COMPONENTID 2",
+                      "style": {
+                        "color": "#5B6675",
+                        "fontSize": "11px",
+                        "fontWeight": "700",
+                        "textAlign": "left",
+                        "letterSpacing": "0.6px"
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Comp2TileVal"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "(blank)",
+                      "style": {
+                        "color": "#1B212B",
+                        "fontSize": "16px",
+                        "fontWeight": "700",
+                        "textAlign": "left",
+                        "whiteSpace": "nowrap",
+                        "overflow": "hidden",
+                        "textOverflow": "ellipsis",
+                        "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace"
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.currentComponentId2} = '', '(blank)', {view.custom.currentComponentId2})"
+                          }
+                        }
+                      },
+                      "props.style.color": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.currentComponentId2} = '', '#8A929E', '#1B212B')"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "TagPathRow"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "baseline",
+              "style": {
+                "gap": "8px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "TagPathLbl"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "TAG PATH",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "textAlign": "left",
+                    "letterSpacing": "0.6px"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "TagPathVal"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1,
+                  "basis": "0%"
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "12px",
+                    "fontWeight": "400",
+                    "textAlign": "right",
+                    "wordBreak": "break-all",
+                    "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(coalesce({view.custom.componentIdTagPath}, '')) = 0, '(select an AMR)', {view.custom.componentIdTagPath})"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "RectifyHdr"
+            },
+            "position": {
+              "basis": "30px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "COMPONENT ID RECTIFICATION",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "letterSpacing": "0.8px",
+                "borderTop": "1px solid #D8DEE7",
+                "paddingTop": "10px"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "ReasonLbl"
+            },
+            "position": {
+              "basis": "18px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "REASON  (required - written to SupervisorOverrideLog)",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "letterSpacing": "0.7px"
+              }
+            }
+          },
+          {
+            "type": "ia.input.text-field",
+            "meta": {
+              "name": "ReasonField"
+            },
+            "position": {
+              "basis": "46px",
+              "shrink": 0
+            },
+            "props": {
+              "placeholder": "Why is this change being made...",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#1B212B",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "8px",
+                "padding": "12px 14px",
+                "fontSize": "15px"
+              },
+              "deferUpdates": false
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.reason",
+                    "bidirectional": true
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "PayloadNote"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "9px",
+                "backgroundColor": "#FFF7F0",
+                "border": "1px solid #F3D3B8",
+                "borderRadius": "8px",
+                "padding": "9px 12px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.icon",
+                "meta": {
+                  "name": "PayloadIcon"
+                },
+                "position": {
+                  "basis": "18px",
+                  "shrink": 0
+                },
+                "props": {
+                  "path": "material/sync",
+                  "color": "#B5601B",
+                  "style": {
+                    "width": "18px",
+                    "height": "18px"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "PayloadTxt"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "Committing a ComponentID re-sends the AMR payload (Navithor size profile + ACU scanner) for this AMR.",
+                  "style": {
+                    "color": "#B5601B",
+                    "fontSize": "12.5px",
+                    "fontWeight": "600",
+                    "lineHeight": "1.4",
+                    "whiteSpace": "normal"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Comp1Editor"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "gap": "8px",
+                "backgroundColor": "#FBFCFD",
+                "border": "1px solid #E7ECF2",
+                "borderRadius": "10px",
+                "padding": "14px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Comp1Lbl"
+                },
+                "position": {
+                  "basis": "18px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "COMPONENT 1  -  NEW COMPONENTID  (blank = unassign)",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "12px",
+                    "fontWeight": "700",
+                    "textAlign": "left",
+                    "letterSpacing": "0.7px"
+                  }
+                }
+              },
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "Comp1EditorRow"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "row",
+                  "alignItems": "center",
+                  "style": {
+                    "gap": "10px"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.input.text-field",
+                    "meta": {
+                      "name": "NewField"
+                    },
+                    "position": {
+                      "grow": 1,
+                      "shrink": 1,
+                      "basis": "0%"
+                    },
+                    "props": {
+                      "placeholder": "e.g. 016023023",
+                      "style": {
+                        "backgroundColor": "#FFFFFF",
+                        "color": "#1B212B",
+                        "border": "1px solid #D8DEE7",
+                        "borderRadius": "8px",
+                        "padding": "12px 14px",
+                        "fontSize": "15px",
+                        "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace"
+                      },
+                      "deferUpdates": false
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "property",
+                          "config": {
+                            "path": "view.custom.newComponentId",
+                            "bidirectional": true
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "CommitChange_Button"
+                    },
+                    "position": {
+                      "basis": "128px",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Commit",
+                      "style": {
+                        "backgroundColor": "#E87722",
+                        "color": "#FFFFFF",
+                        "border": "none",
+                        "borderRadius": "8px",
+                        "fontWeight": "700",
+                        "fontSize": "15px",
+                        "padding": "12px 18px",
+                        "boxShadow": "0 1px 2px rgba(232,119,34,0.35)",
+                        "overflow": "hidden",
+                        "whiteSpace": "nowrap"
+                      },
+                      "image": {
+                        "icon": {
+                          "path": "material/check",
+                          "color": "#FFFFFF",
+                          "style": {
+                            "width": "18px",
+                            "height": "18px",
+                            "flexShrink": "0"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "dom": {
+                        "onClick": {
+                          "type": "script",
+                          "scope": "G",
+                          "config": {
+                            "script": "\tamr = self.view.custom.selectedAmr\n\tif not amr:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': 'Select an AMR first.', 'error': True}, showCloseIcon=False, modal=True)\n\t\treturn\n\tnewVal = (self.view.custom.newComponentId or '').strip()\n\tclearing = newVal == ''\n\tmsg = ('Unassign ComponentID on AMR ' + str(amr) + '?') if clearing else ('Set ComponentID on AMR ' + str(amr) + \" to '\" + newVal + \"'?\")\n\tkind = 'danger' if clearing else 'warn'\n\tconfirmText = 'Unassign' if clearing else 'Commit'\n\tsystem.perspective.openPopup('sccConfirm', 'Plant Overview/Engineering/Station Control Center/embedded/scc-confirm-dialog', {'title': 'Confirm AMR Change', 'message': msg, 'confirmText': confirmText, 'confirmKind': kind, 'callbackMsg': 'sccConfirmAmrCommit', 'context': {'amrId': amr, 'newId': self.view.custom.newComponentId, 'reason': self.view.custom.reason, 'leaf': 'componentID'}}, modal=True, showCloseIcon=False)\n"
+                          }
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.enabled": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "len(coalesce({view.custom.selectedAmr}, '')) > 0 && len(trim({view.custom.reason})) > 0"
+                          }
+                        }
+                      },
+                      "props.style.backgroundColor": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if(len(coalesce({view.custom.selectedAmr}, '')) > 0 && len(trim({view.custom.reason})) > 0, '#E87722', '#D5D5D5')"
+                          }
+                        }
+                      },
+                      "props.style.color": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if(len(coalesce({view.custom.selectedAmr}, '')) > 0 && len(trim({view.custom.reason})) > 0, '#FFFFFF', '#8A929E')"
+                          }
+                        }
+                      },
+                      "props.image.icon.color": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if(len(coalesce({view.custom.selectedAmr}, '')) > 0 && len(trim({view.custom.reason})) > 0, '#FFFFFF', '#8A929E')"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Unassign_Button"
+                    },
+                    "position": {
+                      "basis": "46px",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "backgroundColor": "#FFFFFF",
+                        "color": "#5B6675",
+                        "border": "1px solid #D8DEE7",
+                        "borderRadius": "8px",
+                        "fontWeight": "600",
+                        "fontSize": "15px",
+                        "padding": "12px",
+                        "overflow": "hidden",
+                        "whiteSpace": "nowrap"
+                      },
+                      "image": {
+                        "icon": {
+                          "path": "material/close",
+                          "color": "#5B6675",
+                          "style": {
+                            "width": "18px",
+                            "height": "18px",
+                            "flexShrink": "0"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "dom": {
+                        "onClick": {
+                          "type": "script",
+                          "scope": "G",
+                          "config": {
+                            "script": "\tself.view.custom.newComponentId = ''\n"
+                          }
+                        }
+                      }
+                    },
+                    "propConfig": {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Comp2Editor"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "gap": "8px",
+                "backgroundColor": "#FBFCFD",
+                "border": "1px solid #E7ECF2",
+                "borderRadius": "10px",
+                "padding": "14px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Comp2Lbl"
+                },
+                "position": {
+                  "basis": "18px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "COMPONENT 2  -  NEW COMPONENTID 2  (blank = unassign)",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "12px",
+                    "fontWeight": "700",
+                    "textAlign": "left",
+                    "letterSpacing": "0.7px"
+                  }
+                }
+              },
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "Comp2EditorRow"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "row",
+                  "alignItems": "center",
+                  "style": {
+                    "gap": "10px"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.input.text-field",
+                    "meta": {
+                      "name": "NewField2"
+                    },
+                    "position": {
+                      "grow": 1,
+                      "shrink": 1,
+                      "basis": "0%"
+                    },
+                    "props": {
+                      "placeholder": "e.g. 016023023",
+                      "style": {
+                        "backgroundColor": "#FFFFFF",
+                        "color": "#1B212B",
+                        "border": "1px solid #D8DEE7",
+                        "borderRadius": "8px",
+                        "padding": "12px 14px",
+                        "fontSize": "15px",
+                        "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace"
+                      },
+                      "deferUpdates": false
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "property",
+                          "config": {
+                            "path": "view.custom.newComponentId2",
+                            "bidirectional": true
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "CommitChange2_Button"
+                    },
+                    "position": {
+                      "basis": "128px",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Commit",
+                      "style": {
+                        "backgroundColor": "#E87722",
+                        "color": "#FFFFFF",
+                        "border": "none",
+                        "borderRadius": "8px",
+                        "fontWeight": "700",
+                        "fontSize": "15px",
+                        "padding": "12px 18px",
+                        "boxShadow": "0 1px 2px rgba(232,119,34,0.35)",
+                        "overflow": "hidden",
+                        "whiteSpace": "nowrap"
+                      },
+                      "image": {
+                        "icon": {
+                          "path": "material/check",
+                          "color": "#FFFFFF",
+                          "style": {
+                            "width": "18px",
+                            "height": "18px",
+                            "flexShrink": "0"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "dom": {
+                        "onClick": {
+                          "type": "script",
+                          "scope": "G",
+                          "config": {
+                            "script": "\tamr = self.view.custom.selectedAmr\n\tif not amr:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': 'Select an AMR first.', 'error': True}, showCloseIcon=False, modal=True)\n\t\treturn\n\tnewVal = (self.view.custom.newComponentId2 or '').strip()\n\tclearing = newVal == ''\n\tmsg = ('Unassign ComponentID 2 on AMR ' + str(amr) + '?') if clearing else ('Set ComponentID 2 on AMR ' + str(amr) + \" to '\" + newVal + \"'?\")\n\tkind = 'danger' if clearing else 'warn'\n\tconfirmText = 'Unassign' if clearing else 'Commit'\n\tsystem.perspective.openPopup('sccConfirm', 'Plant Overview/Engineering/Station Control Center/embedded/scc-confirm-dialog', {'title': 'Confirm AMR Change', 'message': msg, 'confirmText': confirmText, 'confirmKind': kind, 'callbackMsg': 'sccConfirmAmrCommit2', 'context': {'amrId': amr, 'newId': self.view.custom.newComponentId2, 'reason': self.view.custom.reason, 'leaf': 'componentID2'}}, modal=True, showCloseIcon=False)\n"
+                          }
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.enabled": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "len(coalesce({view.custom.selectedAmr}, '')) > 0 && len(trim({view.custom.reason})) > 0"
+                          }
+                        }
+                      },
+                      "props.style.backgroundColor": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if(len(coalesce({view.custom.selectedAmr}, '')) > 0 && len(trim({view.custom.reason})) > 0, '#E87722', '#D5D5D5')"
+                          }
+                        }
+                      },
+                      "props.style.color": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if(len(coalesce({view.custom.selectedAmr}, '')) > 0 && len(trim({view.custom.reason})) > 0, '#FFFFFF', '#8A929E')"
+                          }
+                        }
+                      },
+                      "props.image.icon.color": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if(len(coalesce({view.custom.selectedAmr}, '')) > 0 && len(trim({view.custom.reason})) > 0, '#FFFFFF', '#8A929E')"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Unassign2_Button"
+                    },
+                    "position": {
+                      "basis": "46px",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "backgroundColor": "#FFFFFF",
+                        "color": "#5B6675",
+                        "border": "1px solid #D8DEE7",
+                        "borderRadius": "8px",
+                        "fontWeight": "600",
+                        "fontSize": "15px",
+                        "padding": "12px",
+                        "overflow": "hidden",
+                        "whiteSpace": "nowrap"
+                      },
+                      "image": {
+                        "icon": {
+                          "path": "material/close",
+                          "color": "#5B6675",
+                          "style": {
+                            "width": "18px",
+                            "height": "18px",
+                            "flexShrink": "0"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "dom": {
+                        "onClick": {
+                          "type": "script",
+                          "scope": "G",
+                          "config": {
+                            "script": "\tself.view.custom.newComponentId2 = ''\n"
+                          }
+                        }
+                      }
+                    },
+                    "propConfig": {}
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "Note"
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 0
+            },
+            "props": {
+              "text": "Leaving NEW COMPONENTID blank and committing unassigns (clears) the AMR's componentID. This does NOT clear the bound station's fromIGN/componentID - use the Station tab for that.",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "13px",
+                "fontWeight": "400",
+                "lineHeight": "1.5",
+                "textAlign": "left"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "scripts": {
+      "customMethods": [],
+      "extensionFunctions": null,
+      "messageHandlers": [
+        {
+          "messageType": "sccConfirmAmrCommit",
+          "pageScope": false,
+          "sessionScope": true,
+          "viewScope": false,
+          "script": "\tctx = payload.get('context') or {}\n\targs = {'amrId': ctx.get('amrId'), 'newId': ctx.get('newId', ''), 'reason': ctx.get('reason', ''), 'leaf': 'componentID'}\n\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Committing ComponentID...', 'actionKey': 'setAmrComponentId', 'actionArgs': args, 'doneMsg': 'sccAmrDone'}, modal=True, showCloseIcon=False)\n"
+        },
+        {
+          "messageType": "sccConfirmAmrCommit2",
+          "pageScope": false,
+          "sessionScope": true,
+          "viewScope": false,
+          "script": "\tctx = payload.get('context') or {}\n\targs = {'amrId': ctx.get('amrId'), 'newId': ctx.get('newId', ''), 'reason': ctx.get('reason', ''), 'leaf': 'componentID2'}\n\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Committing ComponentID 2...', 'actionKey': 'setAmrComponentId', 'actionArgs': args, 'doneMsg': 'sccAmrDone'}, modal=True, showCloseIcon=False)\n"
+        },
+        {
+          "messageType": "sccAmrDone",
+          "pageScope": false,
+          "sessionScope": true,
+          "viewScope": false,
+          "script": "\tsystem.perspective.closePopup('sccProgress')\n\tok = payload.get('ok', False)\n\tmsg = payload.get('message', '')\n\tak = payload.get('actionKey', '')\n\targs = payload.get('args') or {}\n\tif msg:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': msg, 'error': not ok}, showCloseIcon=False, modal=True)\n\tif ok and ak == 'setAmrComponentId':\n\t\t# Optimistic row update: patch the AMR we just wrote instead of re-reading tags. The tag write\n\t\t# has not propagated to the read cache yet, so a getAmrFleet() re-read here returns the OLD value.\n\t\tleaf = args.get('leaf', 'componentID')\n\t\tnewval = (args.get('newId') or '').strip()\n\t\tcol = 'ComponentID2' if leaf == 'componentID2' else 'ComponentID'\n\t\ttarget = str(args.get('amrId') or '').zfill(3)\n\t\tnewRows = []\n\t\tfor r in self.view.custom.amrRows:\n\t\t\tnr = {'AMR': r['AMR'], 'ComponentID': r['ComponentID'], 'ComponentID2': r['ComponentID2']}\n\t\t\tif str(nr['AMR']).zfill(3) == target:\n\t\t\t\tnr[col] = newval\n\t\t\tnewRows.append(nr)\n\t\tself.view.custom.amrRows = newRows\n\t\tif leaf == 'componentID2':\n\t\t\tself.view.custom.currentComponentId2 = newval\n\t\telse:\n\t\t\tself.view.custom.currentComponentId = newval\n\t\tself.view.custom.newComponentId = ''\n\t\tself.view.custom.newComponentId2 = ''\n\t\tself.view.custom.reason = ''\n\telif ok:\n\t\tself.view.custom.amrRows = StationControl.SCC.getAmrFleet()\n\tself.view.custom.showTable = True\n"
+        }
+      ]
+    }
+  },
+  "events": {}
+}

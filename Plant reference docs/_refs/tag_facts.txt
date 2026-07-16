@@ -1,0 +1,52 @@
+CONFIRMED TAG / QUERY FACTS — verified against the lab FE1 gwbk + TAGIO2 full export.
+Use these as ground truth when approving SCC views/scripts. If a view/script
+contradicts a fact below, that is a BLOCKING issue.
+
+=== STATION TAG STRUCTURE (TAGIO2, Main Line confirmed; same UDT "Station Control/standardControl v2") ===
+- DynamicView.getTagFolder(stationName) returns the AREA folder, e.g.
+    '[TAGIO2]JLG/Jefferson City/Assembly/Main Line'  (NOT including the station).
+  Station folder = getTagFolder(stn) + '/' + stn
+- Station componentID tag:        <areaFolder>/<stn>/control/fromIGN/componentID      (AtomicTag)
+- Station SECOND componentID tag: <areaFolder>/<stn>/control/fromIGN/componentID_2    (AtomicTag, WITH underscore)
+- Two-component flag tag:         <areaFolder>/<stn>/control/fromIGN/compLoadCfg      (AtomicTag; ==2 means two components)
+- The UDT instance is named 'control' on some stations and 'Control' on others — Ignition tag paths are case-INSENSITIVE for reads, so either works.
+- Do NOT confuse with control/JaMESInteraction/componentID1 and /componentID2 (different branch, JaMES side).
+- AMR-bound flag per station: <areaFolder>/<stn>/AMRControl/AMRNumberAssignedToStation
+
+=== AMR FLEET TAG STRUCTURE (TAGIO2) ===
+- Base: '[TAGIO2]JLG/Jefferson City/Fleet/AMR Data'
+- Each AMR is a UdtInstance named 'AMR_<id>' (typeId 'Fleet/AMR/AMR'). 300 instances exist.
+  IMPORTANT: AMRs are UdtInstance, NOT Folder. Browsing with filter {"tagType":"Folder"} returns NOTHING.
+- AMR componentID:        <base>/AMR_<id>/machineInfo/componentID
+- AMR second componentID: <base>/AMR_<id>/machineInfo/componentID2   (NO underscore — unlike stations)
+- AMR Navithor state:     <base>/AMR_<id>/fromNavithor/State          (string; also StateEnum)
+- AMR target station:     <base>/AMR_<id>/fromNavithor/targetStationName
+- AMR battery:            <base>/AMR_<id>/fromNavithor/BatteryLevel
+
+=== NAMED QUERIES (FactoryControl project) — see _refs/named_query_paths.txt for the full authoritative list ===
+- WIP boundary count:  'station-control-center/getActiveStations'   param: StationName (CAPITAL S), Scalar, DB=SCADA
+    SQL: SELECT COUNT(*) FROM dbo.WIPWorkOrders_Assembly WHERE StationName=:stationName AND Status=2 AND CompletedTimestamp IS NULL
+- Station roster:      'station-control/Work Station Assignment/getWorkStationAssignmentTable'  (SELECT * FROM WorkStationAssignment)
+- MachineConfig:       'station-control/Run Schedule/select/getMachineConfigInfo'  params: componentID, items
+- Scheduled serials:   'Run Schedule/Assembly/manualAssemblyScheduling/select/getAllScheduledSerialsInAssembly'
+    returns columns: SerialNumber, ProductCode, OrderNumber, ScheduledTimestamp, CurrentStation, Associated (0/1), Traditional (0/1)
+- BE (FactoryGatewayEvents) queries are called with project="FactoryGatewayEvents":
+    RunSchedule/Assembly/Select/CheckScheduledStatusBySerial, RunSchedule/Select/FindNwgsAssociatedWithSerialNumber,
+    RunSchedule/Select/FindWGSerialNumber, RunSchedule/Fabrication/Select/selectStatus,
+    RunSchedule/Fabrication/Select/updateCompleteTimestamp, RunSchedule/PaintUnload/insert/insertFabricationToPreAssemblyInventory
+    (These live on BE and are NOT in the FE named-query list — do not flag them as missing.)
+
+=== SCC VIEW LOCATION (deployed) ===
+- 'Plant Overview/Engineering/Station Control Center/...'  (tabs/, embedded/, mockup, Station-Control-Center shell)
+- The status-pill embedded view must be installed at: 'Plant Overview/Engineering/Station Control Center/embedded/status-pill'
+  Any column with render:"view" pointing there must use that exact viewPath.
+
+=== KNOWN BUG CLASSES (must NOT appear) — from CLAUDE.md ===
+1. onRowClick on a table (does not fire) — must be onSelectionChange, payload event.value['data']['<col>'].
+2. Theme tokens (--textPrimary, --container, --accent-primary, etc.) — concrete hex only.
+3. session.props.theme / dark-mode toggles.
+4. Namespace 'StationControlCenter' — must be 'StationControl.SCC'.
+5. Flat column "title" key — Perspective ignores it; use header.title (else header shows the field name).
+6. ia.input.button with position.basis as a % inside a COLUMN flex — basis is height there, so % collapses/inflates the button. Use px height.
+7. Polling on query bindings must be disabled (polling.enabled=false) — no polling/timer/tag-change subscriptions.
+8. Query/tag paths that don't exist in the references above.

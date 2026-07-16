@@ -1,0 +1,164 @@
+{
+  "custom": {},
+  "params": {
+    "title": "Working...",
+    "actionKey": "refresh",
+    "actionArgs": {},
+    "doneMsg": "sccActionDone"
+  },
+  "propConfig": {
+    "params.title": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.actionKey": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.actionArgs": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.doneMsg": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 420,
+      "height": 190
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "justify": "center",
+      "alignItems": "center",
+      "style": {
+        "backgroundColor": "#1B212B",
+        "borderRadius": "12px",
+        "padding": "22px 26px",
+        "gap": "14px",
+        "height": "100%",
+        "boxShadow": "0 12px 40px rgba(0,0,0,0.30)",
+        "cursor": "pointer",
+        "width": "100%",
+        "overflow": "hidden",
+        "margin": "0"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.display.icon",
+        "meta": {
+          "name": "WorkIcon"
+        },
+        "position": {
+          "basis": "34px",
+          "shrink": 0
+        },
+        "props": {
+          "path": "material/sync",
+          "color": "#E87722",
+          "style": {
+            "width": "34px",
+            "height": "34px"
+          }
+        }
+      },
+      {
+        "type": "ia.display.label",
+        "meta": {
+          "name": "TitleLbl"
+        },
+        "position": {
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.params.title"
+              }
+            }
+          }
+        },
+        "props": {
+          "text": "Working...",
+          "style": {
+            "color": "#FFFFFF",
+            "fontSize": "16px",
+            "fontWeight": "700",
+            "letterSpacing": "0.2px",
+            "textAlign": "center"
+          }
+        }
+      },
+      {
+        "type": "ia.display.progress",
+        "meta": {
+          "name": "Bar"
+        },
+        "position": {
+          "basis": "8px",
+          "shrink": 0,
+          "alignSelf": "stretch"
+        },
+        "props": {
+          "indeterminate": true,
+          "value": 0,
+          "max": 100,
+          "style": {
+            "width": "100%"
+          }
+        }
+      },
+      {
+        "type": "ia.display.label",
+        "meta": {
+          "name": "SubLbl"
+        },
+        "position": {
+          "shrink": 0
+        },
+        "props": {
+          "text": "Performing action... please wait.",
+          "style": {
+            "color": "#A7B0BE",
+            "fontSize": "13px",
+            "fontWeight": "400",
+            "textAlign": "center"
+          }
+        }
+      }
+    ],
+    "events": {
+      "dom": {
+        "onClick": {
+          "type": "script",
+          "scope": "G",
+          "config": {
+            "script": "\tsystem.perspective.closePopup('sccProgress')\n"
+          }
+        }
+      }
+    }
+  },
+  "events": {
+    "system": {
+      "onStartup": {
+        "type": "script",
+        "scope": "G",
+        "config": {
+          "script": "\tak = self.params.actionKey\n\taa = self.params.actionArgs\n\tdm = self.params.doneMsg\n\ttry:\n\t\tres = StationControl.SCC.runAction(ak, aa, self.session)\n\texcept:\n\t\timport sys\n\t\tres = {'ok': False, 'message': 'Action error: ' + str(sys.exc_info()[1])[:200]}\n\t# Forward the FULL result (results / scheduled / skipped / needsConfirm ...) so a done-handler can\n\t# stamp per-row status, not just read ok + message. actionKey + args are added for the handler to route on.\n\tpayload = dict(res) if isinstance(res, dict) else {'ok': False, 'message': str(res)}\n\tpayload['actionKey'] = ak\n\tpayload['args'] = aa\n\tsystem.perspective.sendMessage(dm, payload = payload, scope = 'session')\n"
+        }
+      }
+    }
+  }
+}

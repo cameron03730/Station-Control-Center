@@ -1,0 +1,423 @@
+{
+  "custom": {
+    "selectedTab": 0,
+    "hasAccess": false
+  },
+  "params": {},
+  "props": {
+    "defaultSize": {
+      "height": 960,
+      "width": 1320
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "backgroundColor": "#F4F6F9"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "Header"
+        },
+        "position": {
+          "basis": "92px",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "style": {
+            "backgroundColor": "#1B212B",
+            "padding": "0 32px",
+            "borderBottom": "3px solid #E87722",
+            "boxShadow": "0 3px 12px rgba(27,33,43,0.26)"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "HeaderAccent"
+            },
+            "position": {
+              "basis": "8px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "backgroundColor": "#E87722",
+                "borderRadius": "4px",
+                "alignSelf": "stretch",
+                "margin": "20px 20px 20px 0"
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "HeaderText"
+            },
+            "position": {
+              "grow": 1
+            },
+            "props": {
+              "direction": "column",
+              "justify": "center",
+              "style": {
+                "gap": "4px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Title"
+                },
+                "position": {
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Station Control Center",
+                  "style": {
+                    "color": "#FFFFFF",
+                    "fontSize": "24px",
+                    "fontWeight": "700",
+                    "letterSpacing": "0.4px"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Subtitle"
+                },
+                "position": {
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Authorized manual interventions — every commit is logged to SupervisorOverrideLog",
+                  "style": {
+                    "color": "#A7B0BE",
+                    "fontSize": "13.5px",
+                    "fontWeight": "400",
+                    "letterSpacing": "0.2px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "HeaderBadge"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "props": {
+              "text": "JLG · JEFFERSON CITY",
+              "style": {
+                "color": "#E87722",
+                "fontSize": "12.5px",
+                "fontWeight": "700",
+                "letterSpacing": "1.4px",
+                "border": "1px solid #3A4250",
+                "borderRadius": "999px",
+                "padding": "8px 18px",
+                "backgroundColor": "#222A36",
+                "whiteSpace": "nowrap"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "VersionBadge"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "props": {
+              "text": "V1.0.0",
+              "style": {
+                "color": "#A7B0BE",
+                "fontSize": "12.5px",
+                "fontWeight": "700",
+                "letterSpacing": "1px",
+                "border": "1px solid #3A4250",
+                "borderRadius": "999px",
+                "padding": "8px 16px",
+                "backgroundColor": "#222A36",
+                "marginLeft": "12px",
+                "whiteSpace": "nowrap"
+              }
+            }
+          },
+          {
+            "type": "ia.input.button",
+            "meta": {
+              "name": "Help_Button"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "props": {
+              "text": "Help",
+              "style": {
+                "backgroundColor": "#2A3340",
+                "color": "#FFFFFF",
+                "border": "1px solid #3A4250",
+                "borderRadius": "999px",
+                "fontWeight": "700",
+                "fontSize": "12.5px",
+                "letterSpacing": "0.5px",
+                "padding": "8px 16px",
+                "marginLeft": "12px",
+                "overflow": "hidden",
+                "whiteSpace": "nowrap"
+              },
+              "image": {
+                "icon": {
+                  "path": "material/help_outline",
+                  "color": "#E87722",
+                  "style": {
+                    "width": "16px",
+                    "height": "16px",
+                    "flexShrink": "0"
+                  }
+                }
+              }
+            },
+            "events": {
+              "dom": {
+                "onClick": {
+                  "type": "script",
+                  "scope": "G",
+                  "config": {
+                    "script": "\tsystem.perspective.openPopup('sccHelp', 'Plant Overview/Engineering/Station Control Center/embedded/scc-help', {}, modal=True, showCloseIcon=False)\n"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.tab",
+        "meta": {
+          "name": "TabContainer"
+        },
+        "position": {
+          "basis": "360px",
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "menuType": "modern",
+          "tabSize": {
+            "height": 58,
+            "width": 236
+          },
+          "tabs": [
+            "Station Rectification",
+            "AMR Rectification",
+            "Manual Assembly",
+            "Work Order Reconciliation"
+          ],
+          "style": {
+            "backgroundColor": "#F4F6F9",
+            "padding": "20px 24px 24px 24px",
+            "fontSize": "15px",
+            "fontWeight": "600",
+            "letterSpacing": "0.3px",
+            "minHeight": "0px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.view",
+            "meta": {
+              "name": "TabPane_0"
+            },
+            "position": {},
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/tabs/station-componentID-rectify",
+              "style": {
+                "overflow": "auto"
+              }
+            }
+          },
+          {
+            "type": "ia.display.view",
+            "meta": {
+              "name": "TabPane_1"
+            },
+            "position": {
+              "tabIndex": 1
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/tabs/amr-componentid-rectify",
+              "style": {
+                "overflow": "auto"
+              }
+            }
+          },
+          {
+            "type": "ia.display.view",
+            "meta": {
+              "name": "TabPane_2"
+            },
+            "position": {
+              "tabIndex": 2
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/tabs/manual-assembly-schedule",
+              "style": {
+                "overflow": "auto"
+              }
+            }
+          },
+          {
+            "type": "ia.display.view",
+            "meta": {
+              "name": "TabPane_3"
+            },
+            "position": {
+              "tabIndex": 3
+            },
+            "props": {
+              "path": "Plant Overview/Engineering/Station Control Center/tabs/work-order-reconciliation",
+              "style": {
+                "overflow": "auto"
+              }
+            }
+          }
+        ],
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.hasAccess"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "AccessDenied"
+        },
+        "position": {
+          "basis": "360px",
+          "grow": 1,
+          "shrink": 1
+        },
+        "propConfig": {
+          "position.display": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "!{view.custom.hasAccess}"
+              }
+            }
+          }
+        },
+        "props": {
+          "direction": "column",
+          "justify": "center",
+          "alignItems": "center",
+          "style": {
+            "backgroundColor": "#F4F6F9",
+            "gap": "14px",
+            "padding": "40px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.icon",
+            "meta": {
+              "name": "DeniedIcon"
+            },
+            "position": {
+              "basis": "56px",
+              "shrink": 0
+            },
+            "props": {
+              "path": "material/lock",
+              "color": "#E03131",
+              "style": {
+                "width": "56px",
+                "height": "56px"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "DeniedTitle"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "props": {
+              "text": "Access Denied",
+              "style": {
+                "color": "#1B212B",
+                "fontSize": "24px",
+                "fontWeight": "700",
+                "textAlign": "center"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "DeniedMsg"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "props": {
+              "text": "You do not have permission to use the Station Control Center. This tool requires the Engineering, Supervisor, or Scheduler role.",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "15px",
+                "fontWeight": "400",
+                "lineHeight": "1.5",
+                "textAlign": "center",
+                "maxWidth": "520px"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "propConfig": {
+    "custom.hasAccess": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "session.props.auth.user.roles"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\troles = value or []\n\tallowed = ('Engineering', 'Supervisor', 'Scheduler', 'Administrator')\n\ttry:\n\t\treturn any((str(r) in allowed) for r in roles)\n\texcept:\n\t\treturn False\n"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,255 @@
+{
+  "custom": {
+    "token": 0,
+    "tick": 0
+  },
+  "params": {
+    "msg": "",
+    "error": false,
+    "autoClose": false
+  },
+  "propConfig": {
+    "params.msg": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.error": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.autoClose": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "custom.tick": {
+      "binding": {
+        "type": "expr",
+        "config": {
+          "expression": "if({view.params.autoClose}, now(2000), 0)"
+        }
+      },
+      "onChange": {
+        "enabled": true,
+        "script": "\tif self.view.params.autoClose:\n\t\tprev = previousValue.value if previousValue is not None else None\n\t\tif prev:\n\t\t\tsystem.perspective.closePopup('sccToast')\n"
+      }
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 620,
+      "height": 240
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "scripts": {
+      "customMethods": [],
+      "extensionFunctions": null,
+      "messageHandlers": []
+    },
+    "events": {
+      "dom": {
+        "onClick": {
+          "type": "script",
+          "scope": "G",
+          "config": {
+            "script": "\tsystem.perspective.closePopup('sccToast')\n"
+          }
+        }
+      }
+    },
+    "props": {
+      "direction": "row",
+      "alignItems": "stretch",
+      "style": {
+        "backgroundColor": "#1B212B",
+        "borderRadius": "10px",
+        "height": "100%",
+        "maxHeight": "100%",
+        "cursor": "pointer",
+        "overflow": "hidden",
+        "boxShadow": "0 8px 24px rgba(0,0,0,0.32)"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "AccentBar"
+        },
+        "position": {
+          "basis": "6px",
+          "shrink": 0
+        },
+        "props": {
+          "style": {
+            "backgroundColor": "#2F9E44"
+          }
+        },
+        "propConfig": {
+          "props.style.backgroundColor": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.error}, '#E03131', '#2F9E44')"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "ia.display.icon",
+        "meta": {
+          "name": "StatusIcon"
+        },
+        "position": {
+          "basis": "48px",
+          "shrink": 0,
+          "alignSelf": "flex-start"
+        },
+        "props": {
+          "path": "material/check_circle",
+          "color": "#2F9E44",
+          "style": {
+            "width": "26px",
+            "height": "26px",
+            "margin": "18px 0 0 16px"
+          }
+        },
+        "propConfig": {
+          "props.path": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.error}, 'material/error', 'material/check_circle')"
+              }
+            }
+          },
+          "props.color": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.error}, '#E03131', '#2F9E44')"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "MsgArea"
+        },
+        "position": {
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "justify": "flex-start",
+          "style": {
+            "overflow": "auto",
+            "padding": "16px 18px 16px 12px",
+            "gap": "6px",
+            "minWidth": "0px",
+            "minHeight": "0px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "TitleLbl"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.params.error}, 'Error', 'Done')"
+                  }
+                }
+              },
+              "props.style.color": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.params.error}, '#FF9B9B', '#8CE0A6')"
+                  }
+                }
+              }
+            },
+            "props": {
+              "text": "Done",
+              "style": {
+                "color": "#8CE0A6",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "letterSpacing": "0.8px",
+                "textTransform": "uppercase",
+                "textAlign": "left"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "Msg"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.params.msg"
+                  }
+                }
+              }
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#FFFFFF",
+                "fontSize": "15px",
+                "fontWeight": "600",
+                "lineHeight": "1.5",
+                "textAlign": "left",
+                "whiteSpace": "normal",
+                "wordBreak": "break-word"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "DismissHint"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "props": {
+              "text": "Click anywhere to dismiss",
+              "style": {
+                "color": "#8A929E",
+                "fontSize": "11px",
+                "fontWeight": "500",
+                "textAlign": "left",
+                "marginTop": "2px"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "events": {}
+}

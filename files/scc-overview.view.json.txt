@@ -1,0 +1,316 @@
+{
+  "custom": {},
+  "params": {
+    "idText": "",
+    "isNWG": false
+  },
+  "propConfig": {
+    "params.idText": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.isNWG": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 1500,
+      "height": 920
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "backgroundColor": "#F4F6F9",
+        "height": "100%",
+        "overflow": "hidden"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "HeaderBar"
+        },
+        "position": {
+          "basis": "64px",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "style": {
+            "backgroundColor": "#1B212B",
+            "padding": "12px 22px",
+            "gap": "16px",
+            "borderBottom": "3px solid #E87722"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.icon",
+            "meta": {
+              "name": "TitleIcon"
+            },
+            "position": {
+              "basis": "24px",
+              "shrink": 0
+            },
+            "props": {
+              "path": "material/account_tree",
+              "color": "#E87722",
+              "style": {
+                "width": "24px",
+                "height": "24px"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "TitleLbl"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "MACHINE OVERVIEW",
+              "style": {
+                "color": "#FFFFFF",
+                "fontSize": "18px",
+                "fontWeight": "700",
+                "letterSpacing": "0.4px",
+                "whiteSpace": "nowrap"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "IdLbl"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 1
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#A7B0BE",
+                "fontSize": "15px",
+                "fontWeight": "600",
+                "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                "whiteSpace": "nowrap",
+                "overflow": "hidden",
+                "textOverflow": "ellipsis"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "coalesce({view.params.idText}, '--')"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "TypePill"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#FFFFFF",
+                "fontSize": "11.5px",
+                "fontWeight": "700",
+                "letterSpacing": "0.5px",
+                "borderRadius": "999px",
+                "padding": "4px 13px",
+                "whiteSpace": "nowrap",
+                "backgroundColor": "#E87722"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.params.isNWG}, 'NON-WHOLE GOOD', 'WHOLE GOOD')"
+                  }
+                }
+              },
+              "props.style.backgroundColor": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.params.isNWG}, '#0C8599', '#E87722')"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "Spacer"
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "text": "",
+              "style": {}
+            }
+          },
+          {
+            "type": "ia.input.button",
+            "meta": {
+              "name": "Refresh_Button"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Refresh",
+              "style": {
+                "backgroundColor": "#2A3340",
+                "color": "#FFFFFF",
+                "border": "1px solid #5B6675",
+                "borderRadius": "8px",
+                "fontWeight": "600",
+                "fontSize": "14px",
+                "padding": "9px 16px",
+                "overflow": "hidden",
+                "whiteSpace": "nowrap"
+              },
+              "image": {
+                "icon": {
+                  "path": "material/refresh",
+                  "color": "#FFFFFF",
+                  "style": {
+                    "width": "18px",
+                    "height": "18px",
+                    "flexShrink": "0"
+                  }
+                }
+              }
+            },
+            "events": {
+              "dom": {
+                "onClick": {
+                  "type": "script",
+                  "scope": "G",
+                  "config": {
+                    "script": "\tsystem.perspective.sendMessage('sccFlowRefresh', payload={}, scope='session')\n"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.input.button",
+            "meta": {
+              "name": "Close_Button"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Close",
+              "style": {
+                "backgroundColor": "#2A3340",
+                "color": "#FFFFFF",
+                "border": "1px solid #5B6675",
+                "borderRadius": "8px",
+                "fontWeight": "600",
+                "fontSize": "14px",
+                "padding": "9px 16px",
+                "overflow": "hidden",
+                "whiteSpace": "nowrap"
+              },
+              "image": {
+                "icon": {
+                  "path": "material/close",
+                  "color": "#FFFFFF",
+                  "style": {
+                    "width": "18px",
+                    "height": "18px",
+                    "flexShrink": "0"
+                  }
+                }
+              }
+            },
+            "events": {
+              "dom": {
+                "onClick": {
+                  "type": "script",
+                  "scope": "G",
+                  "config": {
+                    "script": "\tsystem.perspective.closePopup('sccOverview')\n"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.display.view",
+        "meta": {
+          "name": "CanvasHost"
+        },
+        "position": {
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-flow-canvas",
+          "params": {
+            "idText": "",
+            "isNWG": false
+          },
+          "style": {
+            "minHeight": "0px"
+          }
+        },
+        "propConfig": {
+          "props.params.idText": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "coalesce({view.params.idText}, '')"
+              }
+            }
+          },
+          "props.params.isNWG": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "{view.params.isNWG}"
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

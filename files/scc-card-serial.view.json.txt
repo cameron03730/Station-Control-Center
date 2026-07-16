@@ -1,0 +1,359 @@
+{
+  "custom": {},
+  "params": {
+    "value": "",
+    "rowData": {},
+    "rowIndex": -1
+  },
+  "propConfig": {
+    "params.value": {
+      "paramDirection": "input",
+      "persistent": false
+    },
+    "params.rowData": {
+      "paramDirection": "input",
+      "persistent": false
+    },
+    "params.rowIndex": {
+      "paramDirection": "input",
+      "persistent": false
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 104,
+      "width": 700
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "row",
+      "alignItems": "center",
+      "justify": "flex-start",
+      "wrap": "noWrap",
+      "style": {
+        "backgroundColor": "transparent",
+        "borderBottom": "1px solid #EEF1F5",
+        "padding": "14px 22px",
+        "gap": "20px",
+        "height": "100%",
+        "overflow": "hidden"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "PrimaryBlock"
+        },
+        "position": {
+          "basis": "0px",
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "justify": "center",
+          "style": {
+            "gap": "6px",
+            "overflow": "hidden"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "SerialValue"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "coalesce({view.params.rowData.SerialNumber}, '—')"
+                  }
+                }
+              }
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#1B212B",
+                "fontSize": "22px",
+                "fontWeight": "700",
+                "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                "letterSpacing": "0.3px",
+                "textAlign": "left",
+                "whiteSpace": "nowrap",
+                "overflow": "hidden",
+                "textOverflow": "ellipsis"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "DetailLine"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "coalesce({view.params.rowData.ProductCode}, '—') + '      ' + coalesce({view.params.rowData.MachineType}, '—') + '      Station ' + coalesce({view.params.rowData.CurrentStation}, '—')"
+                  }
+                }
+              }
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "15px",
+                "fontWeight": "500",
+                "textAlign": "left",
+                "whiteSpace": "nowrap",
+                "overflow": "hidden",
+                "textOverflow": "ellipsis"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "PillBlock"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 0,
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "justify": "flex-end",
+          "wrap": "noWrap",
+          "style": {
+            "gap": "10px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "StatusPill"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "coalesce(try({view.params.rowData.Status.value}, ''), '')"
+                  }
+                }
+              },
+              "props.style.backgroundColor": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "coalesce(try({view.params.rowData.Status.style.backgroundColor}, '#E8920C'), '#E8920C')"
+                  }
+                }
+              },
+              "meta.visible": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "len(coalesce(try({view.params.rowData.Status.value}, ''), '')) > 0"
+                  }
+                }
+              }
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "backgroundColor": "#E8920C",
+                "color": "#FFFFFF",
+                "fontSize": "13px",
+                "fontWeight": "700",
+                "letterSpacing": "0.5px",
+                "borderRadius": "999px",
+                "padding": "7px 18px",
+                "textAlign": "center",
+                "whiteSpace": "nowrap"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "AssocPill"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "coalesce(try({view.params.rowData.Assoc.value}, ''), '')"
+                  }
+                }
+              },
+              "props.style.backgroundColor": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "coalesce(try({view.params.rowData.Assoc.style.backgroundColor}, '#2F9E44'), '#2F9E44')"
+                  }
+                }
+              },
+              "meta.visible": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "len(coalesce(try({view.params.rowData.Assoc.value}, ''), '')) > 0"
+                  }
+                }
+              }
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "backgroundColor": "#2F9E44",
+                "color": "#FFFFFF",
+                "fontSize": "13px",
+                "fontWeight": "700",
+                "letterSpacing": "0.5px",
+                "borderRadius": "999px",
+                "padding": "7px 18px",
+                "textAlign": "center",
+                "whiteSpace": "nowrap"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "MetaBlock"
+        },
+        "position": {
+          "basis": "196px",
+          "grow": 0,
+          "shrink": 0
+        },
+        "props": {
+          "direction": "column",
+          "justify": "center",
+          "alignItems": "flex-end",
+          "style": {
+            "gap": "3px",
+            "borderLeft": "1px solid #EEF1F5",
+            "paddingLeft": "18px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "OrderCaption"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "props": {
+              "text": "WORK ORDER",
+              "style": {
+                "color": "#8A929E",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "letterSpacing": "0.7px",
+                "textAlign": "right"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "OrderValue"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "coalesce({view.params.rowData.OrderNumber}, '—')"
+                  }
+                }
+              }
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#1B212B",
+                "fontSize": "17px",
+                "fontWeight": "700",
+                "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                "letterSpacing": "0.3px",
+                "textAlign": "right",
+                "whiteSpace": "nowrap"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "ScheduledValue"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.params.rowData.ScheduledTimestamp} = null, 'Not scheduled', 'Scheduled  ' + dateFormat({view.params.rowData.ScheduledTimestamp}, 'MM/dd/yy  HH:mm'))"
+                  }
+                }
+              }
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "14px",
+                "fontWeight": "500",
+                "letterSpacing": "0.2px",
+                "textAlign": "right",
+                "whiteSpace": "nowrap",
+                "marginTop": "4px"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

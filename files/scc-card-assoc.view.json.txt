@@ -1,0 +1,174 @@
+{
+  "custom": {},
+  "params": {
+    "serial": "",
+    "section": "",
+    "comp": "",
+    "unassigned": false
+  },
+  "propConfig": {
+    "params.serial": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.section": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.comp": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.unassigned": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 420,
+      "height": 56
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "row",
+      "alignItems": "center",
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "border": "1px solid #E1E7EF",
+        "borderLeft": "6px solid #2F9E44",
+        "borderRadius": "10px",
+        "padding": "9px 12px 9px 14px",
+        "gap": "12px",
+        "height": "100%",
+        "overflow": "hidden",
+        "boxShadow": "0 1px 3px rgba(27,33,43,0.06)"
+      }
+    },
+    "propConfig": {
+      "props.style.borderLeft": {
+        "binding": {
+          "type": "expr",
+          "config": {
+            "expression": "if({view.params.unassigned}, '6px solid #E03131', '6px solid #2F9E44')"
+          }
+        }
+      },
+      "props.style.backgroundColor": {
+        "binding": {
+          "type": "expr",
+          "config": {
+            "expression": "if({view.params.unassigned}, '#FDF2F2', '#FFFFFF')"
+          }
+        }
+      }
+    },
+    "children": [
+      {
+        "type": "ia.display.label",
+        "meta": {
+          "name": "SectionBadge"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "props": {
+          "text": "",
+          "style": {
+            "color": "#FFFFFF",
+            "fontSize": "12px",
+            "fontWeight": "800",
+            "letterSpacing": "0.5px",
+            "textTransform": "uppercase",
+            "borderRadius": "999px",
+            "padding": "5px 13px",
+            "whiteSpace": "nowrap",
+            "backgroundColor": "#5B6675",
+            "boxShadow": "0 1px 2px rgba(27,33,43,0.18)"
+          }
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "upper(coalesce({view.params.section}, '--'))"
+              }
+            }
+          },
+          "props.style.backgroundColor": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "case({view.params.section}, 'Fly','#E87722', 'InnerMid','#E8920C', 'OuterMid','#0C8599', 'Base','#6741D9', 'Frame','#5B6675', '#5B6675')"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "ia.display.label",
+        "meta": {
+          "name": "CompVal"
+        },
+        "position": {
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "text": "",
+          "style": {
+            "color": "#2F9E44",
+            "fontSize": "16px",
+            "fontWeight": "700",
+            "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+            "letterSpacing": "0.3px",
+            "whiteSpace": "nowrap",
+            "overflow": "hidden",
+            "textOverflow": "ellipsis"
+          }
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.unassigned}, 'Not associated', coalesce({view.params.comp}, '--'))"
+              }
+            }
+          },
+          "props.style.color": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.unassigned}, '#C0392B', '#2F9E44')"
+              }
+            }
+          },
+          "props.style.fontStyle": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.unassigned}, 'italic', 'normal')"
+              }
+            }
+          },
+          "props.style.fontFamily": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.unassigned}, '-apple-system, Segoe UI, Roboto, sans-serif', 'SF Mono, Roboto Mono, Consolas, monospace')"
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

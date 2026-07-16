@@ -1,0 +1,58 @@
+-- FactoryControl named query: Run Schedule/Assembly/manualAssemblyScheduling/select/getAllScheduledSerialsInAssembly
+-- SCC CHANGE (2026-07-01): added the current (min) station's Status column so the Manual Assembly card can
+-- show SCHEDULED vs WIP. This is ADDITIVE (one extra column) -- existing consumers ignore it. Re-save this
+-- named query in the FactoryControl project for the status pill to reflect real WIP.
+
+-- Min TF station fallback that grabs the earliest station with a null complete timestamp.
+WITH MinStation AS (
+    SELECT
+        SerialNumber,
+        StationName AS MinStation,
+        Status AS CurrentStatus
+    FROM dbo.WIPWorkOrders_Assembly
+    WHERE (StationName LIKE 'TF001%' OR StationName LIKE 'LL001%') AND Completedtimestamp IS NULL
+    AND LineStatus = 1
+
+),
+
+-- Check if machine has been assigned a TF station
+HasTfStation AS (
+    SELECT DISTINCT SerialNumber
+    FROM dbo.WIPWorkOrders_Assembly
+    WHERE (StationName LIKE 'TF001%' AND StationName != 'LL0010')
+    AND LineStatus = 1
+),
+
+-- ScheduledTimestamp for 'TF010A' or 'LL0010'
+TfScheduleTimes AS (
+    SELECT SerialNumber, ScheduledTimestamp
+    FROM dbo.WIPWorkOrders_Assembly
+    WHERE (StationName LIKE 'TF001%' OR StationName LIKE 'LL001%')
+    AND LineStatus = 1
+)
+
+-- Final query. Uses data from previous CTEs, checks association and determines whether the machine is a legacy machine.
+SELECT DISTINCT
+    a.SerialNumber,
+    a.ProductCode,
+    a.WholeGoodWorkOrderNumber AS OrderNumber,
+    st.ScheduledTimestamp,
+    ms.MinStation AS CurrentStation,
+    ms.CurrentStatus AS Status,
+    CASE
+		WHEN
+			a.SerialNumber IN (SELECT  DISTINCT FinalSerialNumber AS SerialNumber FROM dbo.WholeGoodToNonWholeGoodAssoc
+				WHERE ComponentID != 'UNASSIGNED' AND ComponentID IS NOT NULL)
+		THEN 1
+		ELSE 0
+	END AS Associated,
+    CASE
+        WHEN tf.SerialNumber IS NOT NULL THEN 0
+        ELSE 1
+    END AS [Traditional]
+FROM dbo.WIPWorkOrders_Assembly a
+LEFT JOIN MinStation ms ON a.SerialNumber = ms.SerialNumber
+LEFT JOIN HasTfStation tf ON a.SerialNumber = tf.SerialNumber
+LEFT JOIN TfScheduleTimes st ON a.SerialNumber = st.SerialNumber
+WHERE a.LineStatus = 1 AND (a.StationName LIKE 'TF001%' OR a.StationName LIKE 'LL001%')
+ORDER BY ms.MinStation, st.ScheduledTimestamp

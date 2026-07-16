@@ -1,0 +1,342 @@
+{
+  "custom": {},
+  "params": {
+    "value": "",
+    "rowData": {},
+    "rowIndex": -1,
+    "selIdx": -1
+  },
+  "propConfig": {
+    "params.value": {
+      "paramDirection": "input",
+      "persistent": false
+    },
+    "params.rowData": {
+      "paramDirection": "input",
+      "persistent": false
+    },
+    "params.rowIndex": {
+      "paramDirection": "input",
+      "persistent": false
+    },
+    "params.selIdx": {
+      "paramDirection": "input",
+      "persistent": false
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 520,
+      "height": 76
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "propConfig": {
+      "props.style.borderLeft": {
+        "binding": {
+          "type": "expr",
+          "config": {
+            "expression": "if({view.params.rowIndex} = {view.params.selIdx}, '4px solid #E87722', '4px solid transparent')"
+          }
+        }
+      }
+    },
+    "props": {
+      "direction": "column",
+      "justify": "center",
+      "style": {
+        "backgroundColor": "transparent",
+        "borderBottom": "1px solid #EEF1F5",
+        "borderLeft": "4px solid transparent",
+        "gap": "5px",
+        "padding": "10px 16px",
+        "height": "100%",
+        "overflow": "hidden",
+        "cursor": "pointer"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "Row1"
+        },
+        "position": {
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "style": {
+            "gap": "10px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "StationName"
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 1
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.params.rowData.StationName"
+                  }
+                }
+              }
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#1B212B",
+                "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                "fontSize": "18px",
+                "fontWeight": "700",
+                "letterSpacing": "0.4px",
+                "textAlign": "left",
+                "whiteSpace": "nowrap",
+                "overflow": "hidden",
+                "textOverflow": "ellipsis"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "AreaPill"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "propConfig": {
+              "meta.visible": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "len(coalesce({view.params.rowData.Area}, '')) > 0"
+                  }
+                }
+              },
+              "props.text": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.params.rowData.Area"
+                  }
+                }
+              }
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "alignSelf": "center",
+                "backgroundColor": "#0C8599",
+                "borderRadius": "999px",
+                "color": "#FFFFFF",
+                "fontSize": "11px",
+                "fontWeight": "700",
+                "letterSpacing": "0.3px",
+                "padding": "3px 11px",
+                "whiteSpace": "nowrap"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "Row2"
+        },
+        "position": {
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "baseline",
+          "style": {
+            "gap": "22px"
+          },
+          "justify": "start"
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Comp1"
+            },
+            "position": {
+              "grow": 0,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "baseline",
+              "style": {
+                "gap": "8px",
+                "overflow": "hidden"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Comp1Cap"
+                },
+                "position": {
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "COMP ID",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "10px",
+                    "fontWeight": "700",
+                    "letterSpacing": "0.6px",
+                    "whiteSpace": "nowrap",
+                    "textAlign": "left"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Comp1Val"
+                },
+                "position": {
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(coalesce({view.params.rowData.ComponentID}, '')) > 0, {view.params.rowData.ComponentID}, '(blank)')"
+                      }
+                    }
+                  },
+                  "props.style.color": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(coalesce({view.params.rowData.ComponentID}, '')) > 0, '#1B212B', '#8A929E')"
+                      }
+                    }
+                  }
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                    "fontSize": "15px",
+                    "fontWeight": "700",
+                    "letterSpacing": "0.3px",
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden",
+                    "textOverflow": "ellipsis",
+                    "textAlign": "left"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Comp2"
+            },
+            "position": {
+              "shrink": 1
+            },
+            "propConfig": {
+              "meta.visible": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "len(coalesce({view.params.rowData.ComponentID_2}, '')) > 0 && {view.params.rowData.ComponentID_2} != 'False' && {view.params.rowData.ComponentID_2} != 'True'"
+                  }
+                }
+              }
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "baseline",
+              "style": {
+                "gap": "8px",
+                "overflow": "hidden",
+                "borderLeft": "1px solid #EEF1F5",
+                "paddingLeft": "22px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Comp2Cap"
+                },
+                "position": {
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "COMP ID 2",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "10px",
+                    "fontWeight": "700",
+                    "letterSpacing": "0.6px",
+                    "whiteSpace": "nowrap",
+                    "textAlign": "left"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "Comp2Val"
+                },
+                "position": {
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.params.rowData.ComponentID_2"
+                      }
+                    }
+                  }
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                    "fontSize": "15px",
+                    "fontWeight": "700",
+                    "letterSpacing": "0.3px",
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden",
+                    "textOverflow": "ellipsis",
+                    "textAlign": "left"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

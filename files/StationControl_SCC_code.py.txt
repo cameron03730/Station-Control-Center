@@ -1,0 +1,841 @@
+import sys
+import traceback
+import java.lang.Exception as JavaError
+
+logger = system.util.getLogger('STATION CONTROL CENTER')
+
+# Schedule/WIP status codes shared by Fabrication_*WIP and WIPWorkOrders_Assembly.
+STATUS_LABELS = {0: 'Scrapped', 1: 'Scheduled', 2: 'WIP', 3: 'Complete', 4: 'Abort', 5: 'Non-Conformance', 7: 'Associated'}
+ACTIVE_SCHEDULE_STATUSES = (1, 2, 7)          # in the schedule and not finished/voided
+STATION_OCCUPIED_STATUSES = (1, 2, 3, 7)      # live OR finished at a station -> scheduling it again is a duplicate
+
+# Prepaint WIP stations and the pre-assembly inventory station (all live in Fabrication_Frame/BoomWIP).
+PREPAINT_STATIONS = ('TW0700', 'TT170A', 'TT170B')
+PREASSEMBLY_STATION = 'TF000X'
+
+# SupervisorOverrideLog column widths. StationName is nvarchar(6), so it carries a SHORT station and the
+# full context goes in overrideDetails; longer values truncate-crash the insert otherwise.
+OVERRIDE_COLUMN_MAX = {'stationName': 6, 'overrideType': 50, 'overrideDetails': 250, 'reason': 250, 'overrideUser': 50}
+
+# Machine Overview swimlane order.
+FLOW_LANE_ORDER = ['Frame Fab', 'Boom Fab', 'Paint', 'Pre-Assembly', 'Main Line', 'Legacy', 'Boom Sub', 'Cab Sub', 'Engine Sub', 'Outrigger Sub', 'Other']
+
+
+# ---------------------------------------------------------------------------
+# SHARED HELPERS
+# ---------------------------------------------------------------------------
+def getOverrideUser(session):
+	'''Authenticated Perspective username.'''
+	return session.props.auth.user.userName
+
+
+def logOverride(stationName, overrideType, overrideDetails, reason, overrideUser):
+	'''One audit row per committed action. Caps each field to its column width and NEVER raises (audit is secondary to the action that already committed).'''
+	def cap(value, width):
+		return ('' if value is None else str(value))[:width]
+	params = {'stationName': cap(stationName, OVERRIDE_COLUMN_MAX['stationName']), 'overrideType': cap(overrideType, OVERRIDE_COLUMN_MAX['overrideType']), 'overrideDetails': cap(overrideDetails, OVERRIDE_COLUMN_MAX['overrideDetails']), 'reason': cap(reason, OVERRIDE_COLUMN_MAX['reason']), 'overrideUser': cap(overrideUser, OVERRIDE_COLUMN_MAX['overrideUser'])}
+	try:
+		system.db.runNamedQuery(project = 'FactoryControl', path = 'station-control/Supervisor Overrides/insert/insertEntrySupervisorOverrideLog', parameters = params)
+		return True
+	except (JavaError, Exception):
+		logger.error('logOverride FAILED (audit row NOT written) params={}\n{}'.format(params, traceback.format_exc()))
+		return False
+
+
+def backend(stationName = None):
+	'''Owning backend gateway: Frame/Boom/Paint (TW/TT/PT) -> BE1, everything else (and no station) -> BE2.'''
+	prefix = (stationName or '')[:2].upper()
+	if prefix in ('TW', 'TT', 'PT'):
+		return GatewayConfig.getBackEnd_1()
+	return GatewayConfig.getBackEnd_2()
+
+
+def beExec(functionPath, params, stationName = None):
+	'''Runs a FactoryGatewayEvents script function on the owning backend via the executeFunction handler. All BE calls funnel through here.'''
+	targetBackend = str(backend(stationName))
+	logger.info('beExec {} | station={!r} | backend={} | params={}'.format(functionPath, stationName, targetBackend, params))
+	try:
+		return system.util.sendRequest('FactoryGatewayEvents', 'executeFunction', payload = {'function': functionPath, 'params': params}, remoteServer = targetBackend)
+	except (JavaError, Exception):
+		# A remote failure returns as a java.lang.Exception, which a plain except won't catch. Log the full trace here (the toast is truncated).
+		logger.error('beExec FAILED {} | station={!r} | params={}\n{}'.format(functionPath, stationName, params, traceback.format_exc()))
+		raise
+
+
+def beQuery(queryPath, queryParams, stationName = None):
+	'''Runs a FactoryGatewayEvents named query on a backend (the FE does not host that project, so it runs remotely).'''
+	return beExec('JcCommonOperations.dynamicQuery', {'queryPath': queryPath, 'queryParams': queryParams}, stationName = stationName)
+
+
+def getTagFolder(stationName):
+	'''Canonical station tag-folder resolver.'''
+	return StationControl.DynamicView.getTagFolder(stationName)
+
+
+def readTagValue(path):
+	'''One-shot tag read: value as str ('' when null), or None on empty path / bad quality. No polling.'''
+	if not path:
+		return None
+	qval = system.tag.readBlocking([path])[0]
+	if qval is None or not qval.quality.isGood():
+		return None
+	return '' if qval.value is None else str(qval.value)
+
+
+def statusLabel(status):
+	'''Human label for a raw status int ('Status N' if unmapped, 'unknown' if blank).'''
+	if status is None or status == '':
+		return 'unknown'
+	try:
+		return STATUS_LABELS.get(int(status), 'Status {}'.format(int(status)))
+	except:
+		return 'unknown'
+
+
+def scheduleEntriesSafe(idText):
+	'''getScheduleEntries wrapped to never raise -- returns [] and logs on failure.'''
+	try:
+		return getScheduleEntries(idText)
+	except:
+		logger.warn('scheduleEntriesSafe: getScheduleEntries failed for {}'.format(idText))
+		return []
+
+
+def scheduleEntryAtStations(compId, stations = None, rows = None, statuses = STATION_OCCUPIED_STATUSES):
+	'''First schedule row whose Status is in `statuses`, optionally limited to `stations` (None = any station); {station,status} or None.'''
+	rows = rows if rows is not None else scheduleEntriesSafe(compId)
+	targets = set(str(s).upper() for s in stations) if stations else None
+	for row in rows:
+		station = str(row.get('Station') or '')
+		if targets is not None and station.upper() not in targets:
+			continue
+		try:
+			status = int(row.get('Status'))
+		except:
+			continue
+		if status in statuses:
+			return {'station': station, 'status': status}
+	return None
+
+
+# ---------------------------------------------------------------------------
+# STATION COMPONENTID RECTIFICATION
+# ---------------------------------------------------------------------------
+def stationComponentIdTagPath(stationName, leaf = 'componentID'):
+	'''fromIGN component-id tag path ('componentID' or 'componentID_2'), or None if the folder can't be resolved.'''
+	folder = getTagFolder(stationName)
+	if not folder:
+		return None
+	return '{}/{}/control/fromIGN/{}'.format(folder, stationName, leaf)
+
+
+def readStationComponentId(stationName, leaf = 'componentID'):
+	'''One-shot read of a station's fromIGN componentID/componentID_2.'''
+	path = stationComponentIdTagPath(stationName, leaf)
+	if path is None:
+		logger.warn('readStationComponentId: no tag path for {}'.format(stationName))
+		return None
+	return readTagValue(path)
+
+
+def activeWipCount(stationName):
+	'''Active assembly WIP row count for a station (boundary check). Fail-safe 0 if the query is missing.'''
+	try:
+		return int(system.db.runNamedQuery(project = 'FactoryControl', path = 'station-control-center/getActiveStations', parameters = {'StationName': stationName}))
+	except:
+		logger.warn('activeWipCount: getActiveStations failed; returning 0 (fail-safe).')
+		return 0
+
+
+def checkStationGuards(stationName, newComponentID):
+	'''Read-only boundary checks for the Station tab UI. Returns {'checks':[...], 'allPassed':bool}.'''
+	newVal = (newComponentID or '').strip()
+	isClear = (newVal == '')
+	checks = []
+
+	active = activeWipCount(stationName)
+	checks.append({'label': 'Not actively building (no WIP row, status 2)', 'passed': active == 0, 'detail': 'OK' if active == 0 else '{} active WIP row(s)'.format(active)})
+
+	if isClear:
+		checks.append({'label': 'New ComponentID exists in MachineConfig', 'passed': True, 'detail': 'N/A - clearing'})
+	else:
+		mc = JcCommonOperations.getMachineConfigInfo(newVal, ['Product Code', 'ItemName'])
+		ok = (mc is not None and len(mc) > 0)
+		checks.append({'label': 'New ComponentID exists in MachineConfig', 'passed': ok, 'detail': 'OK' if ok else 'not found'})
+
+	current = readStationComponentId(stationName)
+	changed = (current is not None) and (str(current).strip() != newVal)
+	checks.append({'label': 'Value actually changes', 'passed': changed, 'detail': 'OK' if changed else 'no change'})
+
+	return {'checks': checks, 'allPassed': all(c['passed'] for c in checks)}
+
+
+def getStationRows():
+	'''Station roster + live componentID/componentID_2 for every station, in one batched read (no polling).'''
+	dataset = system.db.runNamedQuery(project = 'FactoryControl', path = 'station-control/Work Station Assignment/getWorkStationAssignmentTable', parameters = {})
+	pyData = system.dataset.toPyDataSet(dataset)
+	cols = list(pyData.getColumnNames())
+	rows = []
+	for r in pyData:
+		row = {col: r[col] for col in cols}
+		row['ComponentID'] = ''
+		row['ComponentID_2'] = ''
+		row['__card'] = ''
+		rows.append(row)
+
+	# One batched read of both component leaves for every station whose folder resolves.
+	paths = []
+	slots = []                                          # (rowIndex, columnKey) parallel to paths
+	for i, row in enumerate(rows):
+		stn = row.get('StationName')
+		if not stn:
+			continue
+		try:
+			base = getTagFolder(stn)
+		except:
+			base = None
+		if not base:
+			continue
+		prefix = '{}/{}/control/fromIGN/'.format(base, stn)
+		paths.append(prefix + 'componentID');   slots.append((i, 'ComponentID'))
+		paths.append(prefix + 'componentID_2'); slots.append((i, 'ComponentID_2'))
+	if paths:
+		vals = system.tag.readBlocking(paths)
+		for (i, col), qval in zip(slots, vals):
+			if qval is not None and qval.value is not None:
+				rows[i][col] = str(qval.value)
+	return rows
+
+
+def setStationComponentId(stationName, newComponentID, reason, session, leaf = 'componentID'):
+	'''Sets/clears a station's fromIGN componentID (blank clears), with boundary checks + audit.'''
+	slot = 'ComponentID_2' if leaf == 'componentID_2' else 'ComponentID'
+	newVal = (newComponentID or '').strip()
+	reason = (reason or '').strip()
+	if not reason:
+		return {'ok': False, 'message': 'A reason is required.'}
+
+	path = stationComponentIdTagPath(stationName, leaf)
+	if path is None:
+		return {'ok': False, 'message': 'Could not resolve a tag path for {}.'.format(stationName)}
+	before = readStationComponentId(stationName, leaf)
+	if before is None:
+		return {'ok': False, 'message': 'Could not read current {} value; aborting.'.format(slot)}
+
+	# Boundary check: active assembly WIP status only (no PLC, no AMR-bound gate).
+	if activeWipCount(stationName) > 0:
+		return {'ok': False, 'message': 'Station has an active WIP order (status 2); edit blocked.'}
+	if newVal != '':
+		mc = JcCommonOperations.getMachineConfigInfo(newVal, ['Product Code', 'ItemName'])
+		if mc is None or len(mc) == 0:
+			return {'ok': False, 'message': "'{}' not found in MachineConfig.".format(newVal)}
+	if str(before).strip() == newVal:
+		return {'ok': False, 'message': '{} already matches; no change.'.format(slot)}
+
+	qc = system.tag.writeBlocking([path], [None if newVal == '' else newVal])[0]
+	if not qc.isGood():
+		return {'ok': False, 'message': 'Tag write returned bad quality.'}
+
+	isClear = (newVal == '')
+	details = '{}: {} -> {}'.format(slot, '(blank)' if before == '' else before, '(blank)' if isClear else newVal)
+	logOverride(stationName, 'Station {} Clear'.format(slot) if isClear else 'Station {} Set'.format(slot), details, reason, getOverrideUser(session))
+	return {'ok': True, 'message': 'Committed: {} {}'.format(stationName, details)}
+
+
+def stationComponentMismatch(stationName):
+	'''
+	Advisory (non-blocking) check: does the station's manual componentID differ from the run schedule's next
+	one? nextComponentID may be a single id OR a list of acceptable ids -- General.autoCast turns the tag
+	value into a real list/scalar, then we test membership (a component that IS in the list is NOT a mismatch).
+	'''
+	current = (readStationComponentId(stationName) or '').strip()
+	folder = getTagFolder(stationName)
+	expected = ''
+	mismatched = False
+	if folder:
+		# nextComponentID lives in the 'Station Control/runSchedule' UDT (used by workOrderClaim/workComplete).
+		qv = system.tag.readBlocking(['{}/{}/runSchedule/nextComponentID'.format(folder, stationName)])[0]
+		if qv is not None and qv.quality.isGood() and qv.value is not None:
+			nextVal = General.autoCast(qv.value)          # list when the schedule holds several accepted ids, else a scalar
+			if isinstance(nextVal, (list, tuple)):
+				accepted = [str(x).strip() for x in nextVal if str(x).strip()]
+				expected = ', '.join(accepted)
+				mismatched = bool(current) and len(accepted) > 0 and current not in accepted
+			else:
+				expected = str(nextVal).strip()
+				mismatched = bool(current) and bool(expected) and current != expected
+	return {'current': current, 'expected': expected, 'mismatched': mismatched}
+
+
+# ---------------------------------------------------------------------------
+# AMR COMPONENTID RECTIFICATION
+# ---------------------------------------------------------------------------
+def getAmrFleet():
+	'''AMR fleet + both component ids, via one folder browse + one batched read (no new query, no polling).'''
+	base = '[TAGIO2]JLG/Jefferson City/Fleet/AMR Data'
+	# AMR_xxx are UdtInstances, so do NOT filter the browse by tagType='Folder' (that returns nothing).
+	names = sorted(str(r['name']) for r in system.tag.browse(base).getResults() if str(r['name']).startswith('AMR_'))
+	if not names:
+		return []
+	fields = [('ComponentID', 'machineInfo/componentID'), ('ComponentID2', 'machineInfo/componentID2')]
+	paths = ['{}/{}/{}'.format(base, name, leaf) for name in names for _, leaf in fields]
+	vals = system.tag.readBlocking(paths)
+	rows = []
+	i = 0
+	for name in names:
+		row = {'AMR': name.replace('AMR_', '')}
+		for col, _ in fields:
+			qval = vals[i]
+			i += 1
+			row[col] = str(qval.value) if (qval is not None and qval.quality.isGood() and qval.value is not None) else ''
+		rows.append(row)
+	return rows
+
+
+def amrComponentIdTagPath(amrId, leaf = 'componentID'):
+	'''An AMR's machineInfo component-id tag path ('componentID' or 'componentID2').'''
+	leaf = 'componentID2' if leaf == 'componentID2' else 'componentID'
+	return '[TAGIO2]JLG/Jefferson City/Fleet/AMR Data/AMR_{}/machineInfo/{}'.format(str(amrId).zfill(3), leaf)
+
+
+def readAmrComponentId(amrId, leaf = 'componentID'):
+	'''One-shot read of an AMR's machineInfo componentID/componentID2.'''
+	return readTagValue(amrComponentIdTagPath(amrId, leaf))
+
+
+def setAmrComponentId(amrId, newComponentID, reason, session, leaf = 'componentID'):
+	'''Sets/clears an AMR's machineInfo componentID (blank clears), with audit. A SET re-sends the AMR payload; a clear does not cascade to the station.'''
+	newVal = (newComponentID or '').strip()
+	reason = (reason or '').strip()
+	if not reason:
+		return {'ok': False, 'message': 'A reason is required.'}
+	slot = 'ComponentID 2' if leaf == 'componentID2' else 'ComponentID'
+	before = readAmrComponentId(amrId, leaf)
+	if before is None:
+		return {'ok': False, 'message': 'Could not read AMR_{}; aborting.'.format(str(amrId).zfill(3))}
+	if str(before).strip() == newVal:
+		return {'ok': False, 'message': 'New value matches current {}.'.format(slot)}
+
+	qc = system.tag.writeBlocking([amrComponentIdTagPath(amrId, leaf)], [None if newVal == '' else newVal])[0]
+	if not qc.isGood():
+		return {'ok': False, 'message': 'Tag write returned bad quality.'}
+
+	isClear = (newVal == '')
+	details = 'AMR_{} {}: {} -> {}'.format(str(amrId).zfill(3), slot, '(blank)' if before == '' else before, '(blank)' if isClear else newVal)
+	# StationName is nvarchar(6): 'AMR002' fits, 'AMR_002' (7) would truncate-crash; full identity is in details.
+	logOverride('AMR{}'.format(str(amrId).zfill(3)), ('AMR {} Unassign' if isClear else 'AMR {} Set').format(slot), details, reason, getOverrideUser(session))
+
+	# Run updateAMRPayload on EVERY componentID change (set or clear) so Navithor/ACU get the current profile
+	# -- the same function the machineInfo valueChanged script and AMRPowerCycle fire. Best-effort: the tag write already committed.
+	payloadNote = ''
+	try:
+		beExec('AMR.Commands.updateAMRPayload', {'AMRID': amrId})
+		payloadNote = ' New payload sent to AMR.'
+	except:
+		payloadNote = ' (WARNING: payload refresh failed - verify the AMR payload manually.)'
+	return {'ok': True, 'message': 'Committed: {}{}'.format(details, payloadNote)}
+
+
+# ---------------------------------------------------------------------------
+# RUN SCHEDULE REFRESH
+# ---------------------------------------------------------------------------
+def pullNextWorkOrder(stationName, reason, session):
+	'''Refires getOrder on the owning backend. getOrder calls updateRunSchedules() first, so one fire is enough.'''
+	stationName = (stationName or '').strip()
+	if not stationName:
+		return {'ok': False, 'message': 'No station provided; select a station first.'}
+	reason = (reason or '').strip()
+	if not reason:
+		return {'ok': False, 'message': 'A reason is required.'}
+
+	# Pass the FULL station name through (getOrder's prefix checks rely on it, e.g. TT2000/TT1900).
+	try:
+		beExec('RunSchedule.getNextWorkOrder.getOrder', {'stationName': stationName}, stationName = stationName)
+	except (JavaError, Exception):
+		logger.error('pullNextWorkOrder: backend getNextWorkOrder failed for {}\n{}'.format(stationName, traceback.format_exc()))
+		return {'ok': False, 'message': "Could not refresh the next work order for {} - the backend getNextWorkOrder routine errored (this is a back-end issue, not the station change). Detail: {}".format(stationName, str(sys.exc_info()[1])[:300])}
+
+	logOverride(stationName, 'Run Schedule Refresh', 'Refired getNextWorkOrder', reason, getOverrideUser(session))
+	return {'ok': True, 'message': 'Refresh fired for {}.'.format(stationName)}
+
+
+def refireNextWorkOrder(station, session, why):
+	'''Best-effort getNextWorkOrder refire after a manual mark. Never raises; the preceding mark already committed. Returns a message suffix ('' on success).'''
+	stn = (station or '').strip()
+	if not stn:
+		return ''
+	calmNote = ' (Auto next-work-order refresh did not run - use "Refresh Next Work Order" on the Station Rectification tab if {} did not update.)'.format(stn)
+	try:
+		result = pullNextWorkOrder(stn, why, session)
+		if result.get('ok'):
+			return ''
+		logger.warn('refireNextWorkOrder: did not refire for {}: {}'.format(stn, result.get('message', '')))
+		return calmNote
+	except (JavaError, Exception):
+		logger.warn('refireNextWorkOrder: errored for {}\n{}'.format(stn, traceback.format_exc()))
+		return calmNote
+
+
+def nwgManipulationBlocked(componentID):
+	'''
+	Reason string when an NWG componentID must NOT be manually manipulated -- it is Abort(4)/Non-Conformance(5)
+	in Frame/Boom WIP, OR still active (status 0-2) in the NonConformance table. None when it may be changed.
+	Non-NWG ids (not 'M') are never blocked here.
+	'''
+	compId = (componentID or '').strip()
+	if not compId.upper().startswith('M'):
+		return None
+	# Abort(4) / Non-Conformance(5) in Frame or Boom WIP.
+	for row in scheduleEntriesSafe(compId):
+		try:
+			status = int(row.get('Status'))
+		except:
+			continue
+		if status in (4, 5):
+			return '{} is non-conformanced at {} - manual changes are blocked until it is resolved.'.format(compId, row.get('Station') or 'a fab station')
+	# Still active in the NonConformance table (plant's getAllNwgNonConformance returns {componentID: status 0-2}).
+	try:
+		activeNc = beExec('JcCommonOperations.getAllNwgNonConformance', {})
+		if activeNc and compId in activeNc:
+			return '{} has an active non-conformance - manual changes are blocked until it is resolved.'.format(compId)
+	except (JavaError, Exception):
+		logger.warn('nwgManipulationBlocked: getAllNwgNonConformance failed for {}'.format(compId))
+	return None
+
+
+def runAction(key, args, session):
+	'''Single dispatch for the scc-action-progress popup. 'refresh' is a deliberate no-op that drives the table re-mount.'''
+	args = dict(args) if args else {}
+	logger.info('runAction {} | args={}'.format(key, args))
+	if key == 'refresh':
+		return {'ok': True, 'message': ''}
+	# Block manual NWG manipulations on an aborted/non-conforming component (fab Abort/Non-Conf, or active non-conformance).
+	if key in ('markScheduleComplete', 'markScheduleWip', 'scheduleNwgPrePaint', 'scheduleNwgPreAssembly'):
+		nwgBlock = nwgManipulationBlocked(args.get('componentID') or args.get('idText') or '')
+		if nwgBlock:
+			return {'ok': False, 'message': nwgBlock}
+	if key == 'setStationComponentId':
+		return setStationComponentId(args.get('station'), args.get('newId', ''), args.get('reason', ''), session, args.get('leaf', 'componentID'))
+	if key == 'setAmrComponentId':
+		return setAmrComponentId(args.get('amrId'), args.get('newId', ''), args.get('reason', ''), session, args.get('leaf', 'componentID'))
+	if key == 'scheduleForAssembly':
+		return scheduleForAssembly(args.get('serial'), args.get('legacy', False), args.get('reason', ''), session)
+	if key == 'verifySerials':
+		return verifySerials(args.get('serials'))
+	if key == 'scheduleSerials':
+		return scheduleSerials(args.get('serials'), args.get('legacy', False), args.get('reason', ''), session)
+	if key == 'markScheduleComplete':
+		return markScheduleComplete(args.get('idText'), args.get('item'), args.get('station'), args.get('reason', ''), session)
+	if key == 'markScheduleWip':
+		return markScheduleWip(args.get('idText'), args.get('item'), args.get('station'), args.get('reason', ''), session)
+	if key == 'scheduleNwgPrePaint':
+		return scheduleNwgPrePaint(args.get('componentID'), args.get('itemName'), args.get('reason', ''), session)
+	if key == 'scheduleNwgPreAssembly':
+		return scheduleNwgPreAssembly(args.get('componentID'), args.get('reason', ''), session)
+	if key == 'pullNextWorkOrder':
+		return pullNextWorkOrder(args.get('station'), args.get('reason', ''), session)
+	return {'ok': False, 'message': 'Unknown action: ' + str(key)}
+
+
+# ---------------------------------------------------------------------------
+# MANUAL ASSEMBLY SCHEDULING
+# ---------------------------------------------------------------------------
+def checkSerialForAssembly(serialNumber):
+	'''Validates a WG serial for assembly scheduling: MachineConfig existence then already-scheduled check. Returns a result dict the UI renders.'''
+	serial = (serialNumber or '').strip()
+	result = {'serial': serial, 'ok': False, 'messages': [], 'alreadyScheduled': False, 'priorNonConform': False, 'reason': ''}
+	if not serial:
+		result['messages'].append('Enter a serial.')
+		result['reason'] = 'Enter a serial number.'
+		return result
+	if serial.upper().startswith('M'):                  # M-numbers are NWG components, never assembly
+		result['messages'].append('M-number (non-whole-good component).')
+		result['reason'] = 'M-numbers cannot be scheduled in Assembly.'
+		return result
+
+	mc = JcCommonOperations.getMachineConfigInfo(serial, ['Product Code', 'ItemName'])
+	if mc is None or len(mc) == 0:
+		result['messages'].append('Not found in MachineConfig.')
+		result['reason'] = '{} is not in the MachineConfig table.'.format(serial)
+		return result
+	result['messages'].append('Exists in MachineConfig.')
+
+	if int(beQuery('RunSchedule/Assembly/Select/CheckScheduledStatusBySerial', {'serialNumber': serial})) > 0:
+		result['alreadyScheduled'] = True
+		result['messages'].append('Already scheduled in Assembly.')
+		result['reason'] = '{} is already scheduled in Assembly.'.format(serial)
+		return result
+	result['messages'].append('Not already scheduled in Assembly.')
+	result['reason'] = 'Validated - ready to schedule.'
+	result['ok'] = True
+	return result
+
+
+def scheduleForAssembly(serialNumber, legacy, reason, session):
+	'''Schedules a WG serial for assembly via the existing createAssemblyOrder (BE2).'''
+	serial = (serialNumber or '').strip()
+	reason = (reason or '').strip()
+	if not serial:
+		return {'ok': False, 'message': 'No serial supplied.'}
+	if serial.upper().startswith('M'):
+		return {'ok': False, 'message': 'M-numbers cannot be scheduled in Assembly.'}
+	if not reason:
+		return {'ok': False, 'message': 'A reason is required.'}
+
+	# Server-side duplicate guard: refuse if the serial already has an ACTIVE (Scheduled/WIP/Associated) entry.
+	active = scheduleEntryAtStations(serial, statuses = ACTIVE_SCHEDULE_STATUSES)
+	if active is not None:
+		return {'ok': False, 'message': 'Serial {} is already scheduled (Status: {}) at {} - cannot schedule again.'.format(serial, statusLabel(active['status']), active['station'] or 'unknown station')}
+
+	# createAssemblyOrder is BE2-resident; beExec with no stationName routes to BE2.
+	if beExec('RunSchedule.Assembly.Assembly.createAssemblyOrder', {'serialNumber': serial, 'legacy': bool(legacy)}) is False:
+		return {'ok': False, 'message': 'Backend declined to schedule {} for Assembly.'.format(serial)}
+
+	# Audit against the assembly ENTRY station (a 10-digit serial won't fit StationName); serial goes in details.
+	entryStation = 'LL0010' if bool(legacy) else 'TF0010'
+	logOverride(entryStation, 'Manual Assembly Schedule', 'Serial {} scheduled for Assembly (legacy={})'.format(serial, bool(legacy)), reason, getOverrideUser(session))
+	return {'ok': True, 'message': 'Scheduled {} for Assembly.'.format(serial)}
+
+
+def cleanSerialList(serials):
+	'''Trim, drop blanks, de-dup (first wins) the flex-repeater serial list.'''
+	clean = []
+	seen = set()
+	for s in (serials or []):
+		s = str(s).strip()
+		if s and s not in seen:
+			seen.add(s)
+			clean.append(s)
+	return clean
+
+
+def verifySerials(serials):
+	'''Dry-run verify of a serial LIST; per-serial VALID/INVALID for the UI. Returns {ok, message, results:[{serial,ok,reason}]}.'''
+	clean = cleanSerialList(serials)
+	if not clean:
+		return {'ok': False, 'message': 'No machines to verify.', 'results': []}
+	results = []
+	nValid = 0
+	for serial in clean:
+		chk = checkSerialForAssembly(serial)
+		if chk['ok']:
+			nValid += 1
+		results.append({'serial': serial, 'ok': bool(chk['ok']), 'reason': chk.get('reason', '')})
+	return {'ok': nValid == len(clean), 'message': '{} of {} machine(s) verified OK.'.format(nValid, len(clean)), 'results': results}
+
+
+def scheduleSerials(serials, legacy, reason, session):
+	'''Schedules a serial LIST for assembly; validates each, skips invalid ones with a reason. Returns {ok, message, scheduled, skipped}.'''
+	reason = (reason or '').strip()
+	if not reason:
+		return {'ok': False, 'message': 'A reason is required.', 'scheduled': [], 'skipped': []}
+	clean = cleanSerialList(serials)
+	if not clean:
+		return {'ok': False, 'message': 'No machines to schedule.', 'scheduled': [], 'skipped': []}
+
+	scheduled = []
+	skipped = []
+	for serial in clean:
+		chk = checkSerialForAssembly(serial)
+		if not chk['ok']:
+			skipped.append({'serial': serial, 'reason': chk.get('reason', 'validation failed')})
+			continue
+		res = scheduleForAssembly(serial, legacy, reason, session)
+		if res.get('ok'):
+			scheduled.append(serial)
+		else:
+			skipped.append({'serial': serial, 'reason': res.get('message', 'schedule failed')})
+
+	msg = 'Scheduled {} of {} machine(s).'.format(len(scheduled), len(clean))
+	if skipped:
+		preview = '; '.join('{} ({})'.format(x['serial'], x['reason']) for x in skipped[:5])
+		msg += ' Skipped {}: {}'.format(len(skipped), preview)
+		if len(skipped) > 5:
+			msg += '; +{} more'.format(len(skipped) - 5)
+	return {'ok': len(scheduled) > 0, 'message': msg, 'scheduled': scheduled, 'skipped': skipped}
+
+
+def machineTypeByProductCode():
+	'''{ProductCode: MachineType} for tagging the scheduled-serials grid.'''
+	dataset = system.db.runNamedQuery(project = 'FactoryControl', path = 'Run Schedule/Assembly/manualAssemblyScheduling/select/getAllMachineTypesAndProductCodes', parameters = {})
+	return {r['ProductCode']: r['MachineType'] for r in system.dataset.toPyDataSet(dataset)}
+
+
+# ---------------------------------------------------------------------------
+# WORK ORDER RECONCILIATION
+# ---------------------------------------------------------------------------
+def getScheduleEntries(idText):
+	'''Every WIP/schedule row for a componentID (M-prefix -> Fabrication) or serial (-> Assembly). Unified columns: Station, Status, Item, ScheduledTimestamp, WIPTimestamp, CompletedTimestamp.'''
+	val = (idText or '').strip()
+	if not val:
+		return []
+	if val.upper().startswith('M'):
+		dataset = system.db.runNamedQuery(project = 'FactoryControl', path = 'station-control-center/getFabricationScheduleByComponent', parameters = {'componentID': val})
+	else:
+		dataset = system.db.runNamedQuery(project = 'FactoryControl', path = 'station-control-center/getAssemblyScheduleBySerial', parameters = {'serialNumber': val})
+	pyData = system.dataset.toPyDataSet(dataset)
+	cols = list(pyData.getColumnNames())
+	return [{col: r[col] for col in cols} for r in pyData]
+
+
+def lookupComponent(idText):
+	'''Classifies + locates a componentID/serial for the UI. Returns {input, isNWG, found, itemName, itemNumber, associations, serial}.'''
+	val = (idText or '').strip()
+	out = {'input': val, 'isNWG': val.upper().startswith('M'), 'found': False, 'itemName': None, 'itemNumber': None, 'associations': None, 'serial': None}
+	if not val:
+		return out
+
+	mc = JcCommonOperations.getMachineConfigInfo(val, ['Product Code', 'ItemName', 'FinishedItemNumber'])
+	if mc is None or len(mc) == 0:
+		out['messages'] = 'Not found in MachineConfig.'
+		return out
+	out['found'] = True
+	for row in mc:
+		if row['Description'] == 'ItemName':
+			out['itemName'] = row['Value']
+		elif row['Description'] == 'FinishedItemNumber':
+			out['itemNumber'] = row['Value']
+
+	if out['isNWG']:
+		# NWG -> the serial it is associated to (findSerialNumber is BE-only, returns the FinalSerialNumber string).
+		out['serial'] = beExec('StationControl.findSerialNumber.findSerialNumber', {'NWGComponentID': val})
+	else:
+		# serial -> its NWGs. Routed to the BE copy; the FE copy targets a project without the RunSchedule tree and returns {}.
+		assoc = beExec('JcCommonOperations.getNwgAssociatedItems', {'serialNumber': val})
+		out['associations'] = [{'ItemName': k, 'ComponentID': v} for k, v in (assoc or {}).items()]
+	return out
+
+
+def fabStatusAtStation(componentID, stnType, stationLike):
+	'''TOP-1 fab status for a component at a station via the existing selectStatus. None when blank. stnType is 'Frame' or 'Boom'.'''
+	raw = beQuery('RunSchedule/Fabrication/Select/selectStatus', {'componentID': componentID, 'stn': stationLike, 'stnType': stnType}, stationName = stationLike)
+	return None if (raw is None or raw == '') else int(raw)
+
+
+def prePaintStationForItem(itemName):
+	'''Prepaint station for an NWG section: Frame -> TW0700, Base -> TT170B, Fly/InnerMid/OuterMid -> TT170A ('' if unrecognized).'''
+	nm = (itemName or '').strip()
+	if nm == 'Frame':
+		return 'TW0700'
+	if nm == 'Base':
+		return 'TT170B'
+	if nm in ('Fly', 'InnerMid', 'OuterMid'):
+		return 'TT170A'
+	return ''
+
+
+def scheduleNwgPrePaint(componentID, itemName, reason, session):
+	'''
+	Schedules an NWG into pre-paint by INSERTing a Status-1 fab WIP row at its section station, reusing the
+	plant's insertToWIP query on BE1 (the query behind runQueryHelper's "InsertToWIPWorkOrders" label -- no
+	carrier group). Blocks if a row already exists at that station in any live-or-finished status
+	(Scheduled/WIP/Complete/Associated); only a voided (Scrapped/Abort/Non-Conformance) row frees it.
+	'''
+	compId = (componentID or '').strip()
+	reason = (reason or '').strip()
+	if not compId:
+		return {'ok': False, 'message': 'No ComponentID supplied; search a valid ComponentID first.'}
+	if not reason:
+		return {'ok': False, 'message': 'A reason is required.'}
+
+	# ItemName (routing) + FinishedItemNumber (the WIP row's ItemNumber) come from MachineConfig; the arg is only a UI hint.
+	nm = (itemName or '').strip()
+	itemNumber = None
+	for row in (JcCommonOperations.getMachineConfigInfo(compId, ['ItemName', 'FinishedItemNumber']) or []):
+		if row['Description'] == 'ItemName' and not nm:
+			nm = str(row['Value'] or '').strip()
+		elif row['Description'] == 'FinishedItemNumber':
+			itemNumber = str(row['Value'] or '').strip()
+
+	prepaintStation = prePaintStationForItem(nm)
+	if not prepaintStation:
+		return {'ok': False, 'message': "Cannot route '{}' to pre-paint - expected a boom section (Fly/InnerMid/OuterMid/Base) or Frame.".format(nm)}
+	if not itemNumber:
+		return {'ok': False, 'message': '{} was not scheduled - no FinishedItemNumber in MachineConfig.'.format(compId)}
+
+	# Never schedule the same station twice -- even after it completed there.
+	blocked = scheduleEntryAtStations(compId, (prepaintStation,))
+	if blocked is not None:
+		return {'ok': False, 'message': '{} already has a {} row at {}; cannot schedule the same pre-paint station twice.'.format(compId, statusLabel(blocked['status']), blocked['station'])}
+
+	# insertToWIP: {stnType} QueryString picks Fabrication_Frame/BoomWIP; INSERTs Status 1 at :stn. TW/TT -> BE1.
+	stnType = 'Boom' if prepaintStation.startswith('TT') else 'Frame'
+	beQuery('RunSchedule/Fabrication/Select/insertToWIP', {'component': compId, 'item': itemNumber, 'stn': prepaintStation, 'stn5': prepaintStation[:5], 'stnType': stnType}, stationName = prepaintStation)
+
+	# Audit against the short station; the long componentID goes in details (StationName is nvarchar(6)).
+	logOverride(prepaintStation, 'NWG Schedule PrePaint', '{} -> pre-paint {} ({})'.format(compId, prepaintStation, nm), reason, getOverrideUser(session))
+	return {'ok': True, 'message': '{} scheduled to pre-paint at {}.'.format(compId, prepaintStation)}
+
+
+def scheduleNwgPreAssembly(componentID, reason, session):
+	'''Schedules an NWG into pre-assembly (TF000X, Status 1) via insertFabricationToPreAssemblyInventory, then clears any active prepaint rows so prepaint WIP stays accurate.'''
+	compId = (componentID or '').strip()
+	reason = (reason or '').strip()
+	if not compId:
+		return {'ok': False, 'message': 'No ComponentID supplied; search a valid ComponentID first.'}
+	if not reason:
+		return {'ok': False, 'message': 'A reason is required.'}
+
+	# One fetch feeds both the TF000X duplicate check and the prepaint-clear loop.
+	rows = scheduleEntriesSafe(compId)
+	# Block a duplicate at TF000X (Scheduled/WIP/Complete/Associated). Prepaint rows do NOT block -- they're cleared below.
+	blocked = scheduleEntryAtStations(compId, (PREASSEMBLY_STATION,), rows = rows)
+	if blocked is not None:
+		return {'ok': False, 'message': '{} already has a {} entry at pre-assembly (TF000X); not scheduling a duplicate.'.format(compId, statusLabel(blocked['status']))}
+
+	beQuery('RunSchedule/PaintUnload/insert/insertFabricationToPreAssemblyInventory', {'componentID': compId, 'status': 1})
+
+	# Mark complete any ACTIVE (Scheduled/WIP/Associated) prepaint row so the component moves cleanly prepaint -> pre-assembly.
+	cleared = []
+	for row in rows:
+		station = str(row.get('Station') or '')
+		try:
+			status = int(row.get('Status'))
+		except:
+			continue
+		if status in ACTIVE_SCHEDULE_STATUSES and station.upper() in PREPAINT_STATIONS:
+			try:
+				markNwgComplete(compId, row.get('Item'), station, reason, session, warnIfWip = False)
+				cleared.append(station)
+			except:
+				logger.warn('scheduleNwgPreAssembly: could not clear prepaint at {} for {}'.format(station, compId))
+
+	msg = '{} scheduled to pre-assembly (TF000X).'.format(compId)
+	if cleared:
+		msg += ' Marked complete out of prepaint at ' + ', '.join(cleared) + '.'
+	logOverride(PREASSEMBLY_STATION, 'NWG Schedule PreAssembly', '{} -> TF000X (status 1); prepaint cleared: {}'.format(compId, ', '.join(cleared) or 'none'), reason, getOverrideUser(session))
+	return {'ok': True, 'message': msg}
+
+
+def markNwgComplete(componentID, itemNumber, station, reason, session, warnIfWip = True):
+	'''Marks an NWG fab row complete at a station. Backfills the WIP timestamp first if the row was completed straight from Scheduled, so it never carries a null WIPTimestamp. warnIfWip prompts on a live WIP row.'''
+	reason = (reason or '').strip()
+	if not reason:
+		return {'ok': False, 'message': 'A reason is required.', 'needsConfirm': False}
+
+	stnType = 'Boom' if station.startswith('TT') else 'Frame'      # matches the BE runQueryHelper convention
+	if warnIfWip and fabStatusAtStation(componentID, stnType, station) == 2:
+		return {'ok': False, 'needsConfirm': True, 'message': '{} is currently WIP (status 2) at {}. Confirm to mark complete.'.format(componentID, station)}
+
+	# Backfill WIP only when this row's WIP timestamp is empty -- updateWIPTimestamp has no null-guard, so firing
+	# it on an already-WIP row would overwrite the real timestamp.
+	wipEmpty = False
+	for row in scheduleEntriesSafe(componentID):
+		if str(row.get('Station') or '').upper() != station.upper():
+			continue
+		if itemNumber and str(row.get('Item') or '') != str(itemNumber):
+			continue
+		wipEmpty = not row.get('WIPTimestamp')
+		break
+	if wipEmpty:
+		beExec('RunSchedule.Fabrication.UpdateWorkStatus.runQueryHelper', {'queryName': 'UpdateWIPTimestamp', 'componentID': componentID, 'itemNumber': itemNumber, 'station': station}, stationName = station)
+
+	# UpdateWIPCompletedTimestamp is a thin alias over updateCompleteTimestamp (no next-station cascade, unlike workComplete).
+	beExec('RunSchedule.Fabrication.UpdateWorkStatus.runQueryHelper', {'queryName': 'UpdateWIPCompletedTimestamp', 'componentID': componentID, 'itemNumber': itemNumber, 'station': station, 'status': 3}, stationName = station)
+	logOverride(station, 'NWG Mark Complete', '{} complete at {}'.format(componentID, station), reason, getOverrideUser(session))
+	return {'ok': True, 'message': '{} marked complete at {}.'.format(componentID, station), 'needsConfirm': False}
+
+
+def markSerialComplete(serialNumber, station, reason, session):
+	'''Marks a WG serial complete at an assembly station. Fires WorkOrderClaim first (self-guards WIPTimestamp IS NULL) so a row completed straight from Scheduled gets both timestamps, then runs the line/area completion cascade: if every station on the line is complete, LineStatus and AreaStatus close to 3.'''
+	reason = (reason or '').strip()
+	if not reason:
+		return {'ok': False, 'message': 'A reason is required.', 'needsConfirm': False}
+	# TB (boom sub) completes with no boundary -- the association guard was stripped 2026-07-01 (see files/_stash_association_TB/).
+	beQuery('RunSchedule/Assembly/Update/WorkOrderClaim', {'StationName': station, 'SerialNumber': serialNumber}, stationName = station)
+	beQuery('RunSchedule/Assembly/Update/WorkOrderComplete', {'StationName': station, 'SerialNumber': serialNumber, 'Status': 3}, stationName = station)
+
+	# Line/area completion cascade. Close EVERY line the serial has entries in (not just the completed station's
+	# line): SetAreaStatus_Complete requires BOTH the TB (boom sub) and TF/LL lines at LineStatus 3, so a sub
+	# whose stations are Complete but whose LineStatus was never closed (completed by a path that skipped the
+	# cascade) would otherwise keep the area at 2. Per line: mark in-progress, then close LineStatus -> 3 if all
+	# its stations are complete. Then close AreaStatus -> 3 once all required lines are done.
+	linePrefixes = set([station[:2].upper()])
+	for row in scheduleEntriesSafe(serialNumber):
+		stn = str(row.get('Station') or '')
+		if len(stn) >= 2:
+			linePrefixes.add(stn[:2].upper())
+	for prefix in linePrefixes:
+		lookup = prefix + '%'
+		beQuery('RunSchedule/Assembly/Update/SetLineStatus', {'SerialNumber': serialNumber, 'StationNameLookup': lookup}, stationName = station)
+		beQuery('RunSchedule/Assembly/Update/UpdateLineStatus_NonConformanceComplete', {'SerialNumber': serialNumber, 'StationNameLookup': lookup}, stationName = station)
+		beQuery('RunSchedule/Assembly/Update/SetLineStatus_Complete', {'SerialNumber': serialNumber, 'StationNameLookup': lookup}, stationName = station)
+	beQuery('RunSchedule/Assembly/Update/SetAreaStatus_Complete', {'serialNumber': serialNumber}, stationName = station)
+
+	logOverride(station, 'Serial Mark Complete', '{} complete at {}'.format(serialNumber, station), reason, getOverrideUser(session))
+	return {'ok': True, 'message': '{} marked complete at {}.'.format(serialNumber, station), 'needsConfirm': False}
+
+
+def markScheduleWip(idText, item, station, reason, session):
+	'''Marks a station WIP (Status 2 + WIPTimestamp). NWG ('M') -> fab runQueryHelper; WG serial -> WorkOrderClaim.'''
+	reason = (reason or '').strip()
+	val = (idText or '').strip()
+	station = (station or '').strip()
+	if not reason:
+		return {'ok': False, 'message': 'A reason is required.'}
+	if not val or not station:
+		return {'ok': False, 'message': 'Component/serial and station are required.'}
+
+	# Server-side backstop (view also guards): never mark WIP once this station's entry is Complete.
+	for row in getScheduleEntries(val):
+		if str(row.get('Station') or '').strip().upper() == station.upper():
+			try:
+				if int(row.get('Status')) == 3:
+					return {'ok': False, 'message': '{} is already marked Complete at {}; cannot mark WIP.'.format(val, station)}
+			except:
+				pass
+			break
+
+	if val.upper().startswith('M'):
+		beExec('RunSchedule.Fabrication.UpdateWorkStatus.runQueryHelper', {'queryName': 'UpdateWIPTimestamp', 'componentID': val, 'itemNumber': item, 'station': station}, stationName = station)
+	else:
+		beQuery('RunSchedule/Assembly/Update/WorkOrderClaim', {'StationName': station, 'SerialNumber': val}, stationName = station)
+	logOverride(station, 'Mark WIP', '{} -> WIP at {}'.format(val, station), reason, getOverrideUser(session))
+	return {'ok': True, 'message': '{} marked WIP at {}.'.format(val, station) + refireNextWorkOrder(station, session, 'Auto-refire after manual Mark WIP')}
+
+
+def markScheduleComplete(idText, item, station, reason, session):
+	'''Routes 'Mark Complete at Station': M-prefix -> markNwgComplete (fab), else markSerialComplete (assembly), then best-effort refires getNextWorkOrder.'''
+	# warnIfWip is off: the user picked the entry from the table, so its status is already visible.
+	if (idText or '').strip().upper().startswith('M'):
+		res = markNwgComplete(idText, item, station, reason, session, warnIfWip = False)
+	else:
+		res = markSerialComplete(idText, station, reason, session)
+	if res.get('ok'):
+		res['message'] = res.get('message', '') + refireNextWorkOrder(station, session, 'Auto-refire after manual Mark Complete')
+	return res
+
+
+# ---------------------------------------------------------------------------
+# MACHINE OVERVIEW
+# ---------------------------------------------------------------------------
+def stationArea(station):
+	'''Swimlane area for a station (prefix-based; TF000X = Pre-Assembly).'''
+	s = (station or '').upper()
+	if s == 'TF000X':
+		return 'Pre-Assembly'
+	prefixAreas = [('TW', 'Frame Fab'), ('TT', 'Boom Fab'), ('PT', 'Paint'), ('TF', 'Main Line'), ('LL', 'Legacy'), ('TB', 'Boom Sub'), ('TC', 'Cab Sub'), ('TE', 'Engine Sub'), ('TX', 'Outrigger Sub')]
+	for prefix, area in prefixAreas:
+		if s.startswith(prefix):
+			return area
+	return 'Other'
+
+
+def getMachineFlow(idText):
+	'''The machine's actual journey for the Machine Overview: every schedule row it has, annotated with a swimlane Area and ordered by lane then station.'''
+	val = (idText or '').strip()
+	if not val:
+		return []
+	out = []
+	for row in scheduleEntriesSafe(val):
+		annotated = dict(row)
+		annotated['Area'] = stationArea(annotated.get('Station'))
+		out.append(annotated)
+	def laneKey(d):
+		area = d.get('Area')
+		return (FLOW_LANE_ORDER.index(area) if area in FLOW_LANE_ORDER else len(FLOW_LANE_ORDER), str(d.get('Station') or ''))
+	try:
+		out.sort(key = laneKey)
+	except:
+		pass
+	return out

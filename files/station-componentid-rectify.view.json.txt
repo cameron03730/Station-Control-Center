@@ -1,0 +1,1445 @@
+{
+  "custom": {
+    "reason": "",
+    "selectedStation": "",
+    "newComponentId2": "",
+    "newComponentId": "",
+    "currentComponentId2": "",
+    "currentComponentId": "",
+    "boundaryChecks": null,
+    "componentMismatch": null,
+    "componentLoadCfg": 1,
+    "stationRows": null,
+    "selRowIdx": -1,
+    "filterArea": "",
+    "filterSearch": "",
+    "showTable": true
+  },
+  "params": {},
+  "propConfig": {
+    "custom.selRowIdx": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "/root/StationsCard/StationTable.props.selection"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\tsel = value or {}\n\tif 'data' not in sel or not sel['data']:\n\t\treturn -1\n\tidx = sel['selectedRow'] if 'selectedRow' in sel else -1\n\treturn idx if idx is not None else -1\n"
+          }
+        ]
+      }
+    },
+    "custom.selectedStation": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "/root/StationsCard/StationTable.props.selection"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\tsel = value or {}\n\tdata = sel['data'] if 'data' in sel else None\n\tif not data:\n\t\treturn ''\n\tidx = sel['selectedRow'] if 'selectedRow' in sel else None\n\tif idx is None or idx < 0:\n\t\treturn ''\n\ttry:\n\t\tv = getattr(self, 'view', self)\n\t\trows = v.getChild('root').getChild('StationsCard').getChild('StationTable').props.data\n\t\trow = rows[idx]\n\t\treturn row['StationName'] if 'StationName' in row else ''\n\texcept:\n\t\treturn ''\n"
+          }
+        ]
+      }
+    },
+    "custom.currentComponentId": {
+      "binding": {
+        "config": {
+          "path": "view.custom.selectedStation"
+        },
+        "transforms": [
+          {
+            "code": "\tif not value:\n\t\treturn ''\n\ttry:\n\t\tstation = value\n\t\tbase = StationControl.DynamicView.getTagFolder(value)\n\t\tpath = base + '/' + station\n\t\treturn system.tag.readBlocking([path + '/control/fromIGN/componentID'])[0].value\n\texcept Exception:\n\t\treturn ''\n",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      }
+    },
+    "custom.currentComponentId2": {
+      "binding": {
+        "config": {
+          "path": "view.custom.selectedStation"
+        },
+        "transforms": [
+          {
+            "code": "\tif not value:\n\t\treturn ''\n\ttry:\n\t\tstation = value\n\t\tbase = StationControl.DynamicView.getTagFolder(value)\n\t\tpath = base + '/' + station\n\t\treturn system.tag.readBlocking([path + '/control/fromIGN/componentID_2'])[0].value\n\texcept Exception:\n\t\treturn ''\n",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      }
+    },
+    "custom.componentLoadCfg": {
+      "binding": {
+        "config": {
+          "path": "view.custom.selectedStation"
+        },
+        "transforms": [
+          {
+            "code": "\tif not value:\n\t\treturn 1\n\ttry:\n\t\tbase = StationControl.DynamicView.getTagFolder(value)\n\t\tpath = base + '/' + value + '/control/fromIGN/compLoadCfg'\n\t\tcfg = system.tag.readBlocking([path])[0].value\n\t\treturn cfg if cfg is not None else 1\n\texcept Exception:\n\t\treturn 1\n",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      }
+    },
+    "custom.componentMismatch": {
+      "binding": {
+        "config": {
+          "path": "view.custom.selectedStation"
+        },
+        "transforms": [
+          {
+            "code": "\tif not value:\n\t\treturn None\n\treturn StationControl.SCC.stationComponentMismatch(value)\n",
+            "type": "script"
+          }
+        ],
+        "type": "property"
+      }
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 980,
+      "width": 1360
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "StationsCardTitle"
+            },
+            "position": {
+              "basis": "30px",
+              "shrink": 0
+            },
+            "props": {
+              "style": {
+                "borderBottom": "2px solid #E87722",
+                "color": "#1B212B",
+                "fontSize": "17px",
+                "fontWeight": "700",
+                "paddingBottom": "8px",
+                "textAlign": "left"
+              },
+              "text": "Stations"
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "children": [
+              {
+                "meta": {
+                  "name": "AreaFilter"
+                },
+                "position": {
+                  "basis": "200px",
+                  "shrink": 0
+                },
+                "propConfig": {
+                  "props.value": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "bidirectional": true,
+                        "path": "view.custom.filterArea"
+                      }
+                    }
+                  },
+                  "props.options": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.stationRows"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\trows = value or []\n\tareas = set()\n\tfor r in rows:\n\t\ta = r.get('Area')\n\t\tif a is not None and str(a).strip() != '':\n\t\t\tareas.add(str(a))\n\topts = [{'label': 'All Areas', 'value': ''}]\n\tfor a in sorted(areas):\n\t\topts.append({'label': a, 'value': a})\n\treturn opts\n"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "props": {
+                  "placeholder": "All Areas",
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "color": "#1B212B",
+                    "fontSize": "15px",
+                    "padding": "8px 12px"
+                  }
+                },
+                "type": "ia.input.dropdown"
+              },
+              {
+                "meta": {
+                  "name": "SearchField"
+                },
+                "position": {
+                  "basis": "0%",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "bidirectional": true,
+                        "path": "view.custom.filterSearch"
+                      }
+                    }
+                  }
+                },
+                "props": {
+                  "placeholder": "Search station or component ID...",
+                  "deferUpdates": false,
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "color": "#1B212B",
+                    "fontSize": "15px",
+                    "padding": "10px 14px"
+                  }
+                },
+                "type": "ia.input.text-field"
+              },
+              {
+                "meta": {
+                  "name": "RefreshTable_Button"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Refresh",
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "color": "#1B212B",
+                    "fontSize": "15px",
+                    "fontWeight": "600",
+                    "padding": "10px 18px",
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden"
+                  },
+                  "image": {
+                    "icon": {
+                      "path": "material/refresh",
+                      "color": "#5B6675",
+                      "style": {
+                        "width": "18px",
+                        "height": "18px",
+                        "flexShrink": "0"
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "dom": {
+                    "onClick": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Refreshing stations...', 'actionKey': 'refresh', 'actionArgs': {}, 'doneMsg': 'sccStationDone'}, modal=True, showCloseIcon=False)\n"
+                      }
+                    }
+                  }
+                },
+                "type": "ia.input.button"
+              }
+            ],
+            "meta": {
+              "name": "FilterBar"
+            },
+            "position": {
+              "basis": "52px",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "12px"
+              }
+            },
+            "type": "ia.container.flex"
+          },
+          {
+            "meta": {
+              "name": "StationTable"
+            },
+            "position": {
+              "grow": 1
+            },
+            "propConfig": {
+              "props.data": {
+                "binding": {
+                  "type": "expr-struct",
+                  "config": {
+                    "struct": {
+                      "rows": "{view.custom.stationRows}",
+                      "area": "{view.custom.filterArea}",
+                      "search": "{view.custom.filterSearch}"
+                    },
+                    "waitOnAll": false
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\trows = value['rows'] or []\n\tarea = (value['area'] or '').strip()\n\tsearch = (value['search'] or '').strip().lower()\n\tout = []\n\tfor r in rows:\n\t\tif area and str(r.get('Area','')) != area:\n\t\t\tcontinue\n\t\tif search and search not in (str(r.get('StationName','')) + ' ' + str(r.get('ComponentID',''))).lower():\n\t\t\tcontinue\n\t\td = dict(r)\n\t\td['__card'] = ''\n\t\tout.append(d)\n\treturn out\n"
+                    }
+                  ]
+                }
+              },
+              "meta.visible": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.showTable"
+                  }
+                }
+              }
+            },
+            "props": {
+              "columns": [
+                {
+                  "field": "__card",
+                  "render": "view",
+                  "viewPath": "Plant Overview/Engineering/Station Control Center/embedded/scc-card-station",
+                  "viewParams": {
+                    "selIdx": -1
+                  },
+                  "header": {
+                    "title": "",
+                    "style": {
+                      "classes": ""
+                    }
+                  },
+                  "visible": true,
+                  "sortable": false,
+                  "resizable": false,
+                  "strictWidth": false,
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              ],
+              "filter": {
+                "enabled": false,
+                "text": ""
+              },
+              "rows": {
+                "height": 76,
+                "striped": {
+                  "enabled": false,
+                  "color": {
+                    "odd": "#FFFFFF",
+                    "even": "#F4F6F9"
+                  }
+                }
+              },
+              "selection": {
+                "data": [],
+                "selectedColumn": null,
+                "selectedRow": null,
+                "enableRowSelection": true,
+                "enableColumnSelection": false
+              },
+              "emptyMessage": {
+                "noData": {
+                  "icon": {
+                    "path": "material/inbox",
+                    "color": "#D8DEE7"
+                  },
+                  "text": "No stations to display",
+                  "textStyle": {
+                    "color": "#5B6675",
+                    "fontSize": "14px",
+                    "fontWeight": "600"
+                  }
+                }
+              },
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#1B212B",
+                "fontSize": "13px",
+                "fontFamily": "-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "10px",
+                "boxShadow": "0 1px 2px rgba(27,33,43,0.06), 0 6px 18px rgba(27,33,43,0.10)",
+                "overflow": "hidden",
+                "minHeight": "0px"
+              },
+              "enableHeader": false
+            },
+            "type": "ia.display.table"
+          }
+        ],
+        "meta": {
+          "name": "StationsCard"
+        },
+        "position": {
+          "basis": "44%",
+          "grow": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "backgroundColor": "#FFFFFF",
+            "border": "1px solid #D8DEE7",
+            "borderRadius": "12px",
+            "boxShadow": "0 1px 3px rgba(27,33,43,0.08)",
+            "gap": "18px",
+            "padding": "22px"
+          }
+        },
+        "type": "ia.container.flex"
+      },
+      {
+        "children": [
+          {
+            "meta": {
+              "name": "DetailCardTitle"
+            },
+            "position": {
+              "basis": "30px",
+              "shrink": 0
+            },
+            "props": {
+              "style": {
+                "borderBottom": "2px solid #E87722",
+                "color": "#1B212B",
+                "fontSize": "17px",
+                "fontWeight": "700",
+                "paddingBottom": "8px",
+                "textAlign": "left"
+              },
+              "text": "Selected Station"
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "ReasonLbl"
+            },
+            "position": {
+              "basis": "16px",
+              "shrink": 0
+            },
+            "props": {
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "letterSpacing": "0.7px",
+                "textAlign": "left"
+              },
+              "text": "REASON  (required - written to SupervisorOverrideLog)"
+            },
+            "type": "ia.display.label"
+          },
+          {
+            "meta": {
+              "name": "ReasonField"
+            },
+            "position": {
+              "basis": "54px",
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "config": {
+                    "bidirectional": true,
+                    "path": "view.custom.reason"
+                  },
+                  "type": "property"
+                }
+              }
+            },
+            "props": {
+              "placeholder": "Describe why this change is being made...",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "10px",
+                "color": "#1B212B",
+                "fontSize": "16px",
+                "padding": "14px 16px"
+              },
+              "deferUpdates": false
+            },
+            "type": "ia.input.text-field"
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "meta": {
+                      "name": "RectifySectionHeader"
+                    },
+                    "position": {
+                      "basis": "24px",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "color": "#5B6675",
+                        "fontSize": "12px",
+                        "fontWeight": "700",
+                        "letterSpacing": "0.8px",
+                        "textAlign": "left",
+                        "textTransform": "uppercase",
+                        "borderTop": "1px solid #D8DEE7",
+                        "paddingTop": "10px"
+                      },
+                      "text": "COMPONENT ID RECTIFICATION"
+                    },
+                    "type": "ia.display.label"
+                  },
+                  {
+                    "children": [
+                      {
+                        "meta": {
+                          "name": "MismatchIcon"
+                        },
+                        "position": {
+                          "basis": "28px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "path": "material/warning",
+                          "color": "#E8920C",
+                          "style": {
+                            "width": "26px",
+                            "height": "26px"
+                          }
+                        },
+                        "type": "ia.display.icon"
+                      },
+                      {
+                        "meta": {
+                          "name": "MismatchText"
+                        },
+                        "position": {
+                          "basis": "0%",
+                          "grow": 1,
+                          "shrink": 1
+                        },
+                        "propConfig": {
+                          "props.text": {
+                            "binding": {
+                              "config": {
+                                "expression": "'Run schedule expects ' + coalesce({view.custom.componentMismatch.expected}, '') + ' here, but ' + coalesce({view.custom.componentMismatch.current}, '') + ' is scanned in. Click Refresh Next Work Order to resync.'"
+                              },
+                              "type": "expr"
+                            }
+                          }
+                        },
+                        "props": {
+                          "style": {
+                            "color": "#9A6207",
+                            "fontSize": "15px",
+                            "fontWeight": "600",
+                            "lineHeight": "1.5",
+                            "textAlign": "left"
+                          }
+                        },
+                        "type": "ia.display.label"
+                      }
+                    ],
+                    "meta": {
+                      "name": "ComponentMismatchBanner"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "shrink": 0
+                    },
+                    "propConfig": {
+                      "position.display": {
+                        "binding": {
+                          "config": {
+                            "expression": "{view.custom.componentMismatch.mismatched} = true"
+                          },
+                          "type": "expr"
+                        }
+                      }
+                    },
+                    "props": {
+                      "direction": "row",
+                      "alignItems": "flex-start",
+                      "style": {
+                        "backgroundColor": "#FCF1E2",
+                        "border": "2px solid #E8920C",
+                        "borderRadius": "8px",
+                        "boxShadow": "0 0 0 1px rgba(232,146,12,0.25), 0 2px 6px rgba(232,146,12,0.25)",
+                        "gap": "12px",
+                        "padding": "14px 16px"
+                      }
+                    },
+                    "type": "ia.container.flex"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "meta": {
+                              "name": "Comp1Header"
+                            },
+                            "position": {
+                              "basis": "0%",
+                              "grow": 1,
+                              "shrink": 1
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#1B212B",
+                                "fontSize": "14px",
+                                "fontWeight": "700",
+                                "letterSpacing": "0.3px",
+                                "textAlign": "left"
+                              },
+                              "text": "Component 1"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "CurrentValue"
+                            },
+                            "position": {
+                              "basis": "auto",
+                              "shrink": 0
+                            },
+                            "propConfig": {
+                              "props.text": {
+                                "binding": {
+                                  "config": {
+                                    "expression": "'Current: ' + if({view.custom.currentComponentId} = '', '(blank)', {view.custom.currentComponentId})"
+                                  },
+                                  "type": "expr"
+                                }
+                              }
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#5B6675",
+                                "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                                "fontSize": "13px",
+                                "fontWeight": "600",
+                                "letterSpacing": "0.2px",
+                                "whiteSpace": "nowrap",
+                                "overflow": "hidden",
+                                "textOverflow": "ellipsis",
+                                "textAlign": "right"
+                              }
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "Comp1HeaderRow"
+                        },
+                        "position": {
+                          "basis": "22px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "direction": "row",
+                          "alignItems": "baseline",
+                          "style": {
+                            "gap": "10px"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      },
+                      {
+                        "meta": {
+                          "name": "NewLbl"
+                        },
+                        "position": {
+                          "basis": "16px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "style": {
+                            "color": "#5B6675",
+                            "fontSize": "11px",
+                            "fontWeight": "700",
+                            "letterSpacing": "0.6px",
+                            "textAlign": "left"
+                          },
+                          "text": "NEW COMPONENT ID  (blank = clear)"
+                        },
+                        "type": "ia.display.label"
+                      },
+                      {
+                        "meta": {
+                          "name": "NewField"
+                        },
+                        "position": {
+                          "basis": "54px",
+                          "shrink": 0
+                        },
+                        "propConfig": {
+                          "props.text": {
+                            "binding": {
+                              "config": {
+                                "bidirectional": true,
+                                "path": "view.custom.newComponentId"
+                              },
+                              "type": "property"
+                            }
+                          }
+                        },
+                        "props": {
+                          "placeholder": "e.g. WG-204720",
+                          "style": {
+                            "backgroundColor": "#FFFFFF",
+                            "border": "1px solid #D8DEE7",
+                            "borderRadius": "10px",
+                            "color": "#1B212B",
+                            "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                            "fontSize": "16px",
+                            "padding": "14px 16px"
+                          },
+                          "deferUpdates": false
+                        },
+                        "type": "ia.input.text-field"
+                      },
+                      {
+                        "children": [
+                          {
+                            "events": {
+                              "dom": {
+                                "onClick": {
+                                  "type": "script",
+                                  "scope": "G",
+                                  "config": {
+                                    "script": "\tstation = self.view.custom.selectedStation\n\tif not station:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': 'Select a station first.', 'error': True}, showCloseIcon=False, modal=True)\n\t\treturn\n\tnewVal = (self.view.custom.newComponentId or '').strip()\n\tclearing = newVal == ''\n\tmsg = ('Clear Component 1 on ' + station + '?') if clearing else ('Set Component 1 on ' + station + \" to '\" + newVal + \"'?\")\n\tkind = 'danger' if clearing else 'warn'\n\tconfirmText = 'Clear' if clearing else 'Commit'\n\tsystem.perspective.openPopup('sccConfirm', 'Plant Overview/Engineering/Station Control Center/embedded/scc-confirm-dialog', {'title': 'Confirm Component 1', 'message': msg, 'confirmText': confirmText, 'confirmKind': kind, 'callbackMsg': 'sccConfirmStationC1', 'context': {'station': station, 'newId': self.view.custom.newComponentId, 'reason': self.view.custom.reason, 'leaf': 'componentID'}}, modal=True, showCloseIcon=False)\n"
+                                  }
+                                }
+                              }
+                            },
+                            "meta": {
+                              "name": "CommitC1_Button"
+                            },
+                            "position": {
+                              "basis": "150px",
+                              "shrink": 0
+                            },
+                            "propConfig": {
+                              "props.enabled": {
+                                "binding": {
+                                  "config": {
+                                    "expression": "len(trim(coalesce({view.custom.reason}, ''))) > 0 && len(coalesce({view.custom.selectedStation}, '')) > 0"
+                                  },
+                                  "type": "expr"
+                                }
+                              },
+                              "props.style.backgroundColor": {
+                                "binding": {
+                                  "type": "expr",
+                                  "config": {
+                                    "expression": "if(len(trim(coalesce({view.custom.reason}, ''))) > 0 && len(coalesce({view.custom.selectedStation}, '')) > 0, '#E87722', '#D5D5D5')"
+                                  }
+                                }
+                              },
+                              "props.style.color": {
+                                "binding": {
+                                  "type": "expr",
+                                  "config": {
+                                    "expression": "if(len(trim(coalesce({view.custom.reason}, ''))) > 0 && len(coalesce({view.custom.selectedStation}, '')) > 0, '#FFFFFF', '#8A929E')"
+                                  }
+                                }
+                              },
+                              "props.image.icon.color": {
+                                "binding": {
+                                  "type": "expr",
+                                  "config": {
+                                    "expression": "if(len(trim(coalesce({view.custom.reason}, ''))) > 0 && len(coalesce({view.custom.selectedStation}, '')) > 0, '#FFFFFF', '#8A929E')"
+                                  }
+                                }
+                              }
+                            },
+                            "props": {
+                              "style": {
+                                "backgroundColor": "#E87722",
+                                "border": "none",
+                                "borderRadius": "8px",
+                                "color": "#FFFFFF",
+                                "fontSize": "15px",
+                                "fontWeight": "600",
+                                "padding": "12px 20px",
+                                "whiteSpace": "nowrap",
+                                "overflow": "hidden"
+                              },
+                              "text": "Commit",
+                              "image": {
+                                "icon": {
+                                  "path": "material/check",
+                                  "color": "#FFFFFF",
+                                  "style": {
+                                    "width": "18px",
+                                    "height": "18px",
+                                    "flexShrink": "0"
+                                  }
+                                }
+                              }
+                            },
+                            "type": "ia.input.button"
+                          },
+                          {
+                            "events": {
+                              "dom": {
+                                "onClick": {
+                                  "config": {
+                                    "script": "\tself.view.custom.newComponentId = ''\n"
+                                  },
+                                  "scope": "G",
+                                  "type": "script"
+                                }
+                              }
+                            },
+                            "meta": {
+                              "name": "ClearC1_Button"
+                            },
+                            "position": {
+                              "basis": "110px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "backgroundColor": "#FFFFFF",
+                                "border": "1px solid #D8DEE7",
+                                "borderRadius": "8px",
+                                "color": "#1B212B",
+                                "fontSize": "15px",
+                                "fontWeight": "500",
+                                "padding": "12px 20px",
+                                "whiteSpace": "nowrap",
+                                "overflow": "hidden"
+                              },
+                              "text": "Clear",
+                              "image": {
+                                "icon": {
+                                  "path": "material/clear",
+                                  "color": "#5B6675",
+                                  "style": {
+                                    "width": "18px",
+                                    "height": "18px",
+                                    "flexShrink": "0"
+                                  }
+                                }
+                              }
+                            },
+                            "type": "ia.input.button",
+                            "propConfig": {}
+                          }
+                        ],
+                        "meta": {
+                          "name": "Actions1"
+                        },
+                        "position": {
+                          "basis": "52px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "alignItems": "center",
+                          "style": {
+                            "gap": "16px"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      }
+                    ],
+                    "meta": {
+                      "name": "Comp1Section"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "direction": "column",
+                      "style": {
+                        "borderTop": "1px solid #EEF1F5",
+                        "gap": "10px",
+                        "paddingTop": "12px"
+                      }
+                    },
+                    "type": "ia.container.flex"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "meta": {
+                              "name": "Comp2Header"
+                            },
+                            "position": {
+                              "basis": "0%",
+                              "grow": 1,
+                              "shrink": 1
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#1B212B",
+                                "fontSize": "14px",
+                                "fontWeight": "700",
+                                "letterSpacing": "0.3px",
+                                "textAlign": "left"
+                              },
+                              "text": "Component 2"
+                            },
+                            "type": "ia.display.label"
+                          },
+                          {
+                            "meta": {
+                              "name": "CurrentValue2"
+                            },
+                            "position": {
+                              "basis": "auto",
+                              "shrink": 0
+                            },
+                            "propConfig": {
+                              "props.text": {
+                                "binding": {
+                                  "config": {
+                                    "expression": "'Current: ' + if({view.custom.currentComponentId2} = '', '(blank)', {view.custom.currentComponentId2})"
+                                  },
+                                  "type": "expr"
+                                }
+                              }
+                            },
+                            "props": {
+                              "style": {
+                                "color": "#5B6675",
+                                "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                                "fontSize": "13px",
+                                "fontWeight": "600",
+                                "letterSpacing": "0.2px",
+                                "whiteSpace": "nowrap",
+                                "overflow": "hidden",
+                                "textOverflow": "ellipsis",
+                                "textAlign": "right"
+                              }
+                            },
+                            "type": "ia.display.label"
+                          }
+                        ],
+                        "meta": {
+                          "name": "Comp2HeaderRow"
+                        },
+                        "position": {
+                          "basis": "22px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "direction": "row",
+                          "alignItems": "baseline",
+                          "style": {
+                            "gap": "10px"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      },
+                      {
+                        "meta": {
+                          "name": "New2Lbl"
+                        },
+                        "position": {
+                          "basis": "16px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "style": {
+                            "color": "#5B6675",
+                            "fontSize": "11px",
+                            "fontWeight": "700",
+                            "letterSpacing": "0.6px",
+                            "textAlign": "left"
+                          },
+                          "text": "NEW COMPONENT ID 2  (blank = clear)"
+                        },
+                        "type": "ia.display.label"
+                      },
+                      {
+                        "meta": {
+                          "name": "NewField2"
+                        },
+                        "position": {
+                          "basis": "54px",
+                          "shrink": 0
+                        },
+                        "propConfig": {
+                          "props.text": {
+                            "binding": {
+                              "config": {
+                                "bidirectional": true,
+                                "path": "view.custom.newComponentId2"
+                              },
+                              "type": "property"
+                            }
+                          }
+                        },
+                        "props": {
+                          "placeholder": "e.g. WG-204721",
+                          "style": {
+                            "backgroundColor": "#FFFFFF",
+                            "border": "1px solid #D8DEE7",
+                            "borderRadius": "10px",
+                            "color": "#1B212B",
+                            "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                            "fontSize": "16px",
+                            "padding": "14px 16px"
+                          },
+                          "deferUpdates": false
+                        },
+                        "type": "ia.input.text-field"
+                      },
+                      {
+                        "children": [
+                          {
+                            "events": {
+                              "dom": {
+                                "onClick": {
+                                  "type": "script",
+                                  "scope": "G",
+                                  "config": {
+                                    "script": "\tstation = self.view.custom.selectedStation\n\tif not station:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': 'Select a station first.', 'error': True}, showCloseIcon=False, modal=True)\n\t\treturn\n\tnewVal = (self.view.custom.newComponentId2 or '').strip()\n\tclearing = newVal == ''\n\tmsg = ('Clear Component 2 on ' + station + '?') if clearing else ('Set Component 2 on ' + station + \" to '\" + newVal + \"'?\")\n\tkind = 'danger' if clearing else 'warn'\n\tconfirmText = 'Clear' if clearing else 'Commit'\n\tsystem.perspective.openPopup('sccConfirm', 'Plant Overview/Engineering/Station Control Center/embedded/scc-confirm-dialog', {'title': 'Confirm Component 2', 'message': msg, 'confirmText': confirmText, 'confirmKind': kind, 'callbackMsg': 'sccConfirmStationC2', 'context': {'station': station, 'newId': self.view.custom.newComponentId2, 'reason': self.view.custom.reason, 'leaf': 'componentID_2'}}, modal=True, showCloseIcon=False)\n"
+                                  }
+                                }
+                              }
+                            },
+                            "meta": {
+                              "name": "CommitC2_Button"
+                            },
+                            "position": {
+                              "basis": "150px",
+                              "shrink": 0
+                            },
+                            "propConfig": {
+                              "props.enabled": {
+                                "binding": {
+                                  "config": {
+                                    "expression": "len(trim(coalesce({view.custom.reason}, ''))) > 0 && len(coalesce({view.custom.selectedStation}, '')) > 0"
+                                  },
+                                  "type": "expr"
+                                }
+                              },
+                              "props.style.backgroundColor": {
+                                "binding": {
+                                  "type": "expr",
+                                  "config": {
+                                    "expression": "if(len(trim(coalesce({view.custom.reason}, ''))) > 0 && len(coalesce({view.custom.selectedStation}, '')) > 0, '#E87722', '#D5D5D5')"
+                                  }
+                                }
+                              },
+                              "props.style.color": {
+                                "binding": {
+                                  "type": "expr",
+                                  "config": {
+                                    "expression": "if(len(trim(coalesce({view.custom.reason}, ''))) > 0 && len(coalesce({view.custom.selectedStation}, '')) > 0, '#FFFFFF', '#8A929E')"
+                                  }
+                                }
+                              },
+                              "props.image.icon.color": {
+                                "binding": {
+                                  "type": "expr",
+                                  "config": {
+                                    "expression": "if(len(trim(coalesce({view.custom.reason}, ''))) > 0 && len(coalesce({view.custom.selectedStation}, '')) > 0, '#FFFFFF', '#8A929E')"
+                                  }
+                                }
+                              }
+                            },
+                            "props": {
+                              "style": {
+                                "backgroundColor": "#E87722",
+                                "border": "none",
+                                "borderRadius": "8px",
+                                "color": "#FFFFFF",
+                                "fontSize": "15px",
+                                "fontWeight": "600",
+                                "padding": "12px 20px",
+                                "whiteSpace": "nowrap",
+                                "overflow": "hidden"
+                              },
+                              "text": "Commit",
+                              "image": {
+                                "icon": {
+                                  "path": "material/check",
+                                  "color": "#FFFFFF",
+                                  "style": {
+                                    "width": "18px",
+                                    "height": "18px",
+                                    "flexShrink": "0"
+                                  }
+                                }
+                              }
+                            },
+                            "type": "ia.input.button"
+                          },
+                          {
+                            "events": {
+                              "dom": {
+                                "onClick": {
+                                  "config": {
+                                    "script": "\tself.view.custom.newComponentId2 = ''\n"
+                                  },
+                                  "scope": "G",
+                                  "type": "script"
+                                }
+                              }
+                            },
+                            "meta": {
+                              "name": "ClearC2_Button"
+                            },
+                            "position": {
+                              "basis": "110px",
+                              "shrink": 0
+                            },
+                            "props": {
+                              "style": {
+                                "backgroundColor": "#FFFFFF",
+                                "border": "1px solid #D8DEE7",
+                                "borderRadius": "8px",
+                                "color": "#1B212B",
+                                "fontSize": "15px",
+                                "fontWeight": "500",
+                                "padding": "12px 20px",
+                                "whiteSpace": "nowrap",
+                                "overflow": "hidden"
+                              },
+                              "text": "Clear",
+                              "image": {
+                                "icon": {
+                                  "path": "material/clear",
+                                  "color": "#5B6675",
+                                  "style": {
+                                    "width": "18px",
+                                    "height": "18px",
+                                    "flexShrink": "0"
+                                  }
+                                }
+                              }
+                            },
+                            "type": "ia.input.button",
+                            "propConfig": {}
+                          }
+                        ],
+                        "meta": {
+                          "name": "Actions2"
+                        },
+                        "position": {
+                          "basis": "52px",
+                          "shrink": 0
+                        },
+                        "props": {
+                          "alignItems": "center",
+                          "style": {
+                            "gap": "16px"
+                          }
+                        },
+                        "type": "ia.container.flex"
+                      }
+                    ],
+                    "meta": {
+                      "name": "Comp2Section"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "shrink": 0
+                    },
+                    "propConfig": {
+                      "meta.visible": {
+                        "binding": {
+                          "config": {
+                            "expression": "{view.custom.componentLoadCfg} = 2"
+                          },
+                          "type": "expr"
+                        }
+                      }
+                    },
+                    "props": {
+                      "direction": "column",
+                      "style": {
+                        "borderTop": "1px solid #EEF1F5",
+                        "gap": "10px",
+                        "paddingTop": "12px"
+                      }
+                    },
+                    "type": "ia.container.flex"
+                  }
+                ],
+                "meta": {
+                  "name": "RectifySection"
+                },
+                "position": {
+                  "basis": "0%",
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "direction": "column",
+                  "style": {
+                    "gap": "10px",
+                    "minWidth": "0px"
+                  }
+                },
+                "type": "ia.container.flex"
+              },
+              {
+                "children": [
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "RunSchedSectionHeader"
+                    },
+                    "position": {
+                      "basis": "24px",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "RUN SCHEDULE OPTIONS",
+                      "style": {
+                        "color": "#5B6675",
+                        "fontSize": "12px",
+                        "fontWeight": "700",
+                        "letterSpacing": "0.8px",
+                        "textAlign": "left",
+                        "textTransform": "uppercase",
+                        "borderTop": "1px solid #D8DEE7",
+                        "paddingTop": "10px"
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "RefreshWO_Button"
+                    },
+                    "position": {
+                      "basis": "auto",
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Refresh Next Work Order",
+                      "style": {
+                        "backgroundColor": "#FFFFFF",
+                        "color": "#1B212B",
+                        "border": "1px solid #D8DEE7",
+                        "borderRadius": "8px",
+                        "fontWeight": "600",
+                        "fontSize": "15px",
+                        "padding": "11px 18px",
+                        "overflow": "hidden",
+                        "whiteSpace": "nowrap"
+                      },
+                      "image": {
+                        "icon": {
+                          "path": "material/refresh",
+                          "color": "#5B6675",
+                          "style": {
+                            "width": "18px",
+                            "height": "18px",
+                            "flexShrink": "0"
+                          }
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.enabled": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "len(coalesce({view.custom.selectedStation}, '')) > 0 && len(trim(coalesce({view.custom.reason}, ''))) > 0"
+                          }
+                        }
+                      },
+                      "props.style.backgroundColor": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if(len(coalesce({view.custom.selectedStation}, '')) > 0 && len(trim(coalesce({view.custom.reason}, ''))) > 0, '#FFFFFF', '#FFFFFF')"
+                          }
+                        }
+                      },
+                      "props.style.color": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if(len(coalesce({view.custom.selectedStation}, '')) > 0 && len(trim(coalesce({view.custom.reason}, ''))) > 0, '#1B212B', '#8A929E')"
+                          }
+                        }
+                      },
+                      "props.image.icon.color": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if(len(coalesce({view.custom.selectedStation}, '')) > 0 && len(trim(coalesce({view.custom.reason}, ''))) > 0, '#5B6675', '#8A929E')"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "dom": {
+                        "onClick": {
+                          "type": "script",
+                          "scope": "G",
+                          "config": {
+                            "script": "\tif not self.view.custom.selectedStation:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': 'Select a station first.', 'error': True}, showCloseIcon=False, modal=True)\n\t\treturn\n\targs = {'station': self.view.custom.selectedStation, 'reason': self.view.custom.reason}\n\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Refreshing next work order...', 'actionKey': 'pullNextWorkOrder', 'actionArgs': args, 'doneMsg': 'sccStationDone'}, modal=True, showCloseIcon=False)\n"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "meta": {
+                      "name": "Note"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "style": {
+                        "color": "#5B6675",
+                        "fontSize": "12px",
+                        "fontWeight": "400",
+                        "lineHeight": "1.45",
+                        "textAlign": "left"
+                      },
+                      "text": "Re-pulls this station's next work order."
+                    },
+                    "type": "ia.display.label"
+                  }
+                ],
+                "meta": {
+                  "name": "RunSchedSection"
+                },
+                "position": {
+                  "basis": "320px",
+                  "grow": 0,
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "column",
+                  "style": {
+                    "gap": "10px",
+                    "borderLeft": "1px solid #EEF1F5",
+                    "paddingLeft": "24px"
+                  }
+                },
+                "type": "ia.container.flex"
+              }
+            ],
+            "meta": {
+              "name": "DetailBody"
+            },
+            "position": {
+              "basis": "auto",
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "row",
+              "style": {
+                "gap": "28px",
+                "overflow": "hidden",
+                "minHeight": "0px"
+              },
+              "alignItems": "flex-start"
+            },
+            "type": "ia.container.flex"
+          }
+        ],
+        "meta": {
+          "name": "DetailCard"
+        },
+        "position": {
+          "basis": "56%",
+          "grow": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "backgroundColor": "#FFFFFF",
+            "border": "1px solid #D8DEE7",
+            "borderRadius": "12px",
+            "boxShadow": "0 1px 3px rgba(27,33,43,0.08)",
+            "gap": "14px",
+            "padding": "20px",
+            "overflow": "hidden"
+          }
+        },
+        "type": "ia.container.flex"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "style": {
+        "backgroundColor": "#F4F6F9",
+        "gap": "20px",
+        "padding": "20px"
+      }
+    },
+    "type": "ia.container.flex",
+    "scripts": {
+      "customMethods": [],
+      "extensionFunctions": null,
+      "messageHandlers": [
+        {
+          "messageType": "sccConfirmStationC1",
+          "pageScope": false,
+          "sessionScope": true,
+          "viewScope": false,
+          "script": "\tctx = payload.get('context') or {}\n\targs = {'station': ctx.get('station'), 'newId': ctx.get('newId', ''), 'reason': ctx.get('reason', ''), 'leaf': 'componentID'}\n\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Committing Component 1...', 'actionKey': 'setStationComponentId', 'actionArgs': args, 'doneMsg': 'sccStationDone'}, modal=True, showCloseIcon=False)\n"
+        },
+        {
+          "messageType": "sccConfirmStationC2",
+          "pageScope": false,
+          "sessionScope": true,
+          "viewScope": false,
+          "script": "\tctx = payload.get('context') or {}\n\targs = {'station': ctx.get('station'), 'newId': ctx.get('newId', ''), 'reason': ctx.get('reason', ''), 'leaf': 'componentID_2'}\n\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Committing Component 2...', 'actionKey': 'setStationComponentId', 'actionArgs': args, 'doneMsg': 'sccStationDone'}, modal=True, showCloseIcon=False)\n"
+        },
+        {
+          "messageType": "sccStationDone",
+          "pageScope": false,
+          "sessionScope": true,
+          "viewScope": false,
+          "script": "\tsystem.perspective.closePopup('sccProgress')\n\tok = payload.get('ok', False)\n\tmsg = payload.get('message', '')\n\tak = payload.get('actionKey', '')\n\targs = payload.get('args') or {}\n\tif msg:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': msg, 'error': not ok}, showCloseIcon=False, modal=True)\n\tif ok and ak == 'setStationComponentId':\n\t\tstn = args.get('station')\n\t\tleaf = args.get('leaf', 'componentID')\n\t\tnewval = (args.get('newId') or '').strip()\n\t\tfield = 'ComponentID_2' if leaf == 'componentID_2' else 'ComponentID'\n\t\trows = [dict(r) for r in (self.view.custom.stationRows or [])]\n\t\tfor r in rows:\n\t\t\tif r.get('StationName') == stn:\n\t\t\t\tr[field] = newval\n\t\tself.view.custom.stationRows = rows\n\t\tif leaf == 'componentID_2':\n\t\t\tself.view.custom.currentComponentId2 = newval\n\t\telse:\n\t\t\tself.view.custom.currentComponentId = newval\n\t\tself.view.custom.newComponentId = ''\n\t\tself.view.custom.newComponentId2 = ''\n\t\tself.view.custom.reason = ''\n\telif ok:\n\t\tself.view.custom.stationRows = StationControl.SCC.getStationRows()\n\tself.view.custom.showTable = True\n"
+        }
+      ]
+    }
+  },
+  "events": {
+    "system": {
+      "onStartup": {
+        "type": "script",
+        "scope": "G",
+        "config": {
+          "script": "\tself.custom.stationRows = StationControl.SCC.getStationRows()\n"
+        }
+      }
+    }
+  }
+}

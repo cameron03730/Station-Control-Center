@@ -1,0 +1,25 @@
+{
+  "base": {
+    "style": {
+      "backgroundColor": "#E87722",
+      "color": "#FFFFFF",
+      "fontWeight": "600",
+      "borderRadius": "6px"
+    }
+  },
+  "variants": [
+    {
+      "pseudo": "hover",
+      "style": {
+        "backgroundColor": "#CF6A1E"
+      }
+    },
+    {
+      "pseudo": "disabled",
+      "style": {
+        "backgroundColor": "#D5D5D5",
+        "color": "#8A929E"
+      }
+    }
+  ]
+}

@@ -1,0 +1,1085 @@
+{
+  "custom": {
+    "reason": "",
+    "legacy": false,
+    "showTable": true,
+    "maSearch": "",
+    "maDateRange": "all",
+    "scheduledRows": null,
+    "lastResult": "",
+    "serialRows": [],
+    "newSerial": "",
+    "hasMachines": false,
+    "machineCount": 0,
+    "allVerified": false,
+    "lastState": ""
+  },
+  "params": {},
+  "props": {
+    "defaultSize": {
+      "width": 1320,
+      "height": 860
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "row",
+      "style": {
+        "backgroundColor": "#F4F6F9",
+        "padding": "22px",
+        "gap": "22px"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "ScheduleCard"
+        },
+        "position": {
+          "basis": "44%",
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": "12px",
+            "border": "1px solid #D8DEE7",
+            "boxShadow": "0 1px 3px rgba(27,33,43,0.08)",
+            "padding": "22px",
+            "gap": "18px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "ScheduleCardTitle"
+            },
+            "position": {
+              "basis": "30px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Schedule Serials for Assembly",
+              "style": {
+                "color": "#1B212B",
+                "fontSize": "17px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "borderBottom": "2px solid #E87722",
+                "paddingBottom": "8px"
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "AddLbl"
+            },
+            "position": {
+              "basis": "18px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "ADD MACHINE  (type a serial, then Add)",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "letterSpacing": "0.6px"
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "AddRow"
+            },
+            "position": {
+              "basis": "48px",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.input.text-field",
+                "meta": {
+                  "name": "NewSerialField"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "placeholder": "e.g. 0160153231",
+                  "deferUpdates": false,
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "color": "#1B212B",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "padding": "11px 14px",
+                    "fontSize": "15px",
+                    "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.newSerial",
+                        "bidirectional": true
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.input.button",
+                "meta": {
+                  "name": "AddBtn"
+                },
+                "position": {
+                  "basis": "110px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Add",
+                  "style": {
+                    "backgroundColor": "#1B212B",
+                    "color": "#FFFFFF",
+                    "border": "none",
+                    "borderRadius": "8px",
+                    "fontWeight": "700",
+                    "fontSize": "15px",
+                    "padding": "11px 18px",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap"
+                  },
+                  "image": {
+                    "icon": {
+                      "path": "material/add",
+                      "color": "#FFFFFF",
+                      "style": {
+                        "width": "18px",
+                        "height": "18px",
+                        "flexShrink": "0"
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "dom": {
+                    "onClick": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "\ts = (self.view.custom.newSerial or '').strip()\n\tif not s:\n\t\treturn\n\trows = [dict(r) for r in (self.view.custom.serialRows or [])]\n\tfor r in rows:\n\t\tif str(r.get('serial')) == s:\n\t\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': s + ' is already in the list.', 'error': True, 'autoClose': True}, showCloseIcon=False, modal=False, position={'top': '24px', 'right': '24px'}, viewportBound=True)\n\t\t\treturn\n\trows.append({'serial': s, 'status': 'pending', 'message': ''})\n\tself.view.custom.serialRows = rows\n\tself.view.custom.newSerial = ''\n"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "MachinesHdr"
+            },
+            "position": {
+              "basis": "20px",
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "'MACHINES TO SCHEDULE  (' + toStr({view.custom.machineCount}) + ')'"
+                  }
+                }
+              }
+            },
+            "props": {
+              "text": "MACHINES TO SCHEDULE",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "letterSpacing": "0.6px",
+                "borderTop": "1px solid #EEF1F5",
+                "paddingTop": "12px"
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "RepeaterArea"
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "gap": "8px",
+                "overflow": "auto",
+                "minHeight": "0px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.flex-repeater",
+                "meta": {
+                  "name": "SerialRepeater"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "path": "Plant Overview/Engineering/Station Control Center/embedded/scc-serial-row",
+                  "direction": "column",
+                  "wrap": "nowrap",
+                  "style": {
+                    "gap": "8px"
+                  }
+                },
+                "propConfig": {
+                  "props.instances": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.serialRows"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\tout = []\n\tfor r in (value or []):\n\t\tout.append({'serial': r.get('serial', ''), 'status': r.get('status', 'pending'), 'message': r.get('message', '')})\n\treturn out\n"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "EmptyHint"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "propConfig": {
+                  "position.display": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "!{view.custom.hasMachines}"
+                      }
+                    }
+                  }
+                },
+                "props": {
+                  "text": "No machines added yet. Type a serial above and click Add.",
+                  "style": {
+                    "color": "#8A929E",
+                    "fontSize": "14px",
+                    "fontWeight": "400",
+                    "textAlign": "center",
+                    "padding": "24px 8px"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.input.checkbox",
+            "meta": {
+              "name": "LegacyToggle"
+            },
+            "position": {
+              "basis": "34px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Legacy / traditional machine",
+              "style": {
+                "color": "#1B212B",
+                "fontSize": "15px"
+              }
+            },
+            "propConfig": {
+              "props.selected": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.legacy",
+                    "bidirectional": true
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "ReasonLbl"
+            },
+            "position": {
+              "basis": "18px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "REASON  (required - written to SupervisorOverrideLog)",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "letterSpacing": "0.6px"
+              }
+            }
+          },
+          {
+            "type": "ia.input.text-field",
+            "meta": {
+              "name": "ReasonField"
+            },
+            "position": {
+              "basis": "44px",
+              "shrink": 0
+            },
+            "props": {
+              "placeholder": "Why is this being scheduled manually...",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#1B212B",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "8px",
+                "padding": "11px 14px",
+                "fontSize": "15px"
+              },
+              "deferUpdates": false
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.reason",
+                    "bidirectional": true
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "StatusBanner"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "12px",
+                "borderRadius": "10px",
+                "padding": "14px 16px",
+                "border": "1px solid #D8DEE7",
+                "backgroundColor": "#F4F6F9"
+              }
+            },
+            "propConfig": {
+              "props.style.backgroundColor": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if({view.custom.lastState} = 'fail', '#FCE9E9', if({view.custom.lastState} = 'warn', '#FDF3E3', if({view.custom.lastState} = 'ok', '#E7F6EC', '#F4F6F9')))"
+                  }
+                }
+              },
+              "props.style.border": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "'1px solid ' + if({view.custom.lastState} = 'fail', '#E03131', if({view.custom.lastState} = 'warn', '#E8920C', if({view.custom.lastState} = 'ok', '#2F9E44', '#D8DEE7')))"
+                  }
+                }
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.icon",
+                "meta": {
+                  "name": "StatusBannerIcon"
+                },
+                "position": {
+                  "basis": "26px",
+                  "shrink": 0
+                },
+                "props": {
+                  "path": "material/info",
+                  "color": "#5B6675",
+                  "style": {
+                    "width": "26px",
+                    "height": "26px"
+                  }
+                },
+                "propConfig": {
+                  "props.path": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.custom.lastState} = 'fail', 'material/error', if({view.custom.lastState} = 'warn', 'material/warning', if({view.custom.lastState} = 'ok', 'material/check_circle', 'material/info')))"
+                      }
+                    }
+                  },
+                  "props.color": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.custom.lastState} = 'fail', '#E03131', if({view.custom.lastState} = 'warn', '#E8920C', if({view.custom.lastState} = 'ok', '#2F9E44', '#5B6675')))"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "StatusBannerText"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "Add machines, Verify, then Schedule. M-numbers are not allowed in Assembly.",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "15px",
+                    "fontWeight": "700",
+                    "whiteSpace": "normal",
+                    "lineHeight": "1.45",
+                    "textAlign": "left"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(coalesce({view.custom.lastResult}, '')) = 0, 'Add machines, Verify, then Schedule. M-numbers are not allowed in Assembly.', {view.custom.lastResult})"
+                      }
+                    }
+                  },
+                  "props.style.color": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.custom.lastState} = 'fail', '#B42318', if({view.custom.lastState} = 'warn', '#8A5A00', if({view.custom.lastState} = 'ok', '#1E7A34', '#5B6675')))"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "ButtonRow"
+            },
+            "position": {
+              "basis": "56px",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "12px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.input.button",
+                "meta": {
+                  "name": "Validate_Button"
+                },
+                "position": {
+                  "basis": "150px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Verify All",
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "color": "#1B212B",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "fontWeight": "600",
+                    "fontSize": "15px",
+                    "padding": "11px 18px",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap"
+                  },
+                  "image": {
+                    "icon": {
+                      "path": "material/fact_check",
+                      "color": "#5B6675",
+                      "style": {
+                        "width": "18px",
+                        "height": "18px",
+                        "flexShrink": "0"
+                      }
+                    }
+                  }
+                },
+                "propConfig": {
+                  "props.enabled": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.hasMachines"
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "dom": {
+                    "onClick": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "\trows = self.view.custom.serialRows or []\n\tif not rows:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': 'Add at least one machine first.', 'error': True, 'autoClose': True}, showCloseIcon=False, modal=False, position={'top': '24px', 'right': '24px'}, viewportBound=True)\n\t\treturn\n\tserials = [r.get('serial') for r in rows]\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Verifying machines...', 'actionKey': 'verifySerials', 'actionArgs': {'serials': serials}, 'doneMsg': 'sccMaDone'}, modal=True, showCloseIcon=False)\n"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.input.button",
+                "meta": {
+                  "name": "Schedule_Button"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1,
+                  "basis": "0%"
+                },
+                "props": {
+                  "text": "Schedule All",
+                  "style": {
+                    "backgroundColor": "#E87722",
+                    "color": "#FFFFFF",
+                    "border": "none",
+                    "borderRadius": "8px",
+                    "fontWeight": "700",
+                    "fontSize": "15px",
+                    "padding": "11px 18px",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap",
+                    "boxShadow": "0 1px 2px rgba(232,119,34,0.35)"
+                  },
+                  "image": {
+                    "icon": {
+                      "path": "material/playlist_add",
+                      "color": "#FFFFFF",
+                      "style": {
+                        "width": "18px",
+                        "height": "18px",
+                        "flexShrink": "0"
+                      }
+                    }
+                  }
+                },
+                "propConfig": {
+                  "props.enabled": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "{view.custom.hasMachines} && len(trim(coalesce({view.custom.reason}, ''))) > 0"
+                      }
+                    }
+                  },
+                  "props.style.backgroundColor": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.custom.hasMachines} && len(trim(coalesce({view.custom.reason}, ''))) > 0, '#E87722', '#D5D5D5')"
+                      }
+                    }
+                  },
+                  "props.style.color": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.custom.hasMachines} && len(trim(coalesce({view.custom.reason}, ''))) > 0, '#FFFFFF', '#8A929E')"
+                      }
+                    }
+                  },
+                  "props.image.icon.color": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.custom.hasMachines} && len(trim(coalesce({view.custom.reason}, ''))) > 0, '#FFFFFF', '#8A929E')"
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "dom": {
+                    "onClick": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "\trows = self.view.custom.serialRows or []\n\tif not rows:\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': 'Add at least one machine first.', 'error': True, 'autoClose': True}, showCloseIcon=False, modal=False, position={'top': '24px', 'right': '24px'}, viewportBound=True)\n\t\treturn\n\tserials = [r.get('serial') for r in rows]\n\targs = {'serials': serials, 'legacy': self.view.custom.legacy, 'reason': self.view.custom.reason}\n\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Scheduling machines...', 'actionKey': 'scheduleSerials', 'actionArgs': args, 'doneMsg': 'sccMaDone'}, modal=True, showCloseIcon=False)\n"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "ScheduledCard"
+        },
+        "position": {
+          "basis": "56%",
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": "12px",
+            "border": "1px solid #D8DEE7",
+            "boxShadow": "0 1px 3px rgba(27,33,43,0.08)",
+            "padding": "22px",
+            "gap": "18px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "ScheduledHeaderRow"
+            },
+            "position": {
+              "basis": "46px",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "justify": "space-between",
+              "style": {
+                "gap": "12px",
+                "borderBottom": "2px solid #E87722",
+                "paddingBottom": "8px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "ScheduledCardTitle"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "Currently Scheduled in Assembly",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "17px",
+                    "fontWeight": "700",
+                    "textAlign": "left"
+                  }
+                }
+              },
+              {
+                "type": "ia.input.button",
+                "meta": {
+                  "name": "Refresh_Button"
+                },
+                "position": {
+                  "basis": "124px",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "Refresh",
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "color": "#1B212B",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "fontWeight": "600",
+                    "fontSize": "14px",
+                    "padding": "10px 16px",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap"
+                  },
+                  "image": {
+                    "icon": {
+                      "path": "material/refresh",
+                      "color": "#5B6675",
+                      "style": {
+                        "width": "18px",
+                        "height": "18px",
+                        "flexShrink": "0"
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "dom": {
+                    "onClick": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "\tself.view.custom.showTable = False\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Refreshing...', 'actionKey': 'refresh', 'actionArgs': {}, 'doneMsg': 'sccMaDone'}, modal=True, showCloseIcon=False)\n"
+                      }
+                    }
+                  }
+                },
+                "propConfig": {}
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "SearchFilterRow"
+            },
+            "position": {
+              "basis": "40px",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "10px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.input.text-field",
+                "meta": {
+                  "name": "MaSearchField"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                },
+                "props": {
+                  "placeholder": "Search serial number...",
+                  "deferUpdates": false,
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "color": "#1B212B",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "padding": "9px 14px",
+                    "fontSize": "14px"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.maSearch",
+                        "bidirectional": true
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "DateRangeCaption"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "SCHEDULED",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "11px",
+                    "fontWeight": "700",
+                    "letterSpacing": "0.6px",
+                    "whiteSpace": "nowrap"
+                  }
+                }
+              },
+              {
+                "type": "ia.input.dropdown",
+                "meta": {
+                  "name": "MaDateRangeDropdown"
+                },
+                "position": {
+                  "basis": "180px",
+                  "shrink": 0
+                },
+                "props": {
+                  "options": [
+                    {"label": "All dates", "value": "all"},
+                    {"label": "Today", "value": "today"},
+                    {"label": "Last 7 days", "value": "7"},
+                    {"label": "Last 30 days", "value": "30"},
+                    {"label": "Last 90 days", "value": "90"}
+                  ],
+                  "clearable": false,
+                  "style": {
+                    "backgroundColor": "#FFFFFF",
+                    "color": "#1B212B",
+                    "border": "1px solid #D8DEE7",
+                    "borderRadius": "8px",
+                    "fontSize": "14px"
+                  }
+                },
+                "propConfig": {
+                  "props.value": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.maDateRange",
+                        "bidirectional": true
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.table",
+            "meta": {
+              "name": "ScheduledTable"
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 1
+            },
+            "props": {
+              "columns": [
+                {
+                  "field": "__card",
+                  "render": "view",
+                  "viewPath": "Plant Overview/Engineering/Station Control Center/embedded/scc-card-serial",
+                  "viewParams": {},
+                  "header": {
+                    "title": "",
+                    "style": {
+                      "classes": ""
+                    }
+                  },
+                  "visible": true,
+                  "sortable": false,
+                  "resizable": false,
+                  "strictWidth": false,
+                  "style": {
+                    "classes": ""
+                  }
+                }
+              ],
+              "rows": {
+                "height": 104,
+                "striped": {
+                  "enabled": false,
+                  "color": {
+                    "odd": "#FFFFFF",
+                    "even": "#F4F6F9"
+                  }
+                }
+              },
+              "selection": {
+                "enabled": true,
+                "mode": "single",
+                "enableRowSelection": true,
+                "enableColumnSelection": false
+              },
+              "filter": {
+                "enabled": false
+              },
+              "emptyMessage": {
+                "noData": {
+                  "icon": {
+                    "path": "material/inbox",
+                    "color": "#D8DEE7"
+                  },
+                  "text": "No serials scheduled in assembly",
+                  "textStyle": {
+                    "color": "#5B6675",
+                    "fontSize": "14px",
+                    "fontWeight": "600"
+                  }
+                }
+              },
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#1B212B",
+                "fontSize": "13px",
+                "fontFamily": "-apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "10px",
+                "boxShadow": "0 1px 2px rgba(27,33,43,0.06), 0 6px 18px rgba(27,33,43,0.10)",
+                "overflow": "hidden"
+              },
+              "enableHeader": false
+            },
+            "propConfig": {
+              "meta.visible": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.showTable"
+                  }
+                }
+              },
+              "props.data": {
+                "binding": {
+                  "type": "expr-struct",
+                  "config": {
+                    "struct": {
+                      "rows": "{view.custom.scheduledRows}",
+                      "search": "{view.custom.maSearch}",
+                      "range": "{view.custom.maDateRange}"
+                    },
+                    "waitOnAll": false
+                  },
+                  "transforms": [
+                    {
+                      "type": "script",
+                      "code": "\tsd = value or {}\n\trows = sd['rows'] if 'rows' in sd else []\n\trows = rows or []\n\tsearch = (sd['search'] if 'search' in sd else '') or ''\n\tsearch = search.strip().lower()\n\t# Date filter from the preset dropdown: 'all' (no filter), 'today', or a day count ('7'/'30'/'90').\n\t# We keep only rows scheduled on/after the cutoff (midnight of today minus N days).\n\trng = (sd['range'] if 'range' in sd else 'all') or 'all'\n\tdateFrom = None\n\tif rng == 'today':\n\t\tdateFrom = system.date.midnight(system.date.now())\n\telif rng in ('7', '30', '90'):\n\t\tdateFrom = system.date.midnight(system.date.addDays(system.date.now(), -int(rng)))\n\tdateTo = None\n\tout = []\n\tfor r in rows:\n\t\tif search and search not in str(r.get('SerialNumber', '')).lower():\n\t\t\tcontinue\n\t\tts = r.get('ScheduledTimestamp')\n\t\tif ts is not None:\n\t\t\tif dateFrom is not None and ts < dateFrom:\n\t\t\t\tcontinue\n\t\t\tif dateTo is not None and ts >= dateTo:\n\t\t\t\tcontinue\n\t\tout.append(dict(r))\n\twithTs = [d for d in out if d.get('ScheduledTimestamp') is not None]\n\tnoTs = [d for d in out if d.get('ScheduledTimestamp') is None]\n\ttry:\n\t\twithTs.sort(key=lambda d: d.get('ScheduledTimestamp'), reverse=True)\n\texcept Exception:\n\t\tpass\n\tout = withTs + noTs\n\tpillBase = {'color': '#FFFFFF', 'borderRadius': '999px', 'padding': '3px 11px', 'fontWeight': '700', 'fontSize': '11px', 'letterSpacing': '0.4px', 'textAlign': 'center', 'alignSelf': 'center', 'whiteSpace': 'nowrap'}\n\tdef pill(text, bg):\n\t\tst = dict(pillBase)\n\t\tst['backgroundColor'] = bg\n\t\treturn {'value': text, 'style': st}\n\tfor d in out:\n\t\t# Status pill from the current station's Status: 1 Scheduled, 2 WIP, 3 Complete, 7 Associated.\n\t\t# Defaults to SCHEDULED when the Status column is absent (query not yet re-deployed) so nothing errors.\n\t\ttry:\n\t\t\tstat = int(d.get('Status'))\n\t\texcept:\n\t\t\tstat = 1\n\t\tif stat == 2:\n\t\t\td['Status'] = pill('WIP', '#E87722')\n\t\telif stat == 3:\n\t\t\td['Status'] = pill('COMPLETE', '#2F9E44')\n\t\telif stat == 7:\n\t\t\td['Status'] = pill('ASSOCIATED', '#0C8599')\n\t\telse:\n\t\t\td['Status'] = pill('SCHEDULED', '#E8920C')\n\t\tassoc = d.get('Associated')\n\t\td['Assoc'] = pill('ASSOCIATED', '#2F9E44') if assoc in (1, True, '1') else ''\n\t\td['__card'] = ''\n\treturn out\n"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "scripts": {
+      "customMethods": [],
+      "extensionFunctions": null,
+      "messageHandlers": [
+        {
+          "messageType": "sccMaDone",
+          "pageScope": false,
+          "sessionScope": true,
+          "viewScope": false,
+          "script": "\tsystem.perspective.closePopup('sccProgress')\n\tok = payload.get('ok', False)\n\tmsg = payload.get('message', '')\n\tak = payload.get('actionKey', '')\n\tif msg:\n\t\tself.view.custom.lastResult = msg\n\t\tsystem.perspective.openPopup('sccToast', 'Plant Overview/Engineering/Station Control Center/embedded/scc-toast-popup', {'msg': msg, 'error': not ok, 'autoClose': True}, showCloseIcon=False, modal=False, position={'top': '24px', 'right': '24px'}, viewportBound=True)\n\tif ak == 'verifySerials':\n\t\tbyserial = {}\n\t\tfor r in payload.get('results', []):\n\t\t\tbyserial[r.get('serial')] = r\n\t\trows = [dict(r) for r in (self.view.custom.serialRows or [])]\n\t\tfor r in rows:\n\t\t\tres = byserial.get(r.get('serial'))\n\t\t\tif res is not None:\n\t\t\t\tr['status'] = 'valid' if res.get('ok') else 'invalid'\n\t\t\t\tr['message'] = res.get('reason', '')\n\t\tself.view.custom.serialRows = rows\n\tif ak == 'scheduleSerials':\n\t\tnewrows = []\n\t\tfor x in payload.get('skipped', []):\n\t\t\tnewrows.append({'serial': x.get('serial'), 'status': 'invalid', 'message': x.get('reason', '')})\n\t\tself.view.custom.serialRows = newrows\n\t\tself.view.custom.reason = ''\n\t\tself.view.refreshBinding('custom.scheduledRows')\n\tif ak == 'refresh':\n\t\tself.view.refreshBinding('custom.scheduledRows')\n\tif ak == 'verifySerials':\n\t\tself.view.custom.lastState = 'ok' if ok else 'warn'\n\tif ak == 'scheduleSerials':\n\t\tskips = payload.get('skipped', [])\n\t\tif not ok:\n\t\t\tself.view.custom.lastState = 'fail'\n\t\telif skips:\n\t\t\tself.view.custom.lastState = 'warn'\n\t\telse:\n\t\t\tself.view.custom.lastState = 'ok'\n\tself.view.custom.showTable = True\n"
+        },
+        {
+          "messageType": "sccRemoveSerial",
+          "pageScope": false,
+          "sessionScope": true,
+          "viewScope": false,
+          "script": "\tserial = payload.get('serial')\n\trows = []\n\tfor r in (self.view.custom.serialRows or []):\n\t\tif str(r.get('serial')) != str(serial):\n\t\t\trows.append(dict(r))\n\tself.view.custom.serialRows = rows\n"
+        }
+      ]
+    }
+  },
+  "propConfig": {
+    "custom.scheduledRows": {
+      "binding": {
+        "type": "query",
+        "config": {
+          "queryPath": "Run Schedule/Assembly/manualAssemblyScheduling/select/getAllScheduledSerialsInAssembly",
+          "parameters": {},
+          "returnFormat": "auto",
+          "polling": {
+            "enabled": false
+          }
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\tif value is None:\n\t\treturn []\n\trows = []\n\ttry:\n\t\tpds = system.dataset.toPyDataSet(value)\n\t\tcols = list(pds.getColumnNames())\n\t\tfor r in pds:\n\t\t\td = {}\n\t\t\tfor c in cols:\n\t\t\t\td[c] = r[c]\n\t\t\trows.append(d)\n\texcept Exception:\n\t\tfor d in value:\n\t\t\trows.append(dict(d))\n\tmtMap = StationControl.SCC.machineTypeByProductCode()\n\tfor d in rows:\n\t\td['MachineType'] = mtMap.get(d.get('ProductCode'), '')\n\treturn rows\n"
+          }
+        ]
+      }
+    },
+    "custom.hasMachines": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "view.custom.serialRows"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\treturn len(value or []) > 0\n"
+          }
+        ]
+      }
+    },
+    "custom.machineCount": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "view.custom.serialRows"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\treturn len(value or [])\n"
+          }
+        ]
+      }
+    },
+    "custom.allVerified": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "view.custom.serialRows"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\trows = value or []\n\treturn len(rows) > 0 and all((r.get(\"status\") == \"valid\") for r in rows)\n"
+          }
+        ]
+      }
+    }
+  }
+}

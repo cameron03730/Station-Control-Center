@@ -1,0 +1,453 @@
+{
+  "custom": {},
+  "params": {
+    "rowData": {},
+    "idText": "",
+    "isNWG": false,
+    "idx": 0
+  },
+  "propConfig": {
+    "params.rowData": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.idText": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.isNWG": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.idx": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 262,
+      "height": 162
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "row",
+      "alignItems": "stretch",
+      "style": {
+        "gap": "0px",
+        "height": "100%",
+        "overflow": "visible"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "Connector"
+        },
+        "position": {
+          "basis": "30px",
+          "shrink": 0,
+          "alignSelf": "center"
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "justify": "center",
+          "style": {
+            "gap": "0px"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.icon",
+            "meta": {
+              "name": "Chev"
+            },
+            "position": {
+              "basis": "28px",
+              "shrink": 0
+            },
+            "props": {
+              "path": "material/chevron_right",
+              "color": "#C2C9D4",
+              "style": {
+                "width": "28px",
+                "height": "28px"
+              }
+            },
+            "propConfig": {
+              "position.display": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "toInt(coalesce({view.params.idx}, 0)) > 0"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "Card"
+        },
+        "position": {
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "background": "linear-gradient(180deg, #FFFFFF 0%, #F5F8FC 100%)",
+            "borderRadius": "14px",
+            "border": "1px solid #E1E7EF",
+            "borderLeft": "6px solid #5B6675",
+            "padding": "15px 16px",
+            "gap": "8px",
+            "height": "100%",
+            "minWidth": "0",
+            "overflow": "hidden",
+            "cursor": "pointer",
+            "justifyContent": "center",
+            "boxShadow": "0 1px 3px rgba(27,33,43,0.07), 0 10px 26px rgba(27,33,43,0.10)"
+          }
+        },
+        "propConfig": {
+          "props.style.borderLeft": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "'6px solid ' + case(toInt(coalesce({view.params.rowData.Status}, -1)), 0,'#5B6675', 1,'#E8920C', 2,'#E87722', 3,'#2F9E44', 4,'#E03131', 5,'#E03131', 7,'#0C8599', '#5B6675')"
+              }
+            }
+          },
+          "props.style.border": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if(toInt(coalesce({view.params.rowData.Status}, -1)) = 2, '1px solid #E87722', '1px solid #E1E7EF')"
+              }
+            }
+          },
+          "props.style.boxShadow": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if(toInt(coalesce({view.params.rowData.Status}, -1)) = 2, '0 0 0 4px rgba(232,119,34,0.24), 0 10px 28px rgba(232,119,34,0.24)', '0 1px 3px rgba(27,33,43,0.07), 0 10px 26px rgba(27,33,43,0.10)')"
+              }
+            }
+          }
+        },
+        "events": {
+          "dom": {
+            "onClick": {
+              "type": "script",
+              "scope": "G",
+              "config": {
+                "script": "\tsystem.perspective.openPopup('sccNodeAction', 'Plant Overview/Engineering/Station Control Center/embedded/scc-node-action', {'idText': self.view.params.idText, 'station': self.view.params.rowData.Station, 'item': self.view.params.rowData.Item, 'status': self.view.params.rowData.Status, 'isNWG': self.view.params.isNWG}, modal=True, showCloseIcon=False)\n"
+              }
+            }
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "TopRow"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "justify": "space-between",
+              "style": {
+                "gap": "8px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "StationName"
+                },
+                "position": {
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "23px",
+                    "fontWeight": "700",
+                    "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                    "letterSpacing": "0.4px",
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden",
+                    "textOverflow": "ellipsis"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "coalesce({view.params.rowData.Station}, '--')"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "StatusPill"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#FFFFFF",
+                    "fontSize": "12px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.6px",
+                    "textTransform": "uppercase",
+                    "borderRadius": "999px",
+                    "padding": "4px 12px",
+                    "whiteSpace": "nowrap",
+                    "backgroundColor": "#5B6675",
+                    "boxShadow": "0 1px 3px rgba(27,33,43,0.20)"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "case(toInt(coalesce({view.params.rowData.Status}, -1)), 0,'SCRAP', 1,'SCHEDULED', 2,'WIP', 3,'COMPLETE', 4,'ABORT', 5,'NON-CONF', 7,'ASSOC', '?')"
+                      }
+                    }
+                  },
+                  "props.style.backgroundColor": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "case(toInt(coalesce({view.params.rowData.Status}, -1)), 0,'#5B6675', 1,'#E8920C', 2,'#E87722', 3,'#2F9E44', 4,'#E03131', 5,'#E03131', 7,'#0C8599', '#5B6675')"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "ItemVal"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "14px",
+                "fontWeight": "600",
+                "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                "whiteSpace": "nowrap",
+                "overflow": "hidden",
+                "textOverflow": "ellipsis"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "coalesce({view.params.rowData.Item}, '')"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "Divider"
+            },
+            "position": {
+              "basis": "1px",
+              "shrink": 0
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "borderTop": "1px solid #EDF1F6",
+                "margin": "2px 0"
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "SchedCap"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "7px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "SchedTag"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "SCHED",
+                  "style": {
+                    "color": "#9AA3B0",
+                    "fontSize": "11px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.7px",
+                    "textTransform": "uppercase"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "SchedVal"
+                },
+                "position": {
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "13px",
+                    "fontWeight": "600",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.params.rowData.ScheduledTimestamp} = null, '--', dateFormat({view.params.rowData.ScheduledTimestamp}, 'MM/dd HH:mm'))"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "DoneCap"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "7px"
+              }
+            },
+            "propConfig": {
+              "position.display": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "toInt(coalesce({view.params.rowData.Status}, -1)) = 3 && {view.params.rowData.CompletedTimestamp} != null"
+                  }
+                }
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "DoneTag"
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "props": {
+                  "text": "DONE",
+                  "style": {
+                    "color": "#2F9E44",
+                    "fontSize": "11px",
+                    "fontWeight": "800",
+                    "letterSpacing": "0.7px",
+                    "textTransform": "uppercase"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "DoneVal"
+                },
+                "position": {
+                  "shrink": 1
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#2F9E44",
+                    "fontSize": "13px",
+                    "fontWeight": "700",
+                    "whiteSpace": "nowrap"
+                  }
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.params.rowData.CompletedTimestamp} = null, '--', dateFormat({view.params.rowData.CompletedTimestamp}, 'MM/dd HH:mm'))"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

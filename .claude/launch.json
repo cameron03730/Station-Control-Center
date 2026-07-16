@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "studio",
+      "runtimeExecutable": "C:\\Users\\cmetzgar\\AppData\\Local\\Temp\\claude\\C--Users-cmetzgar-OneDrive---mdiadvantage-com-Desktop-Claude-Jefferson-City\\232a92d0-15b7-4498-ae53-02957801ce65\\scratchpad\\studio.bat",
+      "runtimeArgs": [],
+      "port": 3005
+    },
+    {
+      "name": "finance-dashboard",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8642", "--directory", "C:/Users/cmetzgar/OneDrive - mdiadvantage.com/Desktop/Claude/Personal/Finances Dashboard"],
+      "port": 8642
+    },
+    {
+      "name": "synced-mock",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:/Users/cmetzgar/AppData/Local/Temp/claude/C--Users-cmetzgar-OneDrive---mdiadvantage-com-Desktop-Claude-Jefferson-City/7694df2b-0dd3-48b2-9c16-cd5eb0ed9a2a/scratchpad/mockserver.js"],
+      "port": 8643
+    }
+  ]
+}

@@ -1,0 +1,294 @@
+{
+  "custom": {},
+  "params": {
+    "serial": "",
+    "status": "pending",
+    "message": ""
+  },
+  "propConfig": {
+    "params.serial": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.status": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.message": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 560,
+      "height": 60
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "row",
+      "alignItems": "center",
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "border": "1px solid #D8DEE7",
+        "borderLeft": "5px solid #C9D2DD",
+        "borderRadius": "8px",
+        "padding": "8px 12px 8px 12px",
+        "gap": "10px",
+        "height": "100%",
+        "overflow": "hidden",
+        "transition": "background-color 140ms ease, border-color 140ms ease"
+      }
+    },
+    "propConfig": {
+      "props.style.backgroundColor": {
+        "binding": {
+          "type": "expr",
+          "config": {
+            "expression": "if({view.params.status} = 'valid', '#D3F2DD', if({view.params.status} = 'invalid', '#FDECEC', '#FFFFFF'))"
+          }
+        }
+      },
+      "props.style.border": {
+        "binding": {
+          "type": "expr",
+          "config": {
+            "expression": "if({view.params.status} = 'valid', '1px solid #8FD3A4', if({view.params.status} = 'invalid', '1px solid #F2B8B8', '1px solid #D8DEE7'))"
+          }
+        }
+      },
+      "props.style.borderLeft": {
+        "binding": {
+          "type": "expr",
+          "config": {
+            "expression": "if({view.params.status} = 'valid', '6px solid #2F9E44', if({view.params.status} = 'invalid', '6px solid #E03131', '6px solid #C9D2DD'))"
+          }
+        }
+      }
+    },
+    "children": [
+      {
+        "type": "ia.display.label",
+        "meta": {
+          "name": "Serial"
+        },
+        "position": {
+          "grow": 1,
+          "shrink": 1
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.params.serial"
+              }
+            }
+          },
+          "props.style.color": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.status} = 'valid', '#1E7A34', if({view.params.status} = 'invalid', '#B02525', '#1B212B'))"
+              }
+            }
+          }
+        },
+        "props": {
+          "text": "",
+          "style": {
+            "color": "#1B212B",
+            "fontSize": "15px",
+            "fontWeight": "700",
+            "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+            "letterSpacing": "0.3px",
+            "whiteSpace": "nowrap",
+            "overflow": "hidden",
+            "textOverflow": "ellipsis"
+          }
+        }
+      },
+      {
+        "type": "ia.display.label",
+        "meta": {
+          "name": "Msg"
+        },
+        "position": {
+          "shrink": 1
+        },
+        "propConfig": {
+          "meta.visible": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "{view.params.status} = 'invalid' && len(coalesce({view.params.message}, '')) > 0"
+              }
+            }
+          },
+          "props.text": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.params.message"
+              }
+            }
+          }
+        },
+        "props": {
+          "text": "",
+          "style": {
+            "color": "#E03131",
+            "fontSize": "12px",
+            "fontWeight": "400",
+            "whiteSpace": "nowrap",
+            "overflow": "hidden",
+            "textOverflow": "ellipsis",
+            "maxWidth": "230px"
+          }
+        }
+      },
+      {
+        "type": "ia.display.icon",
+        "meta": {
+          "name": "StatusIcon"
+        },
+        "position": {
+          "basis": "24px",
+          "shrink": 0
+        },
+        "props": {
+          "path": "material/schedule",
+          "color": "#9AA3B0",
+          "style": {
+            "width": "24px",
+            "height": "24px"
+          }
+        },
+        "propConfig": {
+          "props.path": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.status} = 'valid', 'material/check_circle', if({view.params.status} = 'invalid', 'material/cancel', 'material/schedule'))"
+              }
+            }
+          },
+          "props.color": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.status} = 'valid', '#2F9E44', if({view.params.status} = 'invalid', '#E03131', '#9AA3B0'))"
+              }
+            }
+          }
+        }
+      },
+      {
+        "type": "ia.display.label",
+        "meta": {
+          "name": "StatusPill"
+        },
+        "position": {
+          "basis": "auto",
+          "shrink": 0
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.status} = 'valid', 'VERIFIED', if({view.params.status} = 'invalid', 'INVALID', 'PENDING'))"
+              }
+            }
+          },
+          "props.style.backgroundColor": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.status} = 'valid', '#2F9E44', if({view.params.status} = 'invalid', '#E03131', '#5B6675'))"
+              }
+            }
+          },
+          "props.style.fontSize": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.status} = 'valid', '13.5px', '12px')"
+              }
+            }
+          },
+          "props.style.padding": {
+            "binding": {
+              "type": "expr",
+              "config": {
+                "expression": "if({view.params.status} = 'valid', '6px 17px', '5px 14px')"
+              }
+            }
+          }
+        },
+        "props": {
+          "text": "PENDING",
+          "style": {
+            "color": "#FFFFFF",
+            "fontSize": "12px",
+            "fontWeight": "800",
+            "borderRadius": "999px",
+            "padding": "5px 14px",
+            "letterSpacing": "0.6px",
+            "whiteSpace": "nowrap",
+            "boxShadow": "0 1px 2px rgba(27,33,43,0.16)"
+          }
+        }
+      },
+      {
+        "type": "ia.input.button",
+        "meta": {
+          "name": "RemoveBtn"
+        },
+        "position": {
+          "basis": "36px",
+          "shrink": 0
+        },
+        "props": {
+          "text": "",
+          "style": {
+            "backgroundColor": "#FFFFFF",
+            "color": "#E03131",
+            "border": "1px solid #D8DEE7",
+            "borderRadius": "8px",
+            "padding": "6px",
+            "overflow": "hidden",
+            "whiteSpace": "nowrap"
+          },
+          "image": {
+            "icon": {
+              "path": "material/close",
+              "color": "#E03131",
+              "style": {
+                "width": "18px",
+                "height": "18px",
+                "flexShrink": "0"
+              }
+            }
+          }
+        },
+        "events": {
+          "dom": {
+            "onClick": {
+              "type": "script",
+              "scope": "G",
+              "config": {
+                "script": "\tsystem.perspective.sendMessage('sccRemoveSerial', {'serial': self.view.params.serial}, scope='session')\n"
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

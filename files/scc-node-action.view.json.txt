@@ -1,0 +1,604 @@
+{
+  "custom": {
+    "reason": ""
+  },
+  "params": {
+    "idText": "",
+    "station": "",
+    "item": "",
+    "status": -1,
+    "isNWG": false
+  },
+  "propConfig": {
+    "params.idText": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.station": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.item": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.status": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.isNWG": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "width": 520,
+      "height": 500
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "direction": "column",
+      "style": {
+        "backgroundColor": "#FFFFFF",
+        "borderRadius": "12px",
+        "height": "100%",
+        "overflow": "hidden",
+        "boxShadow": "0 12px 40px rgba(0,0,0,0.30)"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "TitleBar"
+        },
+        "position": {
+          "basis": "70px",
+          "shrink": 0
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "justify": "space-between",
+          "style": {
+            "backgroundColor": "#1B212B",
+            "padding": "14px 22px",
+            "gap": "14px",
+            "borderBottom": "3px solid #E87722"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "TitleLbl"
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#FFFFFF",
+                "fontSize": "20px",
+                "fontWeight": "700",
+                "letterSpacing": "0.3px",
+                "whiteSpace": "nowrap",
+                "overflow": "hidden",
+                "textOverflow": "ellipsis"
+              }
+            },
+            "position": {
+              "grow": 1,
+              "shrink": 1
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "'Station ' + coalesce({view.params.station}, '--')"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "StatusPill"
+            },
+            "props": {
+              "text": "",
+              "style": {
+                "color": "#FFFFFF",
+                "fontSize": "12px",
+                "fontWeight": "800",
+                "letterSpacing": "0.6px",
+                "textTransform": "uppercase",
+                "borderRadius": "999px",
+                "padding": "5px 14px",
+                "whiteSpace": "nowrap",
+                "backgroundColor": "#5B6675",
+                "boxShadow": "0 1px 2px rgba(27,33,43,0.25)"
+              }
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "case(toInt(coalesce({view.params.status}, -1)), 0,'SCRAP', 1,'SCHEDULED', 2,'WIP', 3,'COMPLETE', 4,'ABORT', 5,'NON-CONF', 7,'ASSOC', '?')"
+                  }
+                }
+              },
+              "props.style.backgroundColor": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "case(toInt(coalesce({view.params.status}, -1)), 0,'#5B6675', 1,'#E8920C', 2,'#E87722', 3,'#2F9E44', 4,'#E03131', 5,'#E03131', 7,'#0C8599', '#5B6675')"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "Body"
+        },
+        "position": {
+          "grow": 1,
+          "shrink": 1
+        },
+        "props": {
+          "direction": "column",
+          "style": {
+            "padding": "20px",
+            "gap": "13px",
+            "backgroundColor": "#FFFFFF"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "ContextCard"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "backgroundColor": "#F7F9FC",
+                "border": "1px solid #E8ECF2",
+                "borderRadius": "10px",
+                "padding": "12px 15px",
+                "gap": "3px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "CtxId"
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#1B212B",
+                    "fontSize": "18px",
+                    "fontWeight": "700",
+                    "fontFamily": "'SF Mono','Roboto Mono',Consolas,monospace",
+                    "letterSpacing": "0.3px",
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden",
+                    "textOverflow": "ellipsis"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "coalesce({view.params.idText}, '--')"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "CtxItem"
+                },
+                "props": {
+                  "text": "",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "13px",
+                    "fontWeight": "600",
+                    "whiteSpace": "nowrap",
+                    "overflow": "hidden",
+                    "textOverflow": "ellipsis"
+                  }
+                },
+                "position": {
+                  "basis": "auto",
+                  "shrink": 0
+                },
+                "propConfig": {
+                  "props.text": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "'Item  ' + coalesce({view.params.item}, '--')"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "ReasonLbl"
+            },
+            "props": {
+              "text": "REASON  (required - written to SupervisorOverrideLog)",
+              "style": {
+                "color": "#5B6675",
+                "fontSize": "12px",
+                "fontWeight": "700",
+                "textAlign": "left",
+                "letterSpacing": "0.6px"
+              }
+            },
+            "position": {
+              "basis": "18px",
+              "shrink": 0
+            }
+          },
+          {
+            "type": "ia.input.text-field",
+            "meta": {
+              "name": "ReasonField"
+            },
+            "position": {
+              "basis": "46px",
+              "shrink": 0
+            },
+            "props": {
+              "placeholder": "Why is this being changed manually...",
+              "deferUpdates": false,
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#1B212B",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "8px",
+                "padding": "12px 14px",
+                "fontSize": "15px"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.reason",
+                    "bidirectional": true
+                  }
+                }
+              },
+              "props.style.border": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "if(len(trim(coalesce({view.custom.reason}, ''))) > 0, '1px solid #D8DEE7', '1px solid #E03131')"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "ActionRow"
+            },
+            "position": {
+              "basis": "52px",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "center",
+              "style": {
+                "gap": "12px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.input.button",
+                "meta": {
+                  "name": "MarkWipBtn"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1,
+                  "basis": "0%"
+                },
+                "props": {
+                  "text": "Mark WIP",
+                  "style": {
+                    "backgroundColor": "#E87722",
+                    "color": "#FFFFFF",
+                    "border": "none",
+                    "borderRadius": "9px",
+                    "fontWeight": "700",
+                    "fontSize": "15.5px",
+                    "padding": "13px 16px",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap"
+                  },
+                  "image": {
+                    "icon": {
+                      "path": "material/play_arrow",
+                      "color": "#FFFFFF",
+                      "style": {
+                        "width": "19px",
+                        "height": "19px",
+                        "flexShrink": "0"
+                      }
+                    }
+                  }
+                },
+                "propConfig": {
+                  "props.enabled": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "len(trim(coalesce({view.custom.reason}, ''))) > 0 && toInt(coalesce({view.params.status}, -1)) != 2 && toInt(coalesce({view.params.status}, -1)) != 3"
+                      }
+                    }
+                  },
+                  "props.style.backgroundColor": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(trim(coalesce({view.custom.reason}, ''))) > 0 && toInt(coalesce({view.params.status}, -1)) != 2 && toInt(coalesce({view.params.status}, -1)) != 3, '#E87722', '#D5D5D5')"
+                      }
+                    }
+                  },
+                  "props.style.color": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(trim(coalesce({view.custom.reason}, ''))) > 0 && toInt(coalesce({view.params.status}, -1)) != 2 && toInt(coalesce({view.params.status}, -1)) != 3, '#FFFFFF', '#8A929E')"
+                      }
+                    }
+                  },
+                  "props.image.icon.color": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(trim(coalesce({view.custom.reason}, ''))) > 0 && toInt(coalesce({view.params.status}, -1)) != 2 && toInt(coalesce({view.params.status}, -1)) != 3, '#FFFFFF', '#8A929E')"
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "dom": {
+                    "onClick": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "\targs = {'idText': self.view.params.idText, 'item': self.view.params.item, 'station': self.view.params.station, 'reason': self.view.custom.reason}\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Marking WIP...', 'actionKey': 'markScheduleWip', 'actionArgs': args, 'doneMsg': 'sccOverviewDone'}, modal=True, showCloseIcon=False)\n"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.input.button",
+                "meta": {
+                  "name": "MarkCompleteBtn"
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1,
+                  "basis": "0%"
+                },
+                "props": {
+                  "text": "Mark Complete",
+                  "style": {
+                    "backgroundColor": "#2F9E44",
+                    "color": "#FFFFFF",
+                    "border": "none",
+                    "borderRadius": "9px",
+                    "fontWeight": "700",
+                    "fontSize": "15.5px",
+                    "padding": "13px 16px",
+                    "overflow": "hidden",
+                    "whiteSpace": "nowrap"
+                  },
+                  "image": {
+                    "icon": {
+                      "path": "material/check_circle",
+                      "color": "#FFFFFF",
+                      "style": {
+                        "width": "19px",
+                        "height": "19px",
+                        "flexShrink": "0"
+                      }
+                    }
+                  }
+                },
+                "propConfig": {
+                  "props.enabled": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "len(trim(coalesce({view.custom.reason}, ''))) > 0 && toInt(coalesce({view.params.status}, -1)) != 3"
+                      }
+                    }
+                  },
+                  "props.style.backgroundColor": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(trim(coalesce({view.custom.reason}, ''))) > 0 && toInt(coalesce({view.params.status}, -1)) != 3, '#2F9E44', '#D5D5D5')"
+                      }
+                    }
+                  },
+                  "props.style.color": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(trim(coalesce({view.custom.reason}, ''))) > 0 && toInt(coalesce({view.params.status}, -1)) != 3, '#FFFFFF', '#8A929E')"
+                      }
+                    }
+                  },
+                  "props.image.icon.color": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if(len(trim(coalesce({view.custom.reason}, ''))) > 0 && toInt(coalesce({view.params.status}, -1)) != 3, '#FFFFFF', '#8A929E')"
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "dom": {
+                    "onClick": {
+                      "type": "script",
+                      "scope": "G",
+                      "config": {
+                        "script": "\targs = {'idText': self.view.params.idText, 'item': self.view.params.item, 'station': self.view.params.station, 'reason': self.view.custom.reason}\n\tsystem.perspective.openPopup('sccProgress', 'Plant Overview/Engineering/Station Control Center/embedded/scc-action-progress', {'title': 'Marking complete...', 'actionKey': 'markScheduleComplete', 'actionArgs': args, 'doneMsg': 'sccOverviewDone'}, modal=True, showCloseIcon=False)\n"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Explainer"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "direction": "row",
+              "alignItems": "flex-start",
+              "style": {
+                "gap": "8px",
+                "backgroundColor": "#F4F6F9",
+                "borderRadius": "8px",
+                "padding": "10px 12px"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.display.icon",
+                "meta": {
+                  "name": "ExpIcon"
+                },
+                "position": {
+                  "basis": "16px",
+                  "shrink": 0
+                },
+                "props": {
+                  "path": "material/info",
+                  "color": "#8A929E",
+                  "style": {
+                    "width": "16px",
+                    "height": "16px"
+                  }
+                }
+              },
+              {
+                "type": "ia.display.label",
+                "meta": {
+                  "name": "ExpTxt"
+                },
+                "props": {
+                  "text": "Mark WIP sets this station actively building (Status 2). Mark Complete finishes it here (Status 3) and re-pulls the station's next work order.",
+                  "style": {
+                    "color": "#5B6675",
+                    "fontSize": "12px",
+                    "fontWeight": "400",
+                    "lineHeight": "1.45",
+                    "whiteSpace": "normal"
+                  }
+                },
+                "position": {
+                  "grow": 1,
+                  "shrink": 1
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.input.button",
+            "meta": {
+              "name": "CancelBtn"
+            },
+            "position": {
+              "basis": "auto",
+              "shrink": 0
+            },
+            "props": {
+              "text": "Cancel",
+              "style": {
+                "backgroundColor": "#FFFFFF",
+                "color": "#5B6675",
+                "border": "1px solid #D8DEE7",
+                "borderRadius": "8px",
+                "fontWeight": "600",
+                "fontSize": "14px",
+                "padding": "11px 14px",
+                "overflow": "hidden",
+                "whiteSpace": "nowrap"
+              }
+            },
+            "events": {
+              "dom": {
+                "onClick": {
+                  "type": "script",
+                  "scope": "G",
+                  "config": {
+                    "script": "\tsystem.perspective.closePopup('sccNodeAction')\n"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "scripts": {
+      "customMethods": [],
+      "extensionFunctions": null,
+      "messageHandlers": []
+    }
+  }
+}

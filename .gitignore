@@ -1,0 +1,21 @@
+# ─── Build / tooling caches ────────────────────────────────
+.cache/
+*.log
+
+# ─── Large binary gateway backups (keep out of git — use plant file share) ──
+*.gwbk
+
+# ─── Extracted gwbk contents (derived from *.gwbk; break Windows 260-char path limit) ──
+Plant reference docs/gwbk_extract/
+Plant reference docs/gwbk_extract_be/
+
+# ─── Machine-local Claude Code settings (not shared) ──────────
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# ─── OS / editor cruft ─────────────────────────────────────
+Thumbs.db
+Desktop.ini
+.DS_Store
+*~
+*.tmp
