@@ -13,6 +13,12 @@ Plant reference docs/gwbk_extract_be/
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
 
+# ─── Sibling repos sharing this workspace folder (NOT part of SCC) ──
+# These are separate git repositories cloned alongside SCC; never commit them here.
+/BE1/
+/BE2/
+/jefferson-city-factory-control/
+
 # ─── OS / editor cruft ─────────────────────────────────────
 Thumbs.db
 Desktop.ini
