@@ -58,7 +58,7 @@ git merge --ff-only origin/dev
 if ($LASTEXITCODE -ne 0) { Fail "dev is not fast-forwardable from origin/dev. Reconcile manually." }
 
 # --- 2. ingest + rebuild ---------------------------------------------------
-Write-Host "==> ingesting export -> *.view.json.txt" -ForegroundColor Cyan
+Write-Host "==> ingesting export into *.view.json.txt" -ForegroundColor Cyan
 python files/_ingest_zip.py "$Export"
 if ($LASTEXITCODE -ne 0) { git checkout -- files/; Fail "ingest failed; working tree reverted." }
 
@@ -66,10 +66,11 @@ Write-Host "==> rebuilding SCC_views_import.zip" -ForegroundColor Cyan
 python files/_rebuild_zip.py
 if ($LASTEXITCODE -ne 0) { git checkout -- files/; Fail "rebuild failed; working tree reverted." }
 
-# --- 3. real changes? ------------------------------------------------------
+# --- 3. real changes? (use git's EXIT CODE, not stdout) --------------------
 git add -A
-if (git diff --cached --quiet) {
-    Write-Host "No real changes from that export — nothing to update. Reverting." -ForegroundColor Yellow
+git diff --cached --quiet
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "No real changes from that export - nothing to update. Reverting." -ForegroundColor Yellow
     git reset -q
     git checkout -- files/
     exit 0
