@@ -44,10 +44,11 @@ function Fail($msg) { Write-Host "ERROR: $msg" -ForegroundColor Red; exit 1 }
 if (-not (Test-Path $Export)) { Fail "export file not found: $Export" }
 $Export = (Resolve-Path $Export).Path
 
-$branch = (git rev-parse --abbrev-ref HEAD).Trim()
+$branch = "$(git rev-parse --abbrev-ref HEAD)".Trim()
 if ($branch -ne 'dev') { Fail "you are on '$branch', not 'dev'. Switch with: git checkout dev" }
 
-if ((git status --porcelain --untracked-files=no).Trim()) {
+$dirty = git status --porcelain --untracked-files=no   # $null when tree is clean
+if ($dirty) {
     Fail "dev has uncommitted changes. Commit or stash them before running this."
 }
 
