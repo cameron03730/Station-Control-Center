@@ -1,5 +1,7 @@
-# Normalize text line endings in the repo; leave working copies alone.
-* text=auto
+# Store text as LF in the repo AND check it out as LF on every platform.
+# (These sources are pasted into Ignition, which is line-ending agnostic; forcing LF
+#  stops Windows CRLF churn and keeps _ingest_zip.py output diff-clean.)
+* text=auto eol=lf
 
 # Treat these as binary (no line-ending munging, no diff noise)
 *.xlsm binary
