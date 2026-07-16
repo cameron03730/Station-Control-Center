@@ -1,0 +1,43 @@
+name: Package SCC Views
+
+# Manually-triggered. Rebuilds the Ignition import bundle (SCC_views_import.zip)
+# from the current *.view.json.txt sources on the chosen branch and uploads it
+# as a downloadable artifact. No polling, no auto-run — you press "Run workflow".
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch to package
+        default: dev
+        type: choice
+        options:
+          - dev
+          - test
+          - prod
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ${{ inputs.branch }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Rebuild import bundle from *.view.json.txt sources
+        working-directory: files
+        run: python _rebuild_zip.py
+
+      - name: Upload SCC_views_import.zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: SCC_views_import_${{ inputs.branch }}
+          path: files/SCC_views_import.zip
+          if-no-files-found: error
+          retention-days: 90
