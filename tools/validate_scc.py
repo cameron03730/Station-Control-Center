@@ -5,7 +5,10 @@
 import json, ast, os, re, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-VIEWS = [f for f in os.listdir(HERE) if f.endswith('.view.json.txt')]
+ROOT = os.path.dirname(HERE)                        # repo root (tools/ -> ..)
+VIEWS_DIR = os.path.join(ROOT, 'ignition', 'views')
+CODE_PATH = os.path.join(ROOT, 'ignition', 'script-library', 'StationControl_SCC_code.py.txt')
+VIEWS = [f for f in os.listdir(VIEWS_DIR) if f.endswith('.view.json.txt')]
 CODE = 'StationControl_SCC_code.py.txt'
 
 THEME_TOKEN_RE = re.compile(r'(?<![A-Za-z0-9])--(?:text|container|accent|neutral|primary|secondary|surface|background|foreground)', re.I)
@@ -18,7 +21,7 @@ def err(m):
 print('=== JSON validity ===')
 parsed = {}
 for v in sorted(VIEWS):
-    p = os.path.join(HERE, v)
+    p = os.path.join(VIEWS_DIR, v)
     try:
         with open(p, 'r', encoding='utf-8') as fh:
             parsed[v] = json.load(fh)
@@ -27,7 +30,7 @@ for v in sorted(VIEWS):
         err('%s did not parse: %s' % (v, e))
 
 print('=== code.py Python syntax ===')
-cp = os.path.join(HERE, CODE)
+cp = CODE_PATH
 try:
     src = open(cp, 'r', encoding='utf-8').read()
     ast.parse(src)

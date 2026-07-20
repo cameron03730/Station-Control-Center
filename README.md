@@ -8,7 +8,25 @@ action writes to the `SupervisorOverrideLog` table.
 Developer: MDI (embedded JLG resource) — Cameron Metzgar.
 
 See [`CLAUDE.md`](CLAUDE.md) for the full build context, absolute rules, architecture, and
-named-query reuse map. See [`HANDOFF.md`](HANDOFF.md) for the current build state.
+named-query reuse map. See [`docs/HANDOFF.md`](docs/HANDOFF.md) for the current build state.
+
+## Repository layout
+
+```
+ignition/                Deployable Ignition resources (the product)
+  script-library/        StationControl.SCC  (StationControl_SCC_code.py.txt)
+  views/                 Perspective view sources (*.view.json.txt)
+  named-queries/         Named-query SQL (*.sql.txt)
+  style-classes/         Perspective style classes (SCC_Primary, SCC_Success)
+  import-bundle/         SCC_views_import.zip  (rebuilt from views/ by tools/rebuild_zip.py)
+tools/                   Build + validation scripts (run from the repo root)
+docs/                    Guides, release-notes template, build/handoff notes
+reference/               Plant reference material (tag exports, PLC, overview)
+tests/                   Test-case workbook (.xlsm)
+archive/                 Parked/retired feature source (e.g. association-TB)
+scripts/                 scc-update-dev.ps1 (local dev-update helper)
+.github/workflows/       "Package SCC Views" action
+```
 
 ## Branch model — one branch per environment
 
@@ -36,8 +54,9 @@ git checkout prod && git merge test && git push origin prod
 
 ## What is / isn't tracked
 
-Tracked: SCC view JSON (`files/*.view.json.txt`), script library
-(`StationControl_SCC_code.py.txt`), SQL, import zips, style classes, docs, test cases.
+Tracked: view sources (`ignition/views/*.view.json.txt`), script library
+(`ignition/script-library/StationControl_SCC_code.py.txt`), named-query SQL, the import
+bundle, style classes, docs, and the test-case workbook.
 
 Ignored (see `.gitignore`): `.cache/`, `*.gwbk` gateway backups, extracted `gwbk_extract*/`
 folders (derived + break Windows path limits), and machine-local `.claude/settings.local.json`.
@@ -60,9 +79,11 @@ rebuilds the bundle, and — only if a view actually changed — (3) tags the cu
 `dev-snapshot-<timestamp>` (so the old version is preserved), then commits and pushes `dev`.
 Restore any old snapshot with `git checkout <tag>`. Pass `-Tag <name>` to name the snapshot.
 
-### Underlying scripts (run from `files/`)
-- `_rebuild_zip.py` — `*.view.json.txt` → `SCC_views_import.zip` (build the import bundle).
-- `_ingest_zip.py <export.zip>` — reverse: export zip → `*.view.json.txt` (LF-normalized).
+### Underlying scripts (in `tools/`, run from the repo root)
+- `python tools/rebuild_zip.py` — `ignition/views/*.view.json.txt` → `ignition/import-bundle/SCC_views_import.zip`.
+- `python tools/ingest_zip.py <export.zip>` — reverse: export zip → `ignition/views/*.view.json.txt` (LF-normalized).
+- `python tools/validate_scc.py` — lint the views + `ast.parse` the script library.
+- `python tools/gen_help.py` / `python tools/gen_overview.py` — regenerate the Help / Machine-Overview views.
 
 ## Deploying to Ignition
 

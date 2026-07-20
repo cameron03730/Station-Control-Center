@@ -1545,7 +1545,7 @@ def markSerialComplete(serialNumber, station, reason, session):
 		1. Requires a reason.
 		2. Fires WorkOrderClaim first (self-guards WIPTimestamp IS NULL) so a row completed straight from
 		   Scheduled gets both timestamps, then WorkOrderComplete (status 3). TB (boom sub) completes with
-		   no boundary -- the association guard was stripped 2026-07-01 (see files/_stash_association_TB/).
+		   no boundary -- the association guard was stripped 2026-07-01 (see archive/association-TB/).
 		3. Line/area cascade: closes EVERY line the serial has entries in (not just the completed station's
 		   line), because SetAreaStatus_Complete requires BOTH the TB and TF/LL lines at LineStatus 3. Per
 		   line: mark in-progress, mark non-conformance-complete, then close LineStatus -> 3 if all its
@@ -1564,7 +1564,7 @@ def markSerialComplete(serialNumber, station, reason, session):
 	reason = (reason or '').strip()
 	if not reason:
 		return {'ok': False, 'message': 'A reason is required.', 'needsConfirm': False}
-	# TB (boom sub) completes with no boundary -- the association guard was stripped 2026-07-01 (see files/_stash_association_TB/).
+	# TB (boom sub) completes with no boundary -- the association guard was stripped 2026-07-01 (see archive/association-TB/).
 	beQuery('RunSchedule/Assembly/Update/WorkOrderClaim', {'StationName': station, 'SerialNumber': serialNumber}, stationName = station)
 	beQuery('RunSchedule/Assembly/Update/WorkOrderComplete', {'StationName': station, 'SerialNumber': serialNumber, 'Status': 3}, stationName = station)
 

@@ -2,11 +2,12 @@
 # Generator for scc-help.view.json.txt (the in-app Help & Guide popup).
 # Accordion design: each process section has a "More info" toggle that expands a
 # step-by-step walkthrough in place. One section open at a time (view.custom.openSection int).
-# Edit the SECTIONS data below and re-run:  python _gen_help.py   (writes scc-help.view.json.txt)
+# Edit the SECTIONS data below and re-run:  python tools/gen_help.py   (writes ignition/views/scc-help.view.json.txt)
 import json, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, 'scc-help.view.json.txt')
+ROOT = os.path.dirname(HERE)                        # repo root (tools/ -> ..)
+OUT = os.path.join(ROOT, 'ignition', 'views', 'scc-help.view.json.txt')
 
 # ---- palette (concrete hex only -- no theme tokens, per project rule 3) --------------------
 DARK, ORANGE, WHITE, PAGE = '#1B212B', '#E87722', '#FFFFFF', '#F4F6F9'

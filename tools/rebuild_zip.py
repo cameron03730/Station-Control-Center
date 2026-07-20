@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
-# Rebuild SCC_views_import.zip from the working *.view.json.txt sources (run from files/).
+# Rebuild the Ignition import bundle from the working view sources.
+#   sources: ignition/views/*.view.json.txt   ->   ignition/import-bundle/SCC_views_import.zip
 # - Replaces every existing view.json from its matching .txt (folder->txt map below).
 # - Copies non-view entries (resource.json, thumbnail.png, project.json) verbatim.
 # - Adds NEW_EMBEDDED views with a clean resource.json (files:['view.json'], no thumbnail/signature).
-# Usage:  python _rebuild_zip.py    (cwd = files/)
+# Usage:  python tools/rebuild_zip.py    (runs from anywhere; paths are resolved from the repo root)
 import zipfile, json, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ZIP = os.path.join(HERE, 'SCC_views_import.zip')
+ROOT = os.path.dirname(HERE)                        # repo root (tools/ -> ..)
+VIEWS = os.path.join(ROOT, 'ignition', 'views')
+ZIP = os.path.join(ROOT, 'ignition', 'import-bundle', 'SCC_views_import.zip')
 BASE = 'com.inductiveautomation.perspective/views/Plant Overview/Engineering/Station Control Center/'
 
-# zip folder (last path segment) -> files/<name>.view.json.txt
+# zip folder (last path segment) -> ignition/views/<name>.view.json.txt
 FOLDER_TXT = {
     'work-order-reconciliation': 'work-order-reconciliation',
     'station-componentID-rectify': 'station-componentid-rectify',  # folder has capital ID
@@ -35,7 +38,7 @@ FOLDER_TXT = {
 }
 
 # View folders to DROP from the zip entirely (feature stashed for later; source lives under
-# files/_stash_association_TB/). scc-associate-popup = the boom-association editor, removed 2026-07-01.
+# archive/association-TB/). scc-associate-popup = the boom-association editor, removed 2026-07-01.
 DROP = {'scc-associate-popup'}
 
 # Views that do NOT yet exist as folders in the current zip and must be appended (embedded/).
@@ -49,7 +52,7 @@ CLEAN_RESOURCE = json.dumps({
 
 
 def read_txt(name):
-    with open(os.path.join(HERE, name + '.view.json.txt'), 'r', encoding='utf-8') as fh:
+    with open(os.path.join(VIEWS, name + '.view.json.txt'), 'r', encoding='utf-8') as fh:
         s = fh.read()
     json.loads(s)  # validate it parses
     return s

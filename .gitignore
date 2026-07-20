@@ -6,12 +6,13 @@
 *.gwbk
 
 # ─── Extracted gwbk contents (derived from *.gwbk; break Windows 260-char path limit) ──
-Plant reference docs/gwbk_extract/
-Plant reference docs/gwbk_extract_be/
+# Match at any depth so it holds after folder renames (e.g. reference/gwbk_extract*/).
+gwbk_extract*/
 
 # ─── Machine-local Claude Code settings (not shared) ──────────
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
+.claude/skills/
 
 # ─── Sibling repos sharing this workspace folder (NOT part of SCC) ──
 # These are separate git repositories cloned alongside SCC; never commit them here.

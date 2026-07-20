@@ -11,6 +11,12 @@ versioning follows [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.P
 ## [Unreleased]
 ### Added
 ### Changed
+- **Repository restructure** — sources reorganized into `ignition/` (`script-library`, `views`,
+  `named-queries`, `style-classes`, `import-bundle`), `tools/` (build scripts), `docs/`,
+  `reference/`, `tests/`, and `archive/`. The Python tools, the GitHub Action, and
+  `scripts/scc-update-dev.ps1` were updated to the new paths. Removed stale artifacts (pre-git
+  backup snapshots, a duplicate context folder, two superseded import zips). No change to the
+  deployed views/script or their contract — only the repo layout moved.
 ### Fixed
 
 ---

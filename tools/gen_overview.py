@@ -249,7 +249,8 @@ overview = {
 
 
 def write(name, obj):
-    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), name)
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # tools/ -> repo root
+    out = os.path.join(root, 'ignition', 'views', name)
     with open(out, 'w', encoding='utf-8') as fh:
         json.dump(obj, fh, indent=2)
         fh.write('\n')

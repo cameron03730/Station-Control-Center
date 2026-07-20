@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 # Ingest an Ignition export (Designer resource export OR SCC_views_import.zip) back into
-# the working *.view.json.txt sources. This is the REVERSE of _rebuild_zip.py.
+# the working view sources at ignition/views/. This is the REVERSE of rebuild_zip.py.
 #
 # For every "*/view.json" entry in the export, the leaf folder name is mapped to its
-# files/<name>.view.json.txt via FOLDER_TXT and overwritten with the exported JSON.
-# Nesting depth does not matter (same as _rebuild_zip.py, which keys on split('/')[-2]).
+# ignition/views/<name>.view.json.txt via FOLDER_TXT and overwritten with the exported JSON.
+# Nesting depth does not matter (same as rebuild_zip.py, which keys on split('/')[-2]).
 # Unmapped view folders are REPORTED and skipped, never guessed.
 #
-# Usage:  python _ingest_zip.py <path-to-export.zip>
+# Usage:  python tools/ingest_zip.py <path-to-export.zip>
 import zipfile, json, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)                        # repo root (tools/ -> ..)
+VIEWS = os.path.join(ROOT, 'ignition', 'views')
 
-# KEEP IN SYNC with _rebuild_zip.py FOLDER_TXT.
-# zip view folder (leaf) -> files/<name>.view.json.txt
+# KEEP IN SYNC with rebuild_zip.py FOLDER_TXT.
+# zip view folder (leaf) -> ignition/views/<name>.view.json.txt
 FOLDER_TXT = {
     'work-order-reconciliation': 'work-order-reconciliation',
     'station-componentID-rectify': 'station-componentid-rectify',  # folder has capital ID
@@ -36,7 +38,7 @@ FOLDER_TXT = {
     'scc-help': 'scc-help',
 }
 
-# Stashed feature; never ingest (see files/_stash_association_TB/).
+# Stashed feature; never ingest (see archive/association-TB/).
 DROP = {'scc-associate-popup'}
 
 
@@ -58,7 +60,7 @@ def main(zip_path):
             data = z.read(name).decode('utf-8')
             json.loads(data)  # validate it parses before we overwrite the source
             data = data.replace('\r\n', '\n').replace('\r', '\n')  # normalize to LF (repo standard)
-            out = os.path.join(HERE, FOLDER_TXT[folder] + '.view.json.txt')
+            out = os.path.join(VIEWS, FOLDER_TXT[folder] + '.view.json.txt')
             with open(out, 'w', encoding='utf-8', newline='') as fh:  # newline='' => emit '\n' verbatim
                 fh.write(data)
             written.append(FOLDER_TXT[folder])
@@ -78,5 +80,5 @@ def main(zip_path):
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        raise SystemExit('usage: python _ingest_zip.py <path-to-export.zip>')
+        raise SystemExit('usage: python tools/ingest_zip.py <path-to-export.zip>')
     main(sys.argv[1])

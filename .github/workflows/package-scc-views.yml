@@ -30,14 +30,13 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Rebuild import bundle from *.view.json.txt sources
-        working-directory: files
-        run: python _rebuild_zip.py
+      - name: Rebuild import bundle from ignition/views sources
+        run: python tools/rebuild_zip.py
 
       - name: Upload SCC_views_import.zip
         uses: actions/upload-artifact@v4
         with:
           name: SCC_views_import_${{ inputs.branch }}
-          path: files/SCC_views_import.zip
+          path: ignition/import-bundle/SCC_views_import.zip
           if-no-files-found: error
           retention-days: 90

@@ -6,7 +6,7 @@
     Workflow this automates (in order):
       1. Verify you are on a clean 'dev' branch and sync with origin.
       2. Ingest the export (Designer export .zip or SCC_views_import.zip) into the
-         *.view.json.txt sources, then rebuild files/SCC_views_import.zip.
+         ignition/views/*.view.json.txt sources, then rebuild ignition/import-bundle/SCC_views_import.zip.
       3. If (and only if) that produced real content changes:
            a. Tag the CURRENT (pre-update) dev commit as a snapshot  -> old version preserved.
            b. Commit the update on dev.
@@ -60,23 +60,23 @@ if ($LASTEXITCODE -ne 0) { Fail "dev is not fast-forwardable from origin/dev. Re
 
 # --- 2. ingest -------------------------------------------------------------
 Write-Host "==> ingesting export into *.view.json.txt" -ForegroundColor Cyan
-python files/_ingest_zip.py "$Export"
-if ($LASTEXITCODE -ne 0) { git checkout -- files/; Fail "ingest failed; working tree reverted." }
+python tools/ingest_zip.py "$Export"
+if ($LASTEXITCODE -ne 0) { git checkout -- ignition/; Fail "ingest failed; working tree reverted." }
 
 # --- 3. real SOURCE changes? -----------------------------------------------
 # Gate on the *.view.json.txt sources, NOT the derived zip (the zip re-deflates on
 # every rebuild and can differ byte-wise even when no view actually changed).
 # 'git diff --quiet' evaluates normalized content, so EOL-only noise is ignored.
-git diff --quiet -- 'files/*.view.json.txt'
+git diff --quiet -- 'ignition/views/*.view.json.txt'
 if ($LASTEXITCODE -eq 0) {
     Write-Host "No view changes from that export - nothing to update. Reverting." -ForegroundColor Yellow
-    git checkout -- files/
+    git checkout -- ignition/
     exit 0
 }
 
 Write-Host "==> view sources changed; rebuilding SCC_views_import.zip" -ForegroundColor Cyan
-python files/_rebuild_zip.py
-if ($LASTEXITCODE -ne 0) { git checkout -- files/; Fail "rebuild failed; working tree reverted." }
+python tools/rebuild_zip.py
+if ($LASTEXITCODE -ne 0) { git checkout -- ignition/; Fail "rebuild failed; working tree reverted." }
 git add -A
 
 # --- 4. tag OLD dev, then commit the update -------------------------------
